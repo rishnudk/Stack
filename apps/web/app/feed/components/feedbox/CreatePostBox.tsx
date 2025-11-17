@@ -1,4 +1,5 @@
 "use client";
+import type React from "react";
 import { useState } from "react";
 import { Button } from "@repo/ui/button";
 import { Image, Smile, Link, Camera } from "lucide-react";
@@ -45,8 +46,10 @@ export function CreatePostBox() {
     return fileUrl;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     if(!content && files.length === 0) return ;
 
     try {
@@ -109,10 +112,11 @@ export function CreatePostBox() {
           <Camera size={18} />
         </div>
         <Button
-          
+          onClick={() => handleSubmit()}
+          disabled={uploading}
           className="rounded-full bg-sky-500 hover:bg-sky-600 px-5"
         >
-          Post
+          {uploading ? "Posting..." : "Post"}
         </Button>
       </div>
     </div>
