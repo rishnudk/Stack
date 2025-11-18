@@ -12,6 +12,6 @@ export const uploadRouter = router({
         })
     )
     .mutation(async ({ input }) => {
-        return await createPresignedUrl(input.fileName, input.fileType);
+        return await createPresignedUrl( input.fileType, input.fileName);
     })
 })

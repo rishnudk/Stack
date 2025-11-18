@@ -23,25 +23,27 @@ export function CreatePostBox() {
   }
 
   async function uploadFileTos3(file: File) {
+    console.log('🔵 Starting upload for:', file.name);
     const presignResp = await getPresignedUrl.mutateAsync({
       fileName: file.name,
       fileType: file.type
     });
-
+    console.log('🔵 Uploading to S3...');
     const { uploadUrl, fileUrl } = presignResp;
-
+    console.log('🔵 Upload URL:', uploadUrl);
+    console.log('🔵 File URL:', fileUrl);
     await fetch(uploadUrl, {
       method: 'PUT',
       headers: { 'Content-Type': file.type },
       body: file,
     });
-    
+    console.log('🔵 File uploaded successfully!');
     return fileUrl;
   }
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-
+console.log('🔵 Starting post creation...');
     const trimmedContent = content.trim();
 
     if (!trimmedContent && files.length === 0) {
