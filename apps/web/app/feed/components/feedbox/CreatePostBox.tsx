@@ -8,76 +8,70 @@ import { trpc } from '@/utils/trpc';
 import { toast } from 'sonner';
 
 export function CreatePostBox() {
- const [content, setContent]  = useState('');
- const [files, setFiles] = useState<File[]>([]);
- const [uploading, setUploading] = useState(false);
- const [progress, setProgress] = useState<Record<string,number>>({});
+  const [content, setContent] = useState('');
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState<Record<string, number>>({});
 
- //helper to call tRPC route via fetch
- async function TRPCMutation(path: string, input: any) {
-  const res = await fetch(`/api/trpc/${path}`, {
-    method: 'POST',
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ input }),
-    credentials: 'include',
-  });
-  return res.json();
- }
+  // Use the actual tRPC mutation
+  const createPost = trpc.posts.createPost.useMutation();
+  const getPresignedUrl = trpc.upload.getPresignedUrl.useMutation();
 
- const handleFiles = ( e: React.ChangeEvent<HTMLInputElement>  ) => {
-  if (!e.target.files)  return;
+  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) return;
     setFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
   }
 
-  async function uploadFileTos3(file: File)  {
-    const presignResp = await TRPCMutation("upload.getPresignedUrl", { fileName: file.name, fileType: file.type });
+  async function uploadFileTos3(file: File) {
+    const presignResp = await getPresignedUrl.mutateAsync({
+      fileName: file.name,
+      fileType: file.type
+    });
 
-    if(presignResp.error) {
-      toast.error("Error getting presigned URL");
-      return;
-    }
-    const { uploadUrl, fileUrl } = presignResp.result.data;
+    const { uploadUrl, fileUrl } = presignResp;
 
     await fetch(uploadUrl, {
       method: 'PUT',
       headers: { 'Content-Type': file.type },
       body: file,
     });
+    
     return fileUrl;
   }
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) {
-      e.preventDefault();
+    if (e) e.preventDefault();
+
+    const trimmedContent = content.trim();
+
+    if (!trimmedContent && files.length === 0) {
+      toast.error("Content or image is required");
+      return;
     }
-    if(!content && files.length === 0) return ;
 
     try {
       setUploading(true);
-      const imageUrls : string[] = [];
+      const imageUrls: string[] = [];
 
-      for(const file of files) {
+      for (const file of files) {
         const url = await uploadFileTos3(file);
-        if(url) imageUrls.push(url);
+        if (url) imageUrls.push(url);
       }
 
-      const createResp = await TRPCMutation("posts.createPost", { content, images: imageUrls });
+      await createPost.mutateAsync({
+        content: trimmedContent,
+        images: imageUrls,
+      });
 
-      if(createResp.error) {
-        toast.error(createResp.error.message || "Error creating post");
-                throw new Error(createResp.error.message || "Create post failed");
-
-        return;
-      }
-
-      //clear form
-      setContent('');
+      // Clear form after successful submission
+      setContent("");
       setFiles([]);
       setProgress({});
-      alert("Post created");
+      toast.success("Post created successfully!");
+      
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Upload error");
+      toast.error(err.message || "Error creating post");
     } finally {
       setUploading(false);
     }
@@ -95,7 +89,7 @@ export function CreatePostBox() {
         />
         <textarea
           className="flex-1 bg-transparent resize-none outline-none text-lg placeholder-neutral-500"
-          placeholder="What’s happening?"
+          placeholder="What's happening?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
@@ -113,10 +107,10 @@ export function CreatePostBox() {
         </div>
         <Button
           onClick={() => handleSubmit()}
-          disabled={uploading}
+          disabled={uploading || createPost.isPending}
           className="rounded-full bg-sky-500 hover:bg-sky-600 px-5"
         >
-          {uploading ? "Posting..." : "Post"}
+          {uploading || createPost.isPending ? "Posting..." : "Post"}
         </Button>
       </div>
     </div>

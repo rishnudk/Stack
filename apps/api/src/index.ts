@@ -1,10 +1,11 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import { appRouter } from './trpc/routerolddd.ts';
+import { appRouter } from './trpc/appRouter.ts';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import { PrismaClient } from '@prisma/client';
 import { createContext } from './context.ts';
 import type { FastifyRequest, FastifyReply } from 'fastify';
+
 
 
 const prisma = new PrismaClient();

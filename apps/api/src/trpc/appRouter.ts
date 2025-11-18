@@ -7,10 +7,10 @@ import { uploadRouter } from "./routers/uploadRouter.ts";
 
 export const appRouter = mergeRouters(
   router({
-    post: postRouter,
-    comment: commentRouter,
-    like: likeRouter,
-    user: userRouter,
+    posts: postRouter,
+    comments: commentRouter,
+    likes: likeRouter,
+    users: userRouter,
     upload: uploadRouter,
   })
 );
