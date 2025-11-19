@@ -1,24 +1,41 @@
 "use client";
 
+import { usePathname, useParams } from "next/navigation";
 import { Navigation } from "./Navigation";
 import { CreatePostBox } from "./CreatePostBox";
 import { ShowMorePosts } from "./ShowMorePosts";
 import { PostList } from "./PostList";
+import { PostDetailView } from "./PostDetailView";
 
-export  function FeedBox() {
+export function FeedBox() {
+  const pathname = usePathname();
+  const params = useParams();
+  
+  // Check if we're on a post detail page
+  const isPostDetail = pathname?.startsWith("/feed/post/");
+  const postId = params?.id as string;
+
   return (
     <div className="w-full max-w-2xl mx-auto min-h-screen border-x border-neutral-800 bg-black text-white">
-      {/* Top navigation tabs (For you, Following...) */}
-      <Navigation />
+      {isPostDetail && postId ? (
+        // Show post detail view
+        <PostDetailView postId={postId} />
+      ) : (
+        // Show normal feed
+        <>
+          {/* Top navigation tabs (For you, Following...) */}
+          <Navigation />
 
-      {/* Create new post box */}
-      <CreatePostBox />
+          {/* Create new post box */}
+          <CreatePostBox />
 
-      {/* Divider: Show more posts */}
-      <ShowMorePosts />
+          {/* Divider: Show more posts */}
+          <ShowMorePosts />
 
-      {/* Post feed */}
-      <PostList />
+          {/* Post feed */}
+          <PostList />
+        </>
+      )}
     </div>
   );
 }

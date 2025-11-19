@@ -47,4 +47,23 @@ export const postRouter = router({
 
       return { posts, nextCursor };
     }),
+
+  getPostById: protectedProcedure
+    .input(z.object({ postId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const post = await ctx.prisma.post.findUnique({
+        where: { id: input.postId },
+        include: {
+          author: true,
+          likes: true,
+          comments: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+
+      return post;
+    }),
 });

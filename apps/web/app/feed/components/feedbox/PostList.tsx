@@ -1,27 +1,31 @@
 "use client";
+import { formatPostTime } from "@/utils/formatTime";
 import { PostCard } from "./PostCard";
+import { trpc } from "@/utils/trpc";
 
 export function PostList() {
-  const posts = [
-    {
-      name: "aditya",
-      username: "adxtyahq",
-      time: "19h",
-      text: "name a better alternative to this. i’ll wait.",
-      imageUrl: "/gmail.png",
-    },
-    {
-      name: "rishnu",
-      username: "rishnudk",
-      time: "1d",
-      text: "Just finished my MERN stack project setup with Turborepo 🚀",
-    },
-  ];
+  const { data, isLoading } = trpc.posts.getPosts.useQuery({ limit: 20 });
+
+  if (isLoading) {
+    return <div className="text-white p-4">Loading posts...</div>;
+  }
+
+  const posts = data?.posts || [];
 
   return (
     <div>
-      {posts.map((post, idx) => (
-        <PostCard key={idx} {...post} />
+      {posts.map((post) => (
+        <PostCard
+          key={post.id}
+          postId={post.id}
+          name={post.author.name || "Unknown"}
+          username={post.author.email?.split("@")[0] || "user"}
+          time={formatPostTime(new Date(post.createdAt))}
+          text={post.content}
+          imageUrl={post.images?.[0]}
+          likeCount={post.likes.length}
+          commentCount={post.comments.length}
+        />
       ))}
     </div>
   );

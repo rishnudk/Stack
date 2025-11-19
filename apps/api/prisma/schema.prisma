@@ -18,6 +18,7 @@ model User {
   posts         Post[]
   comments      Comment[]
   likes         Like[]
+  commentLikes  CommentLike[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @default(now()) @updatedAt
   avatarUrl     String?
@@ -94,15 +95,32 @@ model Impression {
 }
 
 model Comment {
-  id      String @id @default(cuid())
-  content String
-  postId  String
-  userId  String
+  id        String   @id @default(cuid())
+  content   String
+  postId    String
+  userId    String
+  parentId  String?  // for nested replies
 
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id])
+  post    Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user    User          @relation(fields: [userId], references: [id])
+  parent  Comment?      @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[]     @relation("CommentReplies")
+  likes   CommentLike[]
 
   createdAt DateTime @default(now())
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  commentId String
+  userId    String
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId]) // one like per user per comment
 }
 
 model Like {
