@@ -28,6 +28,13 @@ model User {
   isPremium     Boolean      @default(false)
   views         View[]
   impressions   Impression[]
+  
+  // Developer Portfolio Fields
+  leetcodeUsername String?
+  githubUsername   String?
+  bio              String?  // Profile bio/description
+  skills           String[] // Array of skill names
+  socialLinks      Json?    // {linkedin, twitter, portfolio, etc}
 }
 
 model Post {

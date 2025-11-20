@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc.ts";
+import { protectedProcedure, router, publicProcedure } from "../trpc.ts";
 
 
 export const postRouter = router({
@@ -65,5 +65,22 @@ export const postRouter = router({
       });
 
       return post;
+    }),
+
+  // Get posts by user ID for profile page
+  getUserPosts: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const posts = await ctx.prisma.post.findMany({
+        where: { authorId: input.userId },
+        orderBy: { createdAt: "desc" },
+        include: {
+          author: true,
+          likes: true,
+          comments: true,
+        },
+      });
+
+      return posts;
     }),
 });
