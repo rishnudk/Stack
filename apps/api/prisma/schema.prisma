@@ -35,6 +35,10 @@ model User {
   bio              String?  // Profile bio/description
   skills           String[] // Array of skill names
   socialLinks      Json?    // {linkedin, twitter, portfolio, etc}
+  
+  // Cover Photo Fields
+  coverUrl         String?  // S3 URL for uploaded cover images
+  coverGradient    String?  // Tailwind gradient class for gradient covers
 }
 
 model Post {

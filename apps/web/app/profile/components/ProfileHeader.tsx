@@ -12,57 +12,83 @@ interface ProfileHeaderProps {
   isOwnProfile: boolean;
 }
 
+
+
 export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
-  const { data: user, isLoading } = trpc.users.getUserByUsername.useQuery(
-    { username: userId },
-    { enabled: false } // We'll fetch by ID instead
+  // Fetch real user data by ID
+  const { data: user, isLoading } = trpc.users.getUserById.useQuery(
+    { userId },
+    { enabled: !!userId }
   );
-
-  // Mock data for now - we'll connect real data later
-  const mockUser = {
-    name: "Rishnu DK",
-    username: "rishnudk",
-    bio: "Full Stack Developer | Building amazing web experiences with React, Next.js & Node.js",
-    location: "Kannur, Kerala",
-    company: "Brototype",
-    joinedDate: "January 2024",
-    avatarUrl: "/rishnudk.jpg",
-    coverUrl: null,
-    headline: "Full Stack Developer",
-    leetcodeUsername: "rishnudk",
-    githubUsername: "rishnudk",
-    skills: ["React", "Next.js", "Node.js", "TypeScript", "MongoDB", "PostgreSQL", "tRPC", "Prisma"],
-    socialLinks: {
-      github: "https://github.com/rishnudk",
-      linkedin: "https://linkedin.com/in/rishnudk",
-      portfolio: "https://rishnudk.dev",
-    },
-    stats: {
-      posts: 42,
-      followers: 1234,
-      following: 567,
-    },
-  };
 
   if (isLoading) {
     return <div className="animate-pulse bg-neutral-900 h-96"></div>;
   }
+
+  if (!user) {
+    return <div className="p-8 text-center text-neutral-500">User not found</div>;
+  }
+
+  // Extract username from email
+  const username = user.email?.split("@")[0] || "user";
+  
+  // Format join date
+  const joinedDate = new Date(user.createdAt).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
+
+//   function isSocialLinks(value: unknown): value is Record<string, string> {
+//   return typeof value === 'object' && value !== null;
+// }
+
+// const socialLinks = isSocialLinks(user.socialLinks) ? user.socialLinks : null;
+
+type SocialLinks = {
+  github?: string;
+  linkedin?: string;
+  portfolio?: string;
+  twitter?: string;
+};
+
+const socialLinks = user.socialLinks as unknown as SocialLinks | null;
+
+  // Parse socialLinks (it's stored as JSON in database)
+  // const socialLinks = user.socialLinks as unknown as Record<string, string> | null;
 
   return (
     <>
       <EditProfileModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        currentUser={mockUser}
+        currentUser={{
+          name: user.name || "",
+          bio: user.bio || "",
+          location: user.location || "",
+          company: user.company || "",
+          headline: user.headline || "",
+          avatarUrl: user.avatarUrl || user.image || "",
+          leetcodeUsername: user.leetcodeUsername || "",
+          githubUsername: user.githubUsername || "",
+          skills: user.skills || [],
+          socialLinks: socialLinks || {},
+        }}
       />
       
       <div className="border-b border-neutral-800">
         {/* Cover Photo */}
-        <div className="relative h-48 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">
-          {mockUser.coverUrl && (
-            <Image src={mockUser.coverUrl} alt="Cover" fill className="object-cover" />
+        <div className="relative h-48">
+          {user.coverUrl ? (
+            <img 
+              src={user.coverUrl} 
+              alt="Cover" 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-r ${user.coverGradient || 'from-blue-600 via-purple-600 to-pink-600'}`} />
           )}
         </div>
 
@@ -72,8 +98,8 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
           <div className="flex justify-between items-start -mt-16 mb-4">
             <div className="relative">
               <Image
-                src={mockUser.avatarUrl}
-                alt={mockUser.name}
+                src={user.avatarUrl || user.image || "/default-avatar.png"}
+                alt={user.name || "User"}
                 width={128}
                 height={128}
                 className="rounded-full border-4 border-black"
@@ -102,40 +128,40 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
 
         {/* Name and Bio */}
         <div className="mb-3">
-          <h1 className="text-2xl font-bold text-white">{mockUser.name}</h1>
-          <p className="text-neutral-500">@{mockUser.username}</p>
+          <h1 className="text-2xl font-bold text-white">{user.name || "Anonymous"}</h1>
+          <p className="text-neutral-500">@{username}</p>
         </div>
 
-        {mockUser.bio && (
-          <p className="text-white mb-3">{mockUser.bio}</p>
+        {user.bio && (
+          <p className="text-white mb-3">{user.bio}</p>
         )}
 
         {/* Location, Company, Join Date */}
         <div className="flex flex-wrap gap-4 text-neutral-400 text-sm mb-3">
-          {mockUser.location && (
+          {user.location && (
             <div className="flex items-center gap-1">
               <MapPin size={16} />
-              <span>{mockUser.location}</span>
+              <span>{user.location}</span>
             </div>
           )}
-          {mockUser.company && (
+          {user.company && (
             <div className="flex items-center gap-1">
               <Building2 size={16} />
-              <span>{mockUser.company}</span>
+              <span>{user.company}</span>
             </div>
           )}
           <div className="flex items-center gap-1">
             <Calendar size={16} />
-            <span>Joined {mockUser.joinedDate}</span>
+            <span>Joined {joinedDate}</span>
           </div>
         </div>
 
         {/* Social Links */}
-        {mockUser.socialLinks && (
+        {socialLinks && Object.keys(socialLinks).length > 0 && (
           <div className="flex gap-3 mb-4">
-            {mockUser.socialLinks.github && (
+            {socialLinks.github && (
               <a
-                href={mockUser.socialLinks.github}
+                href={socialLinks.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-neutral-400 hover:text-white transition-colors"
@@ -143,9 +169,9 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
                 <Github size={20} />
               </a>
             )}
-            {mockUser.socialLinks.linkedin && (
+            {socialLinks.linkedin && (
               <a
-                href={mockUser.socialLinks.linkedin}
+                href={socialLinks.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-neutral-400 hover:text-white transition-colors"
@@ -153,9 +179,9 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
                 <Linkedin size={20} />
               </a>
             )}
-            {mockUser.socialLinks.portfolio && (
+            {socialLinks.portfolio && (
               <a
-                href={mockUser.socialLinks.portfolio}
+                href={socialLinks.portfolio}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-neutral-400 hover:text-white transition-colors"
@@ -169,23 +195,23 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
         {/* Stats */}
         <div className="flex gap-4 mb-4">
           <div className="hover:underline cursor-pointer">
-            <span className="font-bold text-white">{mockUser.stats.posts}</span>
+            <span className="font-bold text-white">{user._count.posts}</span>
             <span className="text-neutral-500 ml-1">Posts</span>
           </div>
           <div className="hover:underline cursor-pointer">
-            <span className="font-bold text-white">{mockUser.stats.followers}</span>
+            <span className="font-bold text-white">0</span>
             <span className="text-neutral-500 ml-1">Followers</span>
           </div>
           <div className="hover:underline cursor-pointer">
-            <span className="font-bold text-white">{mockUser.stats.following}</span>
+            <span className="font-bold text-white">0</span>
             <span className="text-neutral-500 ml-1">Following</span>
           </div>
         </div>
 
         {/* Skills */}
-        {mockUser.skills && mockUser.skills.length > 0 && (
+        {user.skills && user.skills.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {mockUser.skills.map((skill) => (
+            {user.skills.map((skill) => (
               <span
                 key={skill}
                 className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm font-medium border border-blue-600/30 hover:bg-blue-600/30 transition-colors"

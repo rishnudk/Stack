@@ -10,19 +10,19 @@ interface DevStatsSidebarProps {
 
 export function DevStatsSidebar({ userId }: DevStatsSidebarProps) {
   // Fetch user data to get leetcode and github usernames
-  // For now, we'll use mock data - you can connect real user data later
-  const mockUser = {
-    leetcodeUsername: "rishnudk", // Replace with real data from user profile
-    githubUsername: "rishnudk",   // Replace with real data from user profile
-  };
+  const { data: user } = trpc.users.getUserById.useQuery({ userId });
 
   return (
-    <div className="space-y-4 sticky top-4">
+    <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent">
       {/* LeetCode Stats Card */}
-      <LeetCodeStatsCard username={mockUser.leetcodeUsername} />
+      {user?.leetcodeUsername && (
+        <LeetCodeStatsCard username={user.leetcodeUsername} />
+      )}
 
       {/* GitHub Stats Card */}
-      <GitHubStatsCard username={mockUser.githubUsername} />
+      {user?.githubUsername && (
+        <GitHubStatsCard username={user.githubUsername} />
+      )}
 
       {/* Achievements - Placeholder */}
       <div className="bg-neutral-900 rounded-2xl border border-neutral-800 p-4">

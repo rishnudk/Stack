@@ -20,6 +20,12 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
     { enabled: activeTab === "posts" }
   );
 
+  // Fetch user data for About section
+  const { data: user } = trpc.users.getUserById.useQuery(
+    { userId },
+    { enabled: activeTab === "about" || activeTab === "projects" }
+  );
+
   return (
     <div className="w-full max-w-2xl mx-auto min-h-screen border-x border-neutral-800 bg-black text-white">
       {/* Profile Header */}
@@ -104,27 +110,158 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
 
         {/* Projects Tab */}
         {activeTab === "projects" && (
-          <div className="p-8 text-center text-neutral-500">
-            <p className="text-lg mb-2">🚀 Projects</p>
-            <p className="text-sm">GitHub projects will appear here</p>
+          <div className="p-6 space-y-6">
+            {user?.githubUsername ? (
+              <>
+                <div className="mb-4">
+                  <h3 className="text-xl font-bold text-white mb-2">GitHub Projects</h3>
+                  <p className="text-neutral-400 text-sm">
+                    Explore repositories from{" "}
+                    <a
+                      href={`https://github.com/${user.githubUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:underline"
+                    >
+                      @{user.githubUsername}
+                    </a>
+                  </p>
+                </div>
+
+                {/* Project Cards - Placeholder for now */}
+                <div className="space-y-4">
+                  <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-lg hover:border-neutral-700 transition-colors">
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="text-lg font-semibold text-white">Featured Projects</h4>
+                      <a
+                        href={`https://github.com/${user.githubUsername}?tab=repositories`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-400 hover:underline"
+                      >
+                        View all →
+                      </a>
+                    </div>
+                    <p className="text-neutral-400 text-sm">
+                      Connect your GitHub account to automatically display your repositories here.
+                    </p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🚀</div>
+                <h3 className="text-xl font-bold text-white mb-2">No Projects Yet</h3>
+                <p className="text-neutral-400 mb-4">
+                  {isOwnProfile
+                    ? "Add your GitHub username in Edit Profile to showcase your projects"
+                    : "This user hasn't added their GitHub profile yet"}
+                </p>
+              </div>
+            )}
           </div>
         )}
 
         {/* About Tab */}
         {activeTab === "about" && (
-          <div className="p-6 space-y-4">
-            <div>
-              <h3 className="text-lg font-bold text-white mb-2">About</h3>
-              <p className="text-neutral-400">
-                Full Stack Developer passionate about building amazing web experiences.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-white mb-2">Skills</h3>
-              <p className="text-neutral-400">
-                React, Next.js, Node.js, TypeScript, MongoDB, PostgreSQL
-              </p>
-            </div>
+          <div className="p-6 space-y-6">
+            {/* Bio Section */}
+            {user?.bio && (
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">About</h3>
+                <p className="text-neutral-300 leading-relaxed">{user.bio}</p>
+              </div>
+            )}
+
+            {/* Headline */}
+            {user?.headline && (
+              <div>
+                <h3 className="text-lg font-bold text-white mb-2">Headline</h3>
+                <p className="text-neutral-300">{user.headline}</p>
+              </div>
+            )}
+
+            {/* Skills */}
+            {user?.skills && user.skills.length > 0 && (
+              <div>
+                <h3 className="text-lg font-bold text-white mb-3">Skills</h3>
+                <div className="flex flex-wrap gap-2">
+                  {user.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-3 py-1.5 bg-blue-600/20 text-blue-400 rounded-full text-sm font-medium border border-blue-600/30"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Work Info */}
+            {(user?.company || user?.location) && (
+              <div>
+                <h3 className="text-lg font-bold text-white mb-3">Work & Location</h3>
+                <div className="space-y-2">
+                  {user.company && (
+                    <div className="flex items-center gap-2 text-neutral-300">
+                      <span className="text-neutral-500">Company:</span>
+                      <span>{user.company}</span>
+                    </div>
+                  )}
+                  {user.location && (
+                    <div className="flex items-center gap-2 text-neutral-300">
+                      <span className="text-neutral-500">Location:</span>
+                      <span>{user.location}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Developer Profiles */}
+            {(user?.githubUsername || user?.leetcodeUsername) && (
+              <div>
+                <h3 className="text-lg font-bold text-white mb-3">Developer Profiles</h3>
+                <div className="space-y-2">
+                  {user.githubUsername && (
+                    <a
+                      href={`https://github.com/${user.githubUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-neutral-300 hover:text-white transition-colors"
+                    >
+                      <span className="text-neutral-500">GitHub:</span>
+                      <span className="text-blue-400 hover:underline">@{user.githubUsername}</span>
+                    </a>
+                  )}
+                  {user.leetcodeUsername && (
+                    <a
+                      href={`https://leetcode.com/${user.leetcodeUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-neutral-300 hover:text-white transition-colors"
+                    >
+                      <span className="text-neutral-500">LeetCode:</span>
+                      <span className="text-orange-400 hover:underline">@{user.leetcodeUsername}</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!user?.bio && !user?.headline && !user?.skills?.length && !user?.company && !user?.location && (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">👤</div>
+                <h3 className="text-xl font-bold text-white mb-2">No Information Yet</h3>
+                <p className="text-neutral-400">
+                  {isOwnProfile
+                    ? "Add your bio, skills, and other information in Edit Profile"
+                    : "This user hasn't added their information yet"}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
