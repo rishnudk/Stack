@@ -9,7 +9,7 @@ export default async function FeedPage() {
   if (!session) {
     redirect("/api/auth/signin");
   }
-
+ 
   return (
     <div className="min-h-screen bg-gray-50">
       <FeedClient session={session} />
