@@ -3,6 +3,8 @@ import Image from "next/image";
 import { Ellipsis, Heart, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PostDetailView } from "./PostDetailView";
+
 
 export function PostCard({
   name,
@@ -40,8 +42,7 @@ export function PostCard({
 
   const handleCommentClick = () => {
     if (!isDetailView && postId) {
-      router.push(`/feed/post/${postId}`);
-    }
+router.push(`/feed/post/${postId}`);    }
   };
 
   return (

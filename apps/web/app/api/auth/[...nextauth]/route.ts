@@ -17,6 +17,9 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  pages: {
+    signIn: "/auth/signin", // Custom sign-in page
+  },
   session: {
     strategy: "jwt",
   },
@@ -27,6 +30,17 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub;
       }
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      // Redirect to /feed after sign in
+      if (url === baseUrl || url === `${baseUrl}/`) {
+        return `${baseUrl}/feed`;
+      }
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
   },
 };

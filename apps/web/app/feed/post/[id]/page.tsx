@@ -1,5 +1,21 @@
-import PostDetailClient from "./PostDetailClient";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../../api/auth/[...nextauth]/route";
+import { redirect } from "next/navigation";
+import FeedClient from "../../FeedClient";
 
-export default function PostDetailPage() {
-  return <PostDetailClient />;
+
+export default async function PostDetailPage() {
+    
+    const session = await getServerSession(authOptions)
+
+    if(!session) {
+        redirect("/auth/login")
+    }
+
+    return (
+        <div className="min=h-screen bg-gray-50">
+            <FeedClient session={session} />
+
+        </div>
+    )
 }
