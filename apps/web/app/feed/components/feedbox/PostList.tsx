@@ -10,7 +10,7 @@ export function PostList() {
     return <div className="text-white p-4">Loading posts...</div>;
   }
 
-  const posts = data?.posts || [];
+  const posts = (data?.posts || []) as any[];
 
   return (
     <div>
@@ -25,6 +25,7 @@ export function PostList() {
           imageUrl={post.images?.[0]}
           likeCount={post.likes.length}
           commentCount={post.comments.length}
+          avatarUrl={post.author.avatarUrl || post.author.image || undefined}
         />
       ))}
     </div>

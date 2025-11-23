@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ProfileHeader } from "./ProfileHeader";
 import { trpc } from "@/utils/trpc";
 import { PostCard } from "../../feed/components/feedbox/PostCard";
+import { ProjectCard } from "./ProjectCard";
 import { formatPostTime } from "@/utils/formatTime";
 
 interface ProfileContentProps {
@@ -24,6 +25,12 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
   const { data: user } = trpc.users.getUserById.useQuery(
     { userId },
     { enabled: activeTab === "about" || activeTab === "projects" }
+  );
+
+  // Fetch GitHub pinned repos
+  const { data: pinnedRepos, isLoading: reposLoading } = trpc.users.getGithubPinnedRepos.useQuery(
+    { username: user?.githubUsername || "" },
+    { enabled: activeTab === "projects" && !!user?.githubUsername }
   );
 
   return (
@@ -95,6 +102,7 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
                   postId={post.id}
                   likeCount={post.likes.length}
                   commentCount={post.comments.length}
+                  avatarUrl={post.author.avatarUrl || post.author.image || undefined}
                 />
               ))
             ) : (
@@ -128,25 +136,36 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
                   </p>
                 </div>
 
-                {/* Project Cards - Placeholder for now */}
-                <div className="space-y-4">
-                  <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-lg hover:border-neutral-700 transition-colors">
-                    <div className="flex items-start justify-between mb-2">
-                      <h4 className="text-lg font-semibold text-white">Featured Projects</h4>
-                      <a
-                        href={`https://github.com/${user.githubUsername}?tab=repositories`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-blue-400 hover:underline"
-                      >
-                        View all →
-                      </a>
-                    </div>
-                    <p className="text-neutral-400 text-sm">
-                      Connect your GitHub account to automatically display your repositories here.
+                {/* Project Cards */}
+                {reposLoading ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} className="h-32 bg-neutral-900 border border-neutral-800 rounded-xl animate-pulse" />
+                    ))}
+                  </div>
+                ) : pinnedRepos && pinnedRepos.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {pinnedRepos.map((repo) => (
+                      <ProjectCard
+                        key={repo.name}
+                        name={repo.name}
+                        description={repo.description}
+                        url={repo.url}
+                        stargazerCount={repo.stargazerCount}
+                        language={repo.primaryLanguage}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-8 text-center bg-neutral-900 border border-neutral-800 rounded-lg">
+                    <p className="text-neutral-400 text-sm mb-2">
+                      No pinned repositories found.
+                    </p>
+                    <p className="text-xs text-neutral-500">
+                      Pin repositories on your GitHub profile to see them here.
                     </p>
                   </div>
-                </div>
+                )}
               </>
             ) : (
               <div className="text-center py-12">

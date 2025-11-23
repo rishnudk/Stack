@@ -5,7 +5,7 @@ export default function SidebarLogo() {
   return (
     <div className="flex items-center justify-center py-4">
       <Image
-        src="/twitch.svg" // 👈 place your logo file in public/x-logo.svg
+        src="/twitch.svg" 
         alt="App Logo"
         width={36}
         height={36}

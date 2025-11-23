@@ -6,8 +6,10 @@ import { Image, Smile, Link, Camera } from "lucide-react";
 import ImageNext from "next/image";
 import { trpc } from '@/utils/trpc';
 import { toast } from 'sonner';
+import { useSession } from 'next-auth/react';
 
 export function CreatePostBox() {
+  const { data: session } = useSession();
   const [content, setContent] = useState('');
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -83,7 +85,7 @@ console.log('🔵 Starting post creation...');
     <div className="flex flex-col border-b border-neutral-800 p-4 bg-black text-white">
       <div className="flex items-start gap-3">
         <ImageNext
-          src="/profile.png"
+          src={session?.user?.image || "/profile.png"}
           alt="profile"
           width={40}
           height={40}

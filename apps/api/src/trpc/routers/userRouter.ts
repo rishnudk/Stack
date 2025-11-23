@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../trpc.ts";
 import type { Context } from "../../context.ts";
+import { getPinnedRepos } from "../../modules/github/github.service.ts";
 
 export const userRouter = router({
   getSidebarInfo: publicProcedure
@@ -124,5 +125,12 @@ export const userRouter = router({
           socialLinks: input.socialLinks as any, // Cast to satisfy Prisma Json type
         },
       });
+    }),
+
+  // Get GitHub pinned repos
+  getGithubPinnedRepos: publicProcedure
+    .input(z.object({ username: z.string() }))
+    .query(async ({ input }) => {
+      return await getPinnedRepos(input.username);
     }),
 });

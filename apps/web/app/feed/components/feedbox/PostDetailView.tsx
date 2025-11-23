@@ -75,6 +75,7 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
           likeCount={post.likes.length}
           commentCount={post.comments.length}
           isDetailView={true}
+          avatarUrl={post.author.avatarUrl || post.author.image || undefined}
         />
       </div>
 

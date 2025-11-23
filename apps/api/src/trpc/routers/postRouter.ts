@@ -33,7 +33,15 @@ export const postRouter = router({
         cursor: input.cursor ? { id: input.cursor } : undefined,
         orderBy: { createdAt: "desc" },
         include: {
-          author: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+              avatarUrl: true,
+            },
+          },
           likes: true,
           comments: true,
         },
@@ -54,7 +62,15 @@ export const postRouter = router({
       const post = await ctx.prisma.post.findUnique({
         where: { id: input.postId },
         include: {
-          author: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+              avatarUrl: true,
+            },
+          },
           likes: true,
           comments: {
             include: {
@@ -75,7 +91,15 @@ export const postRouter = router({
         where: { authorId: input.userId },
         orderBy: { createdAt: "desc" },
         include: {
-          author: true,
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+              avatarUrl: true,
+            },
+          },
           likes: true,
           comments: true,
         },

@@ -16,6 +16,7 @@ export function PostCard({
   likeCount: initialLikeCount = 0,
   commentCount = 0,
   isDetailView = false,
+  avatarUrl,
 }: {
   name: string;
   username: string;
@@ -26,6 +27,7 @@ export function PostCard({
   likeCount?: number;
   commentCount?: number;
   isDetailView?: boolean;
+  avatarUrl?: string;
 }) {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
@@ -49,7 +51,7 @@ router.push(`/feed/post/${postId}`);    }
     <div className="flex flex-col border-b border-neutral-800 bg-black text-white p-4">
       <div className="flex justify-between items-start">
         <div className="flex gap-2">
-          <Image src="/profile.png" alt="user" width={40} height={40} className="rounded-full" />
+          <Image src={avatarUrl || "/profile.png"} alt="user" width={40} height={40} className="rounded-full" />
           <div>
             <p className="font-semibold">
               {name} <span className="text-neutral-500">@{username} · {time}</span>
