@@ -3,7 +3,6 @@
 import { usePathname, useParams } from "next/navigation";
 import { Navigation } from "./Navigation";
 import { CreatePostBox } from "./CreatePostBox";
-import { ShowMorePosts } from "./ShowMorePosts";
 import { PostList } from "./PostList";
 import { PostDetailView } from "./PostDetailView";
 
@@ -29,8 +28,7 @@ export function FeedBox() {
           {/* Create new post box */}
           <CreatePostBox />
 
-          {/* Divider: Show more posts */}
-          <ShowMorePosts />
+          
 
           {/* Post feed */}
           <PostList />

@@ -18,6 +18,7 @@ export function PostList() {
         <PostCard
           key={post.id}
           postId={post.id}
+          userId={post.author.id}
           name={post.author.name || "Unknown"}
           username={post.author.email?.split("@")[0] || "user"}
           time={formatPostTime(new Date(post.createdAt))}

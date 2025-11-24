@@ -17,6 +17,7 @@ export function PostCard({
   commentCount = 0,
   isDetailView = false,
   avatarUrl,
+  userId,
 }: {
   name: string;
   username: string;
@@ -28,6 +29,7 @@ export function PostCard({
   commentCount?: number;
   isDetailView?: boolean;
   avatarUrl?: string;
+  userId?: string;
 }) {
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
@@ -44,14 +46,28 @@ export function PostCard({
 
   const handleCommentClick = () => {
     if (!isDetailView && postId) {
-router.push(`/feed/post/${postId}`);    }
+      router.push(`/feed/post/${postId}`);
+    }
+  };
+
+  const handleProfileClick = () => {
+    if (userId) {
+      router.push(`/profile?userId=${userId}`);
+    }
   };
 
   return (
     <div className="flex flex-col border-b border-neutral-800 bg-black text-white p-4">
       <div className="flex justify-between items-start">
         <div className="flex gap-2">
-          <Image src={avatarUrl || "/profile.png"} alt="user" width={40} height={40} className="rounded-full" />
+          <Image 
+            src={avatarUrl || "/profile.png"} 
+            alt="user" 
+            width={40} 
+            height={40} 
+            className="rounded-full cursor-pointer hover:opacity-80 transition-opacity" 
+            onClick={handleProfileClick}
+          />
           <div>
             <p className="font-semibold">
               {name} <span className="text-neutral-500">@{username} · {time}</span>

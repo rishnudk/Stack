@@ -94,6 +94,7 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
               posts.map((post) => (
                 <PostCard
                   key={post.id}
+                  userId={post.author.id}
                   name={post.author.name || "Unknown"}
                   username={post.author.email?.split("@")[0] || "user"}
                   time={formatPostTime(new Date(post.createdAt))}

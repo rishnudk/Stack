@@ -66,6 +66,7 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
       {/* Original Post */}
       <div className="border-b border-neutral-800">
         <PostCard
+          userId={post.author.id}
           name={post.author.name || "Unknown"}
           username={post.author.email?.split("@")[0] || "user"}
           time={formatPostTime(new Date(post.createdAt))}
