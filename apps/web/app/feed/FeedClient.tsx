@@ -16,7 +16,7 @@ interface FeedClientProps {
 
 export default function FeedClient({ session }: FeedClientProps) {
   return (
-    <div className="flex justify-center min-h-screen bg-black text-black">
+    <div className="flex justify-center min-h-screen bg-black">
   <div className="flex w-full max-w-7xl">
     {/* Left Sidebar */}
     <aside className="hidden lg:block w-[280px] p-4">
@@ -36,7 +36,6 @@ export default function FeedClient({ session }: FeedClientProps) {
     </aside>
   </div>
 </div>
-
 
   );
 }

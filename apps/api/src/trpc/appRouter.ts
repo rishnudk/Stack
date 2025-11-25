@@ -5,6 +5,7 @@ import { postRouter } from "./routers/postRouter.ts";
 import { commentRouter } from "./routers/commentRouter.ts";
 import { uploadRouter } from "./routers/uploadRouter.ts";
 import { devStatsRouter } from "./routers/devStatsRouter.ts";
+import { hireMeRouter } from "./routers/hireMeRouter.ts";
 
 export const appRouter = mergeRouters(
   router({
@@ -14,6 +15,7 @@ export const appRouter = mergeRouters(
     users: userRouter,
     upload: uploadRouter,
     devStats: devStatsRouter,
+    hireMe: hireMeRouter,
   })
 );
 
