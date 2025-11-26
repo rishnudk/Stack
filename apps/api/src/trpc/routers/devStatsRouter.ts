@@ -102,34 +102,59 @@ export const devStatsRouter = router({
       if (cached) return cached;
 
       try {
-        // Fetch user info
-        const userResponse = await fetch(`https://api.github.com/users/${input.username}`);
+        const githubToken = process.env.GITHUB_TOKEN;
+        const headers: Record<string, string> = githubToken 
+          ? { Authorization: `Bearer ${githubToken}` }
+          : {};
+        
+        console.log(`[GitHub Stats] Using ${githubToken ? 'authenticated' : 'public'} API`);
+
+        const userResponse = await fetch(
+          `https://api.github.com/users/${input.username}`,
+          { headers }
+        );
         const userData = await userResponse.json();
 
         if (userData.message === "Not Found") {
           return null;
         }
 
-        // Fetch recent events
-        const eventsResponse = await fetch(`https://api.github.com/users/${input.username}/events/public?per_page=10`);
+        const eventsResponse = await fetch(
+          `https://api.github.com/users/${input.username}/events/public?per_page=30`,
+          { headers }
+        );
         const events = await eventsResponse.json();
 
-        // Fetch repos
-        const reposResponse = await fetch(`https://api.github.com/users/${input.username}/repos?sort=updated&per_page=10`);
+        const reposResponse = await fetch(
+          `https://api.github.com/users/${input.username}/repos?sort=updated&per_page=10`,
+          { headers }
+        );
         const repos = await reposResponse.json();
 
-        // Calculate total stars
         const totalStars = repos.reduce((sum: number, repo: any) => sum + (repo.stargazers_count || 0), 0);
 
-        // Get recent commits from events
-        const recentCommits = events
-          .filter((e: any) => e.type === "PushEvent")
-          .slice(0, 5)
-          .map((e: any) => ({
-            repo: e.repo.name,
-            message: e.payload.commits?.[0]?.message || "No message",
-            date: e.created_at,
-          }));
+        const pushEvents = events.filter((e: any) => e.type === "PushEvent");
+        console.log(`[GitHub Stats] Found ${pushEvents.length} push events`);
+        
+        // Log full payload to see what we're getting
+        if (pushEvents.length > 0) {
+          console.log(`[GitHub Stats] First payload:`, JSON.stringify(pushEvents[0].payload, null, 2));
+        }
+        
+        const recentCommits = pushEvents
+          .map((e: any) => {
+            const payload = e.payload;
+            const commitCount = payload.size || payload.distinct_size || (payload.commits?.length) || 1;
+            
+            return {
+              repo: e.repo.name,
+              message: `Pushed ${commitCount} commit${commitCount > 1 ? 's' : ''}`,
+              date: e.created_at,
+            };
+          })
+          .slice(0, 5);
+
+        console.log(`[GitHub Stats] Total commits: ${recentCommits.length}`);
 
         const result = {
           username: userData.login,

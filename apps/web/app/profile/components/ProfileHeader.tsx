@@ -40,7 +40,8 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
     twitter?: string;
   };
 
-  const socialLinks = user.socialLinks as unknown as SocialLinks | null;
+  // Fix for TypeScript "excessively deep" error - use simpler type assertion
+  const socialLinks = (user.socialLinks || {}) as SocialLinks;
 
   return (
     <div className="border-b border-neutral-800">

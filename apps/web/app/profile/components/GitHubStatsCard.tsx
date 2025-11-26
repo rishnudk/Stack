@@ -7,6 +7,25 @@ interface GitHubStatsCardProps {
   username?: string;
 }
 
+interface GitHubCommit {
+  repo: string;
+  message: string;
+  date: string;
+}
+
+interface GitHubRepo {
+  name: string;
+  url: string;
+  description?: string;
+  language?: string;
+  stars: number;
+  forks: number;
+}
+
+// Then use:
+// .map((commit: GitHubCommit, index: number) => ...)
+// .map((repo: GitHubRepo, index: number) => ...)
+
 export function GitHubStatsCard({ username }: GitHubStatsCardProps) {
   const { data: stats, isLoading, error } = trpc.devStats.getGitHubStats.useQuery(
     { username: username || "" },
@@ -110,7 +129,7 @@ export function GitHubStatsCard({ username }: GitHubStatsCardProps) {
             Recent Commits
           </h4>
           <div className="space-y-2">
-            {stats.recentCommits.slice(0, 3).map((commit, index) => (
+            {stats.recentCommits.slice(0, 3).map((commit: GitHubCommit, index: number) => (
               <div key={index} className="p-2 bg-neutral-800/50 rounded-lg">
                 <div className="text-xs text-neutral-400 truncate">{commit.repo}</div>
                 <div className="text-xs text-neutral-300 truncate mt-1">{commit.message}</div>
@@ -131,7 +150,7 @@ export function GitHubStatsCard({ username }: GitHubStatsCardProps) {
             Top Repositories
           </h4>
           <div className="space-y-2">
-            {stats.repos.slice(0, 3).map((repo, index) => (
+            {stats.repos.slice(0, 3).map((repo: GitHubRepo, index: number) => (
               <a
                 key={index}
                 href={repo.url}
