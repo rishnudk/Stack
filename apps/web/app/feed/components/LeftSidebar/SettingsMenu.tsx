@@ -4,12 +4,21 @@ import { useSession, signOut } from "next-auth/react";
 import { Settings, User, Briefcase, Shield, LogOut, ChevronUp } from "lucide-react";
 import Image from "next/image";
 import HireMeSettingsModal from "../../../profile/components/HireMeSettingsModal";
+import { EditProfileModal } from "../../../profile/components/EditProfileModal";
+import { trpc } from "@/utils/trpc";
 
 export default function SettingsMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [isHireMeModalOpen, setIsHireMeModalOpen] = useState(false);
+  const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const { data: session } = useSession();
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Fetch user data for edit profile modal
+  const { data: userData } = trpc.users.getUserById.useQuery(
+    { userId: session?.user?.id || "" },
+    { enabled: !!session?.user?.id }
+  );
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -37,8 +46,7 @@ export default function SettingsMenu() {
       icon: User,
       label: "Edit Profile",
       onClick: () => {
-        // TODO: Open edit profile modal
-        console.log("Edit Profile clicked");
+        setIsEditProfileModalOpen(true);
         setIsOpen(false);
       },
     },
@@ -46,9 +54,7 @@ export default function SettingsMenu() {
       icon: Briefcase,
       label: "Hire Me Settings",
       onClick: () => {
-        // TODO: Open hire me settings modal
-      setIsHireMeModalOpen(true)
-        console.log("Hire Me Settings clicked");
+        setIsHireMeModalOpen(true);
         setIsOpen(false);
       },
     },
@@ -56,7 +62,6 @@ export default function SettingsMenu() {
       icon: Shield,
       label: "Privacy Settings",
       onClick: () => {
-        // TODO: Open privacy settings modal
         console.log("Privacy Settings clicked");
         setIsOpen(false);
       },
@@ -65,7 +70,6 @@ export default function SettingsMenu() {
       icon: Settings,
       label: "Account Settings",
       onClick: () => {
-        // TODO: Open account settings modal
         console.log("Account Settings clicked");
         setIsOpen(false);
       },
@@ -147,11 +151,31 @@ export default function SettingsMenu() {
         />
       </button>
 
-      {/* Hire Me Settings Modal - Full screen overlay */}
+      {/* Hire Me Settings Modal */}
       <HireMeSettingsModal 
         isOpen={isHireMeModalOpen} 
         onClose={() => setIsHireMeModalOpen(false)} 
       />
+
+      {/* Edit Profile Modal */}
+      {userData && (
+        <EditProfileModal
+          isOpen={isEditProfileModalOpen}
+          onClose={() => setIsEditProfileModalOpen(false)}
+          currentUser={{
+            name: userData.name || "",
+            bio: userData.bio || "",
+            location: userData.location || "",
+            company: userData.company || "",
+            headline: userData.headline || "",
+            avatarUrl: userData.avatarUrl || userData.image || "",
+            leetcodeUsername: userData.leetcodeUsername || "",
+            githubUsername: userData.githubUsername || "",
+            skills: userData.skills || [],
+            socialLinks: (userData.socialLinks as any) || {},
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
-import { LeftSidebar } from "../feed/components/LeftSidebar/LeftSidebar";
+import { ProfileLeftSidebar } from "./components/ProfileLeftSidebar";
 import { ProfileContent } from "./components/ProfileContent";
 import { DevStatsSidebar } from "./components/DevStatsSidebar";
 
@@ -17,7 +17,7 @@ export default async function ProfilePage() {
       <div className="flex w-full max-w-7xl">
         {/* Left Sidebar */}
         <aside className="hidden lg:block w-[280px] p-4">
-          <LeftSidebar session={session} />
+          <ProfileLeftSidebar session={session} />
         </aside>
 
         {/* Profile Content */}

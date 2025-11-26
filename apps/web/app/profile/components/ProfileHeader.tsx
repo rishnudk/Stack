@@ -1,22 +1,15 @@
 "use client";
 
 import { trpc } from "@/utils/trpc";
-import { MapPin, Building2, Calendar, Edit2, Share2, Github, Linkedin, Globe } from "lucide-react";
+import { MapPin, Building2, Calendar, Share2, Github, Linkedin, Globe } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
-import { EditProfileModal } from "./EditProfileModal";
-
 
 interface ProfileHeaderProps {
   userId: string;
   isOwnProfile: boolean;
 }
 
-
-
 export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  
   // Fetch real user data by ID
   const { data: user, isLoading } = trpc.users.getUserById.useQuery(
     { userId },
@@ -40,91 +33,55 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
     year: "numeric",
   });
 
+  type SocialLinks = {
+    github?: string;
+    linkedin?: string;
+    portfolio?: string;
+    twitter?: string;
+  };
 
-//   function isSocialLinks(value: unknown): value is Record<string, string> {
-//   return typeof value === 'object' && value !== null;
-// }
-
-// const socialLinks = isSocialLinks(user.socialLinks) ? user.socialLinks : null;
-
-type SocialLinks = {
-  github?: string;
-  linkedin?: string;
-  portfolio?: string;
-  twitter?: string;
-};
-
-const socialLinks = user.socialLinks as unknown as SocialLinks | null;
-
-  // Parse socialLinks (it's stored as JSON in database)
-  // const socialLinks = user.socialLinks as unknown as Record<string, string> | null;
+  const socialLinks = user.socialLinks as unknown as SocialLinks | null;
 
   return (
-    <>
-      <EditProfileModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        currentUser={{
-          name: user.name || "",
-          bio: user.bio || "",
-          location: user.location || "",
-          company: user.company || "",
-          headline: user.headline || "",
-          avatarUrl: user.avatarUrl || user.image || "",
-          leetcodeUsername: user.leetcodeUsername || "",
-          githubUsername: user.githubUsername || "",
-          skills: user.skills || [],
-          socialLinks: socialLinks || {},
-        }}
-      />
-      
-      <div className="border-b border-neutral-800">
-        {/* Cover Photo */}
-        <div className="relative h-48">
-          {user.coverUrl ? (
-            <img 
-              src={user.coverUrl} 
-              alt="Cover" 
-              className="w-full h-full object-cover"
+    <div className="border-b border-neutral-800">
+      {/* Cover Photo */}
+      <div className="relative h-48">
+        {user.coverUrl ? (
+          <img 
+            src={user.coverUrl} 
+            alt="Cover" 
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-r ${user.coverGradient || 'from-blue-600 via-purple-600 to-pink-600'}`} />
+        )}
+      </div>
+
+      {/* Profile Info */}
+      <div className="px-4 pb-4">
+        {/* Avatar and Action Buttons */}
+        <div className="flex justify-between items-start -mt-16 mb-4">
+          <div className="relative">
+            <Image
+              src={user.avatarUrl || user.image || "/default-avatar.png"}
+              alt={user.name || "User"}
+              width={128}
+              height={128}
+              className="rounded-full border-4 border-black"
             />
-          ) : (
-            <div className={`w-full h-full bg-gradient-to-r ${user.coverGradient || 'from-blue-600 via-purple-600 to-pink-600'}`} />
-          )}
-        </div>
-
-        {/* Profile Info */}
-        <div className="px-4 pb-4">
-          {/* Avatar and Action Buttons */}
-          <div className="flex justify-between items-start -mt-16 mb-4">
-            <div className="relative">
-              <Image
-                src={user.avatarUrl || user.image || "/default-avatar.png"}
-                alt={user.name || "User"}
-                width={128}
-                height={128}
-                className="rounded-full border-4 border-black"
-              />
-            </div>
-
-            <div className="flex gap-2 mt-16">
-              {isOwnProfile ? (
-                <button 
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-full font-semibold transition-colors flex items-center gap-2"
-                >
-                  <Edit2 size={16} />
-                  Edit Profile
-                </button>
-              ) : (
-                <button className="px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-full font-semibold transition-colors">
-                  Follow
-                </button>
-              )}
-              <button className="p-2 bg-neutral-800 hover:bg-neutral-700 rounded-full transition-colors">
-                <Share2 size={20} />
-              </button>
-            </div>
           </div>
+
+          <div className="flex gap-2 mt-16">
+            {!isOwnProfile && (
+              <button className="px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-full font-semibold transition-colors">
+                Follow
+              </button>
+            )}
+            <button className="p-2 bg-neutral-800 hover:bg-neutral-700 rounded-full transition-colors">
+              <Share2 size={20} />
+            </button>
+          </div>
+        </div>
 
         {/* Name and Bio */}
         <div className="mb-3">
@@ -223,6 +180,5 @@ const socialLinks = user.socialLinks as unknown as SocialLinks | null;
         )}
       </div>
     </div>
-    </>
   );
 }

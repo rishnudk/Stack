@@ -102,7 +102,7 @@ export function LeetCodeStatsCard({ username }: LeetCodeStatsCardProps) {
         <div className="flex items-center justify-between p-2 bg-neutral-800/50 rounded-lg">
           <div className="flex items-center gap-2">
             <Flame size={16} className="text-orange-400" />
-            <span className="text-sm text-neutral-300">Current Streak</span>
+            <span className="text-sm text-neutral-300">Max Streak</span>
           </div>
           <span className="font-bold text-white">{stats.streak} days</span>
         </div>

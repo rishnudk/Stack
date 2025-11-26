@@ -18,7 +18,7 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
   // Fetch user's posts
   const { data: posts, isLoading: postsLoading } = trpc.posts.getUserPosts.useQuery(
     { userId },
-    { enabled: activeTab === "posts" }
+    { enabled: activeTab === "posts" } 
   );
 
   // Fetch user data for About section

@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, Briefcase, DollarSign, FileText } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 
@@ -12,6 +13,8 @@ export default function HireMeSettingsModal({
   isOpen,
   onClose,
 }: HireMeSettingsModalProps) {
+  const [mounted, setMounted] = useState(false);
+
   // Fetch current hire me status
   const { data: currentStatus } = trpc.hireMe.getStatus.useQuery();
   
@@ -32,6 +35,11 @@ export default function HireMeSettingsModal({
   const [preferredWorkType, setPreferredWorkType] = useState("");
   const [resumeUrl, setResumeUrl] = useState("");
 
+  // Check if component is mounted (client-side only)
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Populate form when data loads
   useEffect(() => {
     if (currentStatus) {
@@ -51,10 +59,10 @@ export default function HireMeSettingsModal({
     });
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  const modalContent = (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
       <div className="bg-neutral-900 border border-neutral-800 rounded-2xl w-full max-w-lg shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-neutral-800">
@@ -173,4 +181,7 @@ export default function HireMeSettingsModal({
       </div>
     </div>
   );
+
+  // Use portal to render at document root
+  return createPortal(modalContent, document.body);
 }
