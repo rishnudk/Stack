@@ -1,146 +1,144 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
-import { Github, Code2, Users, MessageSquare, BarChart3, Globe } from "lucide-react";
+import { Github, Code2, Users, MessageSquare, BarChart3, Globe, Terminal, Calendar, Award, GitBranch } from "lucide-react";
 
 export default function BentoGridSection() {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <section className="py-24 bg-black relative overflow-hidden">
-      {/* Fluid Background Effect */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob" />
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000" />
-      </div>
-
+    <section id="features" className="py-24 bg-[#000000] relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-5xl font-bold text-white mb-4"
-          >
-            Everything You Need to <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Excel</span>
-          </motion.h2>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+            Everything you need to <span className="text-[#3B82F6]">excel</span>
+          </h2>
+          <p className="text-[#9A9A9A] max-w-2xl mx-auto">
+            A complete ecosystem for developers to build, track, and grow their careers.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {/* Feature 1: Developer Profile (Large Span) */}
-          <BentoCard
-            className="md:col-span-2 md:row-span-2"
-            loading={loading}
-            delay={0}
-          >
-            <div className="h-full flex flex-col justify-between relative overflow-hidden group">
-              <div className="p-6 z-10">
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-4 backdrop-blur-md">
-                  <Github className="w-6 h-6 text-blue-400" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 max-w-7xl mx-auto auto-rows-[minmax(180px,auto)]">
+          {/* 1. Developer Portfolio Integration (Large) */}
+          <BentoCard className="md:col-span-2 md:row-span-2">
+            <div className="p-6 h-full flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-2 rounded-lg bg-[#ffffff0a] border border-[#ffffff0a]">
+                  <Github className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Professional Profile</h3>
-                <p className="text-neutral-400">Showcase your GitHub stats, LeetCode streaks, and tech stack in one unified view.</p>
+                <span className="text-xs font-mono text-[#3B82F6] bg-[#3B82F6]/10 px-2 py-1 rounded">Auto-Sync</span>
               </div>
-              
-              {/* Visual */}
-              <div className="relative h-64 mt-4 mx-4 rounded-t-2xl bg-neutral-900/50 border-t border-l border-r border-neutral-800 overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
-                <div className="absolute inset-0 bg-gradient-to-b from-blue-500/5 to-transparent" />
-                <div className="p-4 grid gap-3">
+              <h3 className="text-xl font-bold text-white mb-2">Portfolio Integration</h3>
+              <p className="text-[#9A9A9A] text-sm mb-6">
+                Automatically fetch and display your GitHub stats, LeetCode streaks, and StackOverflow reputation.
+              </p>
+              <div className="flex-1 bg-[#0A0A0A] rounded-lg border border-[#ffffff0a] p-4 relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#3B82F6]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="space-y-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-neutral-800" />
-                    <div className="space-y-2">
-                      <div className="w-32 h-2 bg-neutral-800 rounded" />
-                      <div className="w-20 h-2 bg-neutral-800 rounded" />
+                    <div className="w-8 h-8 rounded-full bg-[#ffffff1f]" />
+                    <div className="h-2 w-24 bg-[#ffffff1f] rounded" />
+                  </div>
+                  <div className="h-20 bg-[#ffffff05] rounded border border-[#ffffff05]" />
+                  <div className="flex gap-2">
+                    <div className="h-2 w-full bg-[#ffffff0a] rounded" />
+                    <div className="h-2 w-2/3 bg-[#ffffff0a] rounded" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </BentoCard>
+
+          {/* 2. Activity Timeline */}
+          <BentoCard className="md:col-span-1 md:row-span-2">
+            <div className="p-6 h-full flex flex-col">
+              <div className="p-2 w-fit rounded-lg bg-[#ffffff0a] border border-[#ffffff0a] mb-4">
+                <Terminal className="w-5 h-5 text-[#14B8A6]" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">Dev Feed</h3>
+              <div className="flex-1 space-y-4 mt-4 relative">
+                <div className="absolute left-2 top-0 bottom-0 w-px bg-[#ffffff0a]" />
+                {[
+                  { text: "Pushed to main", time: "2m ago", color: "bg-green-500" },
+                  { text: "Solved Hard", time: "1h ago", color: "bg-yellow-500" },
+                  { text: "Joined Group", time: "3h ago", color: "bg-blue-500" },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-3 items-center relative z-10">
+                    <div className={`w-4 h-4 rounded-full border-2 border-[#000] ${item.color}`} />
+                    <div>
+                      <div className="text-xs text-white font-medium">{item.text}</div>
+                      <div className="text-[10px] text-[#9A9A9A]">{item.time}</div>
                     </div>
                   </div>
-                  <div className="flex gap-2 mt-2">
-                    {[1, 2, 3, 4, 5].map(i => (
-                      <div key={i} className="h-16 flex-1 bg-neutral-800/50 rounded-lg" />
-                    ))}
-                  </div>
+                ))}
+              </div>
+            </div>
+          </BentoCard>
+
+          {/* 3. Skill Radar Graph */}
+          <BentoCard className="md:col-span-1 md:row-span-1">
+            <div className="p-6 h-full flex flex-col items-center justify-center text-center">
+              <div className="relative w-24 h-24 mb-3">
+                <div className="absolute inset-0 border border-[#ffffff1f] rounded-full opacity-50" />
+                <div className="absolute inset-4 border border-[#ffffff1f] rounded-full opacity-50" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <BarChart3 className="w-8 h-8 text-[#FF007A]" />
                 </div>
               </div>
+              <h3 className="text-sm font-bold text-white">Skill Radar</h3>
             </div>
           </BentoCard>
 
-          {/* Feature 2: Feed */}
-          <BentoCard
-            className="md:col-span-1 md:row-span-1"
-            loading={loading}
-            delay={0.1}
-          >
-            <div className="p-6 h-full flex flex-col relative overflow-hidden group">
-              <div className="w-10 h-10 rounded-2xl bg-purple-500/20 flex items-center justify-center mb-4 backdrop-blur-md">
-                <MessageSquare className="w-5 h-5 text-purple-400" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Dev Feed</h3>
-              <p className="text-neutral-400 text-sm">Connect with developers, share code, and get feedback.</p>
-              
-              <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-colors" />
-            </div>
-          </BentoCard>
-
-          {/* Feature 3: Groups */}
-          <BentoCard
-            className="md:col-span-1 md:row-span-1"
-            loading={loading}
-            delay={0.2}
-          >
-            <div className="p-6 h-full flex flex-col relative overflow-hidden group">
-              <div className="w-10 h-10 rounded-2xl bg-green-500/20 flex items-center justify-center mb-4 backdrop-blur-md">
-                <Users className="w-5 h-5 text-green-400" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Communities</h3>
-              <p className="text-neutral-400 text-sm">Join topic-based squads and collaborate on projects.</p>
-              
-              <div className="absolute -right-4 -bottom-4 w-32 h-32 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-colors" />
-            </div>
-          </BentoCard>
-
-          {/* Feature 4: Analytics */}
-          <BentoCard
-            className="md:col-span-1"
-            loading={loading}
-            delay={0.3}
-          >
-             <div className="p-6 h-full flex flex-col relative overflow-hidden group">
-              <div className="w-10 h-10 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-4 backdrop-blur-md">
-                <BarChart3 className="w-5 h-5 text-orange-400" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Growth Analytics</h3>
-              <p className="text-neutral-400 text-sm">Track your coding journey with detailed insights.</p>
-            </div>
-          </BentoCard>
-
-          {/* Feature 5: Global */}
-          <BentoCard
-            className="md:col-span-2"
-            loading={loading}
-            delay={0.4}
-          >
-             <div className="p-6 h-full flex items-center justify-between relative overflow-hidden group">
-              <div className="z-10 max-w-sm">
-                <div className="w-10 h-10 rounded-2xl bg-pink-500/20 flex items-center justify-center mb-4 backdrop-blur-md">
-                  <Globe className="w-5 h-5 text-pink-400" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">Global Reach</h3>
-                <p className="text-neutral-400 text-sm">Connect with developers from top institutes and companies worldwide.</p>
-              </div>
-              
-              <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-pink-500/10 to-transparent" />
-              <div className="hidden md:block relative z-10">
-                <div className="flex -space-x-4">
-                  {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="w-12 h-12 rounded-full border-2 border-black bg-neutral-800" />
+          {/* 4. Groups & Collaboration */}
+          <BentoCard className="md:col-span-1 md:row-span-1">
+            <div className="p-6 h-full">
+              <div className="flex items-center justify-between mb-2">
+                <Users className="w-5 h-5 text-white" />
+                <div className="flex -space-x-2">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="w-6 h-6 rounded-full bg-[#ffffff1f] border border-black" />
                   ))}
                 </div>
+              </div>
+              <h3 className="text-lg font-bold text-white">Groups</h3>
+              <p className="text-xs text-[#9A9A9A] mt-1">Real-time chat & collaboration.</p>
+            </div>
+          </BentoCard>
+
+          {/* 5. Open Source Workspaces */}
+          <BentoCard className="md:col-span-2 md:row-span-1">
+            <div className="p-6 h-full flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <GitBranch className="w-5 h-5 text-white" />
+                  <span className="text-xs text-[#9A9A9A]">Open Source</span>
+                </div>
+                <h3 className="text-lg font-bold text-white">Project Workspaces</h3>
+                <p className="text-sm text-[#9A9A9A]">Manage tasks, PRs, and contributions.</p>
+              </div>
+              <div className="h-16 w-32 bg-[#ffffff05] rounded border border-[#ffffff0a] relative overflow-hidden">
+                 <div className="absolute top-2 left-2 right-2 h-2 bg-[#ffffff0a] rounded-sm" />
+                 <div className="absolute top-6 left-2 w-1/2 h-2 bg-[#ffffff0a] rounded-sm" />
+              </div>
+            </div>
+          </BentoCard>
+
+          {/* 6. Coding Events */}
+          <BentoCard className="md:col-span-1 md:row-span-1">
+            <div className="p-6 h-full flex flex-col justify-between">
+              <Calendar className="w-5 h-5 text-white" />
+              <div>
+                <h3 className="text-lg font-bold text-white">Events</h3>
+                <p className="text-xs text-[#9A9A9A]">Weekly hackathons.</p>
+              </div>
+            </div>
+          </BentoCard>
+
+          {/* 7. Professional Profile */}
+          <BentoCard className="md:col-span-1 md:row-span-1">
+            <div className="p-6 h-full flex flex-col justify-between bg-gradient-to-br from-[#3B82F6]/10 to-transparent">
+              <Award className="w-5 h-5 text-[#3B82F6]" />
+              <div>
+                <h3 className="text-lg font-bold text-white">Pro Profile</h3>
+                <p className="text-xs text-[#9A9A9A]">Badges & credibility.</p>
               </div>
             </div>
           </BentoCard>
@@ -150,29 +148,18 @@ export default function BentoGridSection() {
   );
 }
 
-function BentoCard({ children, className, loading, delay }: { children: React.ReactNode, className?: string, loading: boolean, delay: number }) {
+function BentoCard({ children, className }: { children: React.ReactNode, className?: string }) {
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      className={`relative rounded-3xl overflow-hidden bg-neutral-900/30 border border-white/10 backdrop-blur-xl hover:border-white/20 transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] ${className}`}
+      transition={{ duration: 0.5 }}
+      className={`relative rounded-xl overflow-hidden bg-[#050505] border border-[#ffffff0a] hover:border-[#ffffff1f] transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] group ${className}`}
     >
-      {loading ? (
-        <div className="absolute inset-0 p-6 flex flex-col gap-4 animate-pulse">
-          <div className="w-12 h-12 rounded-2xl bg-neutral-800" />
-          <div className="h-6 w-2/3 bg-neutral-800 rounded" />
-          <div className="h-4 w-full bg-neutral-800 rounded" />
-          <div className="h-4 w-5/6 bg-neutral-800 rounded" />
-          <div className="flex-1 bg-neutral-800/50 rounded-xl mt-4" />
-        </div>
-      ) : (
-        children
-      )}
-      
-      {/* Glass Reflection Effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+      {children}
+      {/* Inner Glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
     </motion.div>
   );
 }
