@@ -1,14 +1,19 @@
 "use client";
 
+"use client";
+
+import { useState } from "react";
 import { usePathname, useParams } from "next/navigation";
 import { Navigation } from "./Navigation";
 import { CreatePostBox } from "./CreatePostBox";
 import { PostList } from "./PostList";
 import { PostDetailView } from "./PostDetailView";
+import { GroupsList } from "./GroupsList";
 
 export function FeedBox() {
   const pathname = usePathname();
   const params = useParams();
+  const [activeTab, setActiveTab] = useState("For you");
   
   // Check if we're on a post detail page
   const isPostDetail = pathname?.startsWith("/feed/post/");
@@ -23,15 +28,19 @@ export function FeedBox() {
         // Show normal feed
         <>
           {/* Top navigation tabs (For you, Following...) */}
-          <Navigation />
+          <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-          {/* Create new post box */}
-          <CreatePostBox />
+          {activeTab === "Groups" ? (
+            <GroupsList />
+          ) : (
+            <>
+              {/* Create new post box */}
+              <CreatePostBox />
 
-          
-
-          {/* Post feed */}
-          <PostList />
+              {/* Post feed */}
+              <PostList />
+            </>
+          )}
         </>
       )}
     </div>

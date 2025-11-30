@@ -1,13 +1,14 @@
 'use client'
 
-import React, { useState } from 'react'
+'use client'
+
+import React from 'react'
 import { Button } from '@repo/ui/button'
 import { Card, CardContent } from '@repo/ui/card'
 import { Separator } from '@repo/ui/separator'
 
 
-export function Navigation() {
-  const [active, setActive] = useState("For you");
+export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTabChange: (tab: string) => void }) {
   const tabs = ["For you", "Following", "Startup Community", "Groups"];
 
   return (
@@ -15,9 +16,9 @@ export function Navigation() {
       {tabs.map((tab) => (
         <button
           key={tab}
-          onClick={() => setActive(tab)}
+          onClick={() => onTabChange(tab)}
           className={`py-3 flex-1 text-sm font-semibold transition ${
-            active === tab ? "border-b-2 border-sky-500 text-white" : "text-neutral-400"
+            activeTab === tab ? "border-b-2 border-sky-500 text-white" : "text-neutral-400"
           }`}
         >
           {tab}
