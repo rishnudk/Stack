@@ -1,4 +1,5 @@
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/ui/card'
 import { Button } from '@repo/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
@@ -43,10 +44,20 @@ const MOCK_GROUPS: Group[] = [
 ];
 
 export function GroupsList() {
+  const router = useRouter();
+
+  const handleGroupClick = (groupId: string) => {
+    router.push(`/feed?groupId=${groupId}`);
+  };
+
   return (
     <div className="flex flex-col">
       {MOCK_GROUPS.map((group) => (
-        <div key={group.id} className="flex items-center gap-4 p-4 border-b border-neutral-800 bg-black hover:bg-neutral-900/50 transition-colors cursor-pointer">
+        <div 
+          key={group.id} 
+          onClick={() => handleGroupClick(group.id)}
+          className="flex items-center gap-4 p-4 border-b border-neutral-800 bg-black hover:bg-neutral-900/50 transition-colors cursor-pointer"
+        >
           <Avatar className="h-12 w-12">
             <AvatarImage src={group.image} alt={group.name} />
             <AvatarFallback>{group.name.substring(0, 2)}</AvatarFallback>
@@ -59,7 +70,14 @@ export function GroupsList() {
             <p className="text-neutral-400 text-sm mt-0.5">{group.description}</p>
             <p className="text-neutral-500 text-xs mt-2">{group.memberCount.toLocaleString()} members</p>
           </div>
-          <Button variant="secondary" className="rounded-full px-6 font-bold bg-white text-black hover:bg-neutral-200">
+          <Button 
+            variant="secondary" 
+            className="rounded-full px-6 font-bold bg-white text-black hover:bg-neutral-200"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleGroupClick(group.id);
+            }}
+          >
             Join
           </Button>
         </div>

@@ -80,7 +80,7 @@ export default function SettingsMenu() {
     <div className="relative" ref={menuRef}>
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="absolute top-full left-0 right-0 mb-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
           {/* User Info Header */}
           <div className="p-3 border-b border-neutral-800 bg-neutral-800/50">
             <div className="flex items-center gap-3">
