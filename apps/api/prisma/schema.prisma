@@ -7,6 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Privacy {
+  PUBLIC
+  PRIVATE
+}
+enum GroupRole {
+  ADMIN
+  MEMBER
+}
+enum MemberStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
 model User {
   id            String        @id @default(cuid())
   name          String?
@@ -28,6 +42,8 @@ model User {
   isPremium     Boolean       @default(false)
   views         View[]
   impressions   Impression[]
+  groups        GroupMember[]
+  groupMessages GroupMessage[]
 
   // Developer Portfolio Fields
   leetcodeUsername String?
@@ -55,6 +71,8 @@ model Post {
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments  Comment[]
   likes     Like[]
+  groupId   String? 
+  group     Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -151,4 +169,48 @@ model Like {
   createdAt DateTime @default(now())
 
   @@unique([postId, userId]) // one like per user per post
+}
+
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  image       String?
+  privacy     Privacy  @default(PUBLIC)
+  guidelines  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  members     GroupMember[]
+  posts       Post[]
+  messages    GroupMessage[]
+  
+  @@map("groups")
+}
+model GroupMember {
+  id        String       @id @default(cuid())
+  userId    String
+  groupId   String
+  role      GroupRole    @default(MEMBER)
+  status    MemberStatus @default(ACCEPTED)
+  createdAt DateTime     @default(now())
+  
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, groupId])
+  @@map("group_members")
+}
+model GroupMessage {
+  id        String   @id @default(cuid())
+  content   String
+  userId    String
+  groupId   String
+  createdAt DateTime @default(now())
+  
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  
+  @@map("group_messages")
 }

@@ -7,7 +7,12 @@ import HireMeSettingsModal from "../../../profile/components/HireMeSettingsModal
 import { EditProfileModal } from "../../../profile/components/EditProfileModal";
 import { trpc } from "@/utils/trpc";
 
-export default function SettingsMenu() {
+interface SettingsMenuProps {
+  isGroupsDropdownOpen?: boolean;
+  onOpenChange?: (isOpen: boolean) => void;
+}
+
+export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChange }: SettingsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHireMeModalOpen, setIsHireMeModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
@@ -25,6 +30,7 @@ export default function SettingsMenu() {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        onOpenChange?.(false);
       }
     }
 
@@ -35,7 +41,7 @@ export default function SettingsMenu() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, onOpenChange]);
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/auth/signin" });
@@ -48,6 +54,7 @@ export default function SettingsMenu() {
       onClick: () => {
         setIsEditProfileModalOpen(true);
         setIsOpen(false);
+        onOpenChange?.(false);
       },
     },
     {
@@ -56,6 +63,7 @@ export default function SettingsMenu() {
       onClick: () => {
         setIsHireMeModalOpen(true);
         setIsOpen(false);
+        onOpenChange?.(false);
       },
     },
     {
@@ -64,6 +72,7 @@ export default function SettingsMenu() {
       onClick: () => {
         console.log("Privacy Settings clicked");
         setIsOpen(false);
+        onOpenChange?.(false);
       },
     },
     {
@@ -72,15 +81,20 @@ export default function SettingsMenu() {
       onClick: () => {
         console.log("Account Settings clicked");
         setIsOpen(false);
+        onOpenChange?.(false);
       },
     },
   ];
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div 
+      className="relative transition-all duration-200" 
+      ref={menuRef}
+      style={{ marginTop: isGroupsDropdownOpen ? '280px' : '0px' }}
+    >
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mb-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200 z-30">
           {/* User Info Header */}
           <div className="p-3 border-b border-neutral-800 bg-neutral-800/50">
             <div className="flex items-center gap-3">
@@ -134,7 +148,11 @@ export default function SettingsMenu() {
 
       {/* Trigger Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          const newState = !isOpen;
+          setIsOpen(newState);
+          onOpenChange?.(newState);
+        }}
         className="w-full flex items-center justify-between px-4 py-3 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-xl transition-colors group"
       >
         <div className="flex items-center gap-3">

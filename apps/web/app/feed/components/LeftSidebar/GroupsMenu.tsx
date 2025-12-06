@@ -1,9 +1,14 @@
 "use client";
+import { trpc } from "@/utils/trpc";
 import { useState, useRef, useEffect } from "react";
 import { Users, Plus, Star, Trophy, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export default function GroupsMenu() {
+interface GroupsMenuProps {
+  onOpenChange?: (isOpen: boolean) => void;
+}
+
+export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -12,6 +17,7 @@ export default function GroupsMenu() {
     function handleClickOutside(event: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        onOpenChange?.(false);
       }
     }
 
@@ -22,28 +28,23 @@ export default function GroupsMenu() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, onOpenChange]);
 
   const handleGroupClick = (groupId: string) => {
     router.push(`/feed?groupId=${groupId}`);
     setIsOpen(false);
+    onOpenChange?.(false);
   };
 
   const handleCreateGroup = () => {
     console.log("Create Group - Modal coming soon");
     setIsOpen(false);
+    onOpenChange?.(false);
   };
 
-  const topGroups = [
-    { id: "1", name: "React Developers" },
-    { id: "2", name: "Startup Founders" },
-    { id: "3", name: "Next.js Wizards" },
-  ];
+  const { data: topGroups, isLoading: isLoadingTop } = trpc.groups.getTopGroups.useQuery();
+  const { data: allGroups, isLoading: isLoadingAll } = trpc.groups.getGroups.useQuery();
 
-  const starredGroups = [
-    { id: "4", name: "Web Design Pros" },
-    { id: "1", name: "React Developers" },
-  ];
 
   return (
     <div className="relative" ref={menuRef}>
@@ -64,37 +65,53 @@ export default function GroupsMenu() {
               <Trophy size={12} />
               Top Joined
             </div>
-            {topGroups.map((group) => (
-              <button
-                key={group.id}
-                onClick={() => handleGroupClick(group.id)}
-                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
-              >
-                <span className="truncate">{group.name}</span>
-              </button>
-            ))}
+            {isLoadingTop ? (
+              <div className="px-4 py-2 text-sm text-neutral-500">Loading...</div>
+            ) : topGroups && topGroups.length > 0 ? (
+              topGroups.map((group) => (
+                <button
+                  key={group.id}
+                  onClick={() => handleGroupClick(group.id)}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                >
+                  <span className="truncate">{group.name}</span>
+                </button>
+              ))
+            ) : (
+              <div className="px-4 py-2 text-sm text-neutral-500">No groups joined yet</div>
+            )}
           </div>
 
           <div className="py-2 border-t border-neutral-800">
             <div className="px-4 py-1 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
               <Star size={12} />
-              Starred
+              All Groups
             </div>
-            {starredGroups.map((group) => (
-              <button
-                key={`starred-${group.id}`}
-                onClick={() => handleGroupClick(group.id)}
-                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
-              >
-                <span className="truncate">{group.name}</span>
-              </button>
-            ))}
+            {isLoadingAll ? (
+              <div className="px-4 py-2 text-sm text-neutral-500">Loading...</div>
+            ) : allGroups && allGroups.length > 0 ? (
+              allGroups.slice(0, 5).map((group) => (
+                <button
+                  key={`all-${group.id}`}
+                  onClick={() => handleGroupClick(group.id)}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                >
+                  <span className="truncate">{group.name}</span>
+                </button>
+              ))
+            ) : (
+              <div className="px-4 py-2 text-sm text-neutral-500">No groups available</div>
+            )}
           </div>
         </div>
       )}
 
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          const newState = !isOpen;
+          setIsOpen(newState);
+          onOpenChange?.(newState);
+        }}
         className="w-full flex items-center justify-between px-4 py-3 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-xl transition-colors group"
       >
         <div className="flex items-center gap-3">
@@ -105,9 +122,8 @@ export default function GroupsMenu() {
         </div>
         <ChevronUp
           size={16}
-          className={`text-neutral-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`text-neutral-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
         />
       </button>
     </div>
