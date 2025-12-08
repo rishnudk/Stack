@@ -3,6 +3,7 @@ import { trpc } from "@/utils/trpc";
 import { useState, useRef, useEffect } from "react";
 import { Users, Plus, Star, Trophy, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
+import CreateGroupModal from "./CreateGroupModal";
 
 interface GroupsMenuProps {
   onOpenChange?: (isOpen: boolean) => void;
@@ -10,6 +11,7 @@ interface GroupsMenuProps {
 
 export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -36,11 +38,38 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
     onOpenChange?.(false);
   };
 
-  const handleCreateGroup = () => {
-    console.log("Create Group - Modal coming soon");
+  const createGroupMutation = trpc.groups.createGroup.useMutation({
+    onSuccess: (newGroup) => {
+      // Refresh the group list
+      trpc.useContext().groups.getTopGroups.invalidate();
+      trpc.useContext().groups.getGroups.invalidate();
+
+      // Close modal
+      setIsModalOpen(false);
+
+      // Navigate to the new group
+      router.push(`/feed?groupId=${newGroup.id}`);
+    },
+    onError: (error) => {
+      console.error("Failed to create group:", error);
+      // Modal stays open so user can see the error and try again
+    },
+  });
+
+  const handleCreateGroup = (formData: {
+    name: string;
+    description?: string;
+    privacy: "PUBLIC" | "PRIVATE";
+  }) => {
+    createGroupMutation.mutate(formData);
+  };
+
+  const handleOpenModal = () => {
     setIsOpen(false);
     onOpenChange?.(false);
+    setIsModalOpen(true);
   };
+
 
   const { data: topGroups, isLoading: isLoadingTop } = trpc.groups.getTopGroups.useQuery();
   const { data: allGroups, isLoading: isLoadingAll } = trpc.groups.getGroups.useQuery();
@@ -52,7 +81,7 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
         <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-20">
           <div className="p-2 border-b border-neutral-800">
             <button
-              onClick={handleCreateGroup}
+              onClick={handleOpenModal}
               className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
             >
               <Plus size={16} />
@@ -126,6 +155,14 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
             }`}
         />
       </button>
+
+      {/* Create Group Modal */}
+      <CreateGroupModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateGroup}
+        isLoading={createGroupMutation.isPending}
+      />
     </div>
   );
 }
