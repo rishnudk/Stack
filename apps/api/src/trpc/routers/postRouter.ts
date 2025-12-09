@@ -8,6 +8,7 @@ export const postRouter = router({
       z.object({
         content: z.string().min(1),
         images: z.array(z.string()).default([]), // S3 URLs
+        groupId: z.string().optional(), // Optional group ID for group posts
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -16,6 +17,7 @@ export const postRouter = router({
           content: input.content,
           images: input.images,
           authorId: ctx.session.user.id,
+          groupId: input.groupId,
         },
       });
     }),

@@ -120,7 +120,7 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
       </div>
 
       {/* Create Post Box */}
-      <CreatePostBox />
+      <CreatePostBox groupId={groupId} />
 
       {/* Group Posts */}
       <div className="flex flex-col">

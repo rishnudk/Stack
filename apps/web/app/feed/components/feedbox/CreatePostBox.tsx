@@ -8,7 +8,11 @@ import { trpc } from '@/utils/trpc';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
 
-export function CreatePostBox() {
+interface CreatePostBoxProps {
+  groupId?: string;
+}
+
+export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
   const { data: session } = useSession();
   const [content, setContent] = useState('');
   const [files, setFiles] = useState<File[]>([]);
@@ -16,6 +20,7 @@ export function CreatePostBox() {
   const [progress, setProgress] = useState<Record<string, number>>({});
 
   // Use the actual tRPC mutation
+  const utils = trpc.useUtils();
   const createPost = trpc.posts.createPost.useMutation();
   const getPresignedUrl = trpc.upload.getPresignedUrl.useMutation();
 
@@ -45,7 +50,7 @@ export function CreatePostBox() {
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-console.log('🔵 Starting post creation...');
+    console.log('🔵 Starting post creation...');
     const trimmedContent = content.trim();
 
     if (!trimmedContent && files.length === 0) {
@@ -65,6 +70,7 @@ console.log('🔵 Starting post creation...');
       await createPost.mutateAsync({
         content: trimmedContent,
         images: imageUrls,
+        groupId: groupId,
       });
 
       // Clear form after successful submission
@@ -72,7 +78,16 @@ console.log('🔵 Starting post creation...');
       setFiles([]);
       setProgress({});
       toast.success("Post created successfully!");
-      
+
+      // Invalidate queries to refresh the UI
+      if (groupId) {
+        // Invalidate group posts query
+        utils.groups.getGroupPosts.invalidate({ groupId });
+      } else {
+        // Invalidate general feed posts query
+        utils.posts.getPosts.invalidate();
+      }
+
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Error creating post");
