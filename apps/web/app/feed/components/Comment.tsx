@@ -121,7 +121,7 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
 
             {/* Reply Input Box */}
             {showReplyBox && (
-              <div className="mt-3 flex gap-2">
+              <div className="mt-3 flex gap-2"> 
                 <input
                   type="text"
                   value={replyText}
