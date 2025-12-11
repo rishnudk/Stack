@@ -80,7 +80,7 @@ export function GroupsList() {
           </div>
           <Button
             variant="secondary"
-            className="rounded-full px-6 font-bold bg-black text-white hover:bg-neutral-200"
+            className="rounded-full px-6 py-1.5 font-bold bg-white text-black hover:bg-[#e7e7e8] transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               handleGroupClick(group.id);
