@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
 import type { Session } from "next-auth";
-import AnalyticsCard from "./AnalyticsCard";
-import ActionCard from "./ActionCard";
 import SidebarLogo from "./SidebarLogo";
 import SettingsMenu from "./SettingsMenu";
 import ProfileCard from "./ProfileCard";
