@@ -9,12 +9,28 @@ interface ProfileHeaderProps {
   isOwnProfile: boolean;
 }
 
+
 export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
+   const utils = trpc.useUtils();
   // Fetch real user data by ID
   const { data: user, isLoading } = trpc.users.getUserById.useQuery(
     { userId },
     { enabled: !!userId }
   );
+
+ 
+
+const followMutation = trpc.users.follow.useMutation({
+  onSuccess: () => {
+    utils.users.getUserById.invalidate({ userId})
+  },
+})
+
+const unfollowMutation =trpc.users.unfollow.useMutation({
+  onSuccess: () => {
+    utils.users.getUserById.invalidate({ userId})
+  },
+})
 
   if (isLoading) {
     return <div className="animate-pulse bg-neutral-900 h-96"></div>;
@@ -24,6 +40,7 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
     return <div className="p-8 text-center text-neutral-500">User not found</div>;
   }
 
+  const isFollowing = user.isFollowing;
   // Extract username from email
   const username = user.email?.split("@")[0] || "user";
   
@@ -72,15 +89,27 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
             />
           </div>
 
-          <div className="flex gap-2 mt-16">
+          <div className="flex gap-2 mt-20">
             {!isOwnProfile && (
-              <button className="px-4 py-2 bg-white text-black hover:bg-gray-200 rounded-full font-semibold transition-colors">
-                Follow
-              </button>
+              <button
+  onClick={() => {
+    if (isFollowing) {
+      unfollowMutation.mutate({ userId });
+    } else {
+      followMutation.mutate({ userId });
+    }
+  }}
+  disabled={followMutation.isPending || unfollowMutation.isPending}
+  className={`px-4 py-2 rounded-full font-semibold transition-colors ${
+    isFollowing
+      ? "bg-transparent border border-neutral-600 text-white hover:border-red-500"
+      : "bg-white text-black hover:bg-gray-200"
+  }`}
+>
+  {isFollowing ? "Following" : "Follow"}
+</button>
             )}
-            <button className="p-2 bg-neutral-800 hover:bg-neutral-700 rounded-full transition-colors">
-              <Share2 size={20} />
-            </button>
+           
           </div>
         </div>
 
@@ -157,11 +186,11 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
             <span className="text-neutral-500 ml-1">Posts</span>
           </div>
           <div className="hover:underline cursor-pointer">
-            <span className="font-bold text-white">0</span>
+            <span className="font-bold text-white">{user._count.followers}</span>
             <span className="text-neutral-500 ml-1">Followers</span>
           </div>
           <div className="hover:underline cursor-pointer">
-            <span className="font-bold text-white">0</span>
+            <span className="font-bold text-white">{user._count.following}</span>
             <span className="text-neutral-500 ml-1">Following</span>
           </div>
         </div>

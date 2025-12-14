@@ -4,7 +4,7 @@ import { PostCard } from "./PostCard";
 import { trpc } from "@/utils/trpc";
 
 export function PostList() {
-  const { data, isLoading } = trpc.posts.getPosts.useQuery({ limit: 20 });
+  const { data, isLoading } = trpc.posts.getPosts.useQuery({ limit: 10 });
 
   if (isLoading) {
     return <div className="text-white p-4">Loading posts...</div>;

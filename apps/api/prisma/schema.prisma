@@ -62,7 +62,26 @@ model User {
   hourlyRate        String?
   preferredWorkType String?
   resumeUrl         String?
+
+  //Social Graph
+  followers Follow[] @relation("following")
+  following Follow[] @relation("follower")
+
 }
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId]) // Prevent duplicate follows
+  @@index([followerId])
+  @@index([followingId])
+} 
 
 model Post {
   id        String    @id @default(cuid())

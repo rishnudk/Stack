@@ -88,7 +88,6 @@ export const devStatsRouter = router({
         setCache(cacheKey, result);
         return result;
       } catch (error) {
-        console.error("LeetCode API error:", error);
         return null;
       }
     }),
@@ -107,8 +106,6 @@ export const devStatsRouter = router({
           ? { Authorization: `Bearer ${githubToken}` }
           : {};
         
-        console.log(`[GitHub Stats] Using ${githubToken ? 'authenticated' : 'public'} API`);
-
         const userResponse = await fetch(
           `https://api.github.com/users/${input.username}`,
           { headers }
@@ -134,12 +131,6 @@ export const devStatsRouter = router({
         const totalStars = repos.reduce((sum: number, repo: any) => sum + (repo.stargazers_count || 0), 0);
 
         const pushEvents = events.filter((e: any) => e.type === "PushEvent");
-        console.log(`[GitHub Stats] Found ${pushEvents.length} push events`);
-        
-        // Log full payload to see what we're getting
-        if (pushEvents.length > 0) {
-          console.log(`[GitHub Stats] First payload:`, JSON.stringify(pushEvents[0].payload, null, 2));
-        }
         
         const recentCommits = pushEvents
           .map((e: any) => {
@@ -154,7 +145,6 @@ export const devStatsRouter = router({
           })
           .slice(0, 5);
 
-        console.log(`[GitHub Stats] Total commits: ${recentCommits.length}`);
 
         const result = {
           username: userData.login,
@@ -179,7 +169,6 @@ export const devStatsRouter = router({
         setCache(cacheKey, result);
         return result;
       } catch (error) {
-        console.error("GitHub API error:", error);
         return null;
       }
     }),

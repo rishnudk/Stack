@@ -78,7 +78,16 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
   return (
     <div className="relative" ref={menuRef}>
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-20">
+        <div className="
+  max-h-60
+  overflow-y-auto
+  scrollbar-hide
+  absolute top-full left-0 right-0 mt-2
+  bg-neutral-900 border border-neutral-800
+  rounded-xl shadow-lg
+  animate-in fade-in slide-in-from-top-2
+  duration-200 z-20
+">
           <div className="p-2 border-b border-neutral-800">
             <button
               onClick={handleOpenModal}

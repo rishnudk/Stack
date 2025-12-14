@@ -17,6 +17,8 @@ export const userRouter = router({
           name: true,
             email: true,
             image: true,
+            headline: true,
+            location: true,
             
         },
       });
@@ -90,14 +92,60 @@ export const userRouter = router({
           _count: {
             select: {
               posts: true,
+              followers: true,
+              following: true,
             },
           },
         },
       });
 
-      return user;
+      let isFollowing = false;
+      if (ctx.session?.user?.id) {
+        const follow = await ctx.prisma.follow.findUnique({
+          where: {
+            followerId_followingId: {
+              followerId: ctx.session.user.id,
+              followingId: input.userId,
+            }
+          }
+        })
+        isFollowing = !!follow;
+      }
+      return { ...user, isFollowing };
     }),
 
+
+    //follow a user
+    follow: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      if (ctx.session.user.id === input.userId) {
+        throw new Error("Cannot follow yourself");
+      }
+
+      await ctx.prisma.follow.create({
+        data: {
+          followerId: ctx.session.user.id,
+          followingId: input.userId,
+        },
+      });
+      return { success: true };
+    }),
+
+    //unfollow a user
+    unfollow: protectedProcedure
+    .input(z.object({ userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.prisma.follow.delete({
+        where: {
+          followerId_followingId: {
+            followerId: ctx.session.user.id,
+            followingId: input.userId,
+          },
+        },
+      });
+      return { success: true };
+    }), 
   // Update user profile
   updateProfile: protectedProcedure
     .input(

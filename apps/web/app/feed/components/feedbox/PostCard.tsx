@@ -34,6 +34,7 @@ export function PostCard({
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleLike = () => {
     if (isLiked) {
@@ -56,31 +57,48 @@ export function PostCard({
     }
   };
 
+  const isLongText = text.length > 200; // Heuristic for long text
+
   return (
     <div className="flex flex-col border-b border-neutral-800 bg-black text-white p-4">
       <div className="flex justify-between items-start">
         <div className="flex gap-2">
-          <Image 
-            src={avatarUrl || "/profile.png"} 
-            alt="user" 
-            width={40} 
-            height={40} 
-            className="rounded-full cursor-pointer hover:opacity-80 transition-opacity" 
+          <Image
+            src={avatarUrl || "/profile.png"}
+            alt="user"
+            width={40}
+            height={40}
+            className="w-10 h-10 object-cover rounded-full cursor-pointer hover:opacity-80 transition-opacity"
             onClick={handleProfileClick}
           />
-          <div>
-            <p className="font-semibold">
+          <div className="flex-1">
+            <p onClick={handleProfileClick} className="font-semibold cursor-pointer">
               {name} <span className="text-neutral-500">@{username} · {time}</span>
             </p>
-            <p className="text-neutral-200 mt-1">{text}</p>
+            <div className="mt-1">
+              <p
+                className={`text-neutral-200 whitespace-pre-wrap ${!isExpanded && !isDetailView && isLongText ? "line-clamp-3" : ""
+                  }`}
+              >
+                {text}
+              </p>
+              {!isExpanded && !isDetailView && isLongText && (
+                <button
+                  onClick={() => setIsExpanded(true)}
+                  className="text-blue-500 hover:text-blue-400 text-sm mt-1"
+                >
+                  ...more
+                </button>
+              )}
+            </div>
           </div>
         </div>
-        <Ellipsis className="text-neutral-400" size={18} />
+        <Ellipsis className="text-neutral-400 shrink-0 ml-2" size={18} />
       </div>
 
       {imageUrl && (
-        <div className="mt-3 rounded-2xl overflow-hidden border border-neutral-800">
-          <Image src={imageUrl} alt="post image" width={500} height={350} />
+        <div className="mt-3 rounded-2xl overflow-hidden border border-neutral-800 ml-12">
+          <Image src={imageUrl} alt="post image" width={500} height={350} className="w-full h-auto" />
         </div>
       )}
 
@@ -94,11 +112,10 @@ export function PostCard({
           >
             <Heart
               size={18}
-              className={`transition-all ${
-                isLiked
+              className={`transition-all ${isLiked
                   ? "fill-red-500 text-red-500"
                   : "text-neutral-400 group-hover:text-red-500"
-              }`}
+                }`}
             />
             {likeCount > 0 && (
               <span className={`text-sm ${isLiked ? "text-red-500" : "text-neutral-400"}`}>

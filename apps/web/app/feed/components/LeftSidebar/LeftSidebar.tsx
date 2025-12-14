@@ -10,26 +10,44 @@ interface LeftSidebarProps {
   session: Session;
 }
 
-export function LeftSidebar({ session }: LeftSidebarProps) {
-  const [isGroupsOpen, setIsGroupsOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+type ActiveMenu = "groups" | "settings" | null;
 
-  // Show scrollbar when any dropdown is open
-  const showScrollbar = isGroupsOpen || isSettingsOpen;
+export function LeftSidebar({ session }: LeftSidebarProps) {
+  const [activeMenu, setActiveMenu] = useState<ActiveMenu>(null);
+
+  const isGroupsOpen = activeMenu === "groups";
+  const isSettingsOpen = activeMenu === "settings";
 
   return (
-    <aside className={`w-72 bg-black rounded-2xl flex flex-col gap-4 p-4 max-h-screen sticky top-4 scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-transparent ${showScrollbar ? 'overflow-y-scroll' : 'overflow-y-hidden'}`}>
-      <SidebarLogo />
-      <ProfileCard />
-      {/* <AnalyticsCard /> */}
-      {/* <ActionCard /> */}
-      
-      {/* Groups Menu */}
-      <GroupsMenu onOpenChange={setIsGroupsOpen} />
-      
-      {/* Settings Menu - Sticky at bottom */}
-        <SettingsMenu isGroupsDropdownOpen={isGroupsOpen} onOpenChange={setIsSettingsOpen} />
-      
-    </aside>
+    <aside
+  className="
+    w-72 bg-black rounded-2xl
+    sticky top-4
+    h-[calc(100vh-1rem)]
+    flex flex-col
+  "
+>
+  {/* Scroll container */}
+  <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
+    <SidebarLogo />
+    <ProfileCard />
+
+    <div className="flex flex-col gap-6 mt-4">
+      <GroupsMenu
+        onOpenChange={(open) =>
+          setActiveMenu(open ? "groups" : null)
+        }
+      />
+
+      <SettingsMenu
+        isGroupsDropdownOpen={activeMenu === "groups"}
+        onOpenChange={(open) =>
+          setActiveMenu(open ? "settings" : null)
+        }
+      />
+    </div>
+  </div>
+</aside>
+
   );
 }
