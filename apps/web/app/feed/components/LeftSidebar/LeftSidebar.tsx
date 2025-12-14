@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { MessageCircle } from "lucide-react"; 
+import Link from "next/link"; 
 import type { Session } from "next-auth";
 import SidebarLogo from "./SidebarLogo";
 import SettingsMenu from "./SettingsMenu";
@@ -38,6 +40,12 @@ export function LeftSidebar({ session }: LeftSidebarProps) {
           setActiveMenu(open ? "groups" : null)
         }
       />
+      <Link href="/messages" className="w-full flex items-center gap-3 px-4 py-3 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-xl transition-colors group">
+      <MessageCircle  size= {20} className="text-neutral-400 group-hover:text-white transition-colors" />
+      <span className="text-sm text-neutral-200 group-hover:text-white transition-colors">
+        Messages
+      </span>
+      </Link>
 
       <SettingsMenu
         isGroupsDropdownOpen={activeMenu === "groups"}
