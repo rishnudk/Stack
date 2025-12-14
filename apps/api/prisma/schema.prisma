@@ -67,6 +67,47 @@ model User {
   followers Follow[] @relation("following")
   following Follow[] @relation("follower")
 
+  //message
+  conversations ConversationParticipant[]
+  sentMessages  DirectMessage[]
+
+}
+
+
+model Conversation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt // Important for sorting inbox by latest activity
+  
+  participants ConversationParticipant[]
+  messages     DirectMessage[]
+}
+
+model ConversationParticipant {
+  id             String       @id @default(cuid())
+  userId         String
+  conversationId String
+  hasSeenLatest  Boolean      @default(false) // The "Unread" indicator
+  updatedAt      DateTime     @updatedAt
+  
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, conversationId]) // A user can't be in the same chat twice
+  @@index([userId]) // Makes fetching your inbox fast
+}
+
+model DirectMessage {
+  id             String       @id @default(cuid())
+  content        String
+  senderId       String
+  conversationId String
+  createdAt      DateTime     @default(now())
+  
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId]) // Makes loading messages for a chat fast
 }
 
 model Follow {
