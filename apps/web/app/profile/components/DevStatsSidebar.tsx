@@ -17,17 +17,13 @@ export function DevStatsSidebar({ userId }: DevStatsSidebarProps) {
   return (
     <div className="sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto space-y-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       {/* LeetCode Stats Card */}
-      {user?.leetcodeUsername && (
-        <LeetCodeStatsCard username={user.leetcodeUsername} />
-      )}
+      <LeetCodeStatsCard username={user?.leetcodeUsername} />
 
       {/* GitHub Stats Card */}
-      {user?.githubUsername && (
-        <GitHubStatsCard username={user.githubUsername} />
-      )}
+      <GitHubStatsCard username={user?.githubUsername} />
 
       {/* Achievements - Dynamic */}
-      {/* <AchievementsCard userId={userId} /> */}
+      <AchievementsCard userId={userId} />
 
       {/* Recent Activity - Dynamic */}
       <RecentActivityCard userId={userId} />
