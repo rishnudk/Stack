@@ -17,25 +17,25 @@ interface FeedClientProps {
 export default function FeedClient({ session }: FeedClientProps) {
   return (
     <div className="flex justify-center min-h-screen bg-black">
-  <div className="flex w-full max-w-7xl">
-    {/* Left Sidebar */}
-    <aside className="hidden lg:block w-[280px] p-4">
-      <LeftSidebar session={session} />
-    </aside>
+      <div className="flex w-full max-w-7xl">
+        {/* Left Sidebar */}
+        <aside className="hidden lg:block w-[320px] p-4">
+          <LeftSidebar session={session} />
+        </aside>
 
-    {/* Feed Section */}
-    <main className="flex-1 flex justify-center">
-      <div className="w-full max-w-[600px] px-4 py-0">
-        <FeedBox />
+        {/* Feed Section */}
+        <main className="flex-1 flex justify-center">
+          <div className="w-full max-w-[600px] px-4 py-0">
+            <FeedBox />
+          </div>
+        </main>
+
+        {/* Right Sidebar */}
+        <aside className="hidden lg:block w-[320px] p-3">
+          <RightSidebar session={session} />
+        </aside>
       </div>
-    </main>
-
-    {/* Right Sidebar */}
-    <aside className="hidden lg:block w-[320px] p-3">
-      <RightSidebar session={session} />
-    </aside>
-  </div>
-</div>
+    </div>
 
   );
 }
