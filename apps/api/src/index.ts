@@ -11,7 +11,8 @@ import { Server } from 'socket.io';
 
 const prisma = new PrismaClient();
 
-let io: Server;
+  let io: Server | undefined;
+
 
 const server = Fastify({ logger: true });
 
@@ -30,28 +31,11 @@ server.addHook('preHandler', async (request, reply) => {
 });
 
 async function start() {
-  await server.register(cors, { 
+  await server.register(cors, {
     origin: true, // Allow all origins (in production, specify your frontend URL)
     credentials: true, // Allow cookies
   });
 
-  await server.ready();
-
-  io = new Server(server.server, {
-    cors: {
-      origin: true,
-      credentials: true,
-    }
-  });
-
-  io.on('connection',(socket) => {
-    console.log('socked connected', socket.id)
-
-    socket.on('join_conversation', (conversationId: string) => {
-      socket.join(conversationId)
-      console.log(`Socket ${socket.id} joined  ${conversationId}`);
-    })
-  });
 
   await server.register(fastifyTRPCPlugin, {
     prefix: '/trpc',
@@ -61,6 +45,25 @@ async function start() {
         return createContext(opts.req, opts.res, io);
       },
     },
+  });
+
+
+
+  await server.ready();
+  io = new Server(server.server, {
+    cors: {
+      origin: true,
+      credentials: true,
+    }
+  });
+
+  io.on('connection', (socket) => {
+    console.log('socked connected', socket.id)
+
+    socket.on('join_conversation', (conversationId: string) => {
+      socket.join(conversationId)
+      console.log(`Socket ${socket.id} joined  ${conversationId}`);
+    })
   });
 
   try {

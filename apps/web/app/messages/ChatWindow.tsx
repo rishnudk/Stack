@@ -5,6 +5,7 @@ import { Button } from "@repo/ui/button";
 import { Input } from "@repo/ui/input";
 import { Loader2, Send, Video } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useSocket } from "./SocketContext";
 
 interface ChatWindowProps {
   conversationId: string;
@@ -20,11 +21,12 @@ export default function ChatWindow({
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const { socket } = useSocket();
   // API Hooks
   const utils = trpc.useContext();
   const { data: messages, isLoading } = trpc.messaging.getMessages.useQuery(
     { conversationId },
-    { refetchInterval: 3000 }
+    
   );
 
   const sendMessageMutation = trpc.messaging.sendMessage.useMutation({
@@ -35,6 +37,29 @@ export default function ChatWindow({
     },
   });
 
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.emit("join_conversation", conversationId);
+
+    const handleNewMessage = (message: any) => {
+      utils.messaging.getMessages.setData({ conversationId }, (oldMessages) => {
+        if (!oldMessages) return [message];
+        
+
+        if (oldMessages?.find((m) => m.id === message.id)) return oldMessages;
+
+        return [...oldMessages, message];     
+      })
+    }
+
+    socket.on("new_message", handleNewMessage);
+
+    return () => {
+      socket.off("new_message", handleNewMessage);
+    }
+
+  });
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;

@@ -1,7 +1,7 @@
 'use client'
 
-import { createContext, ReactNode, useContext, useState } from "react";
-import { Socket } from "socket.io-client";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
 interface SocketContextProps {
     socket: Socket | null;
@@ -22,7 +22,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
     useEffect(() => {
         const socketInstance = io("http://localhost:4000", {
             withCredentials: true,
-            autoConnect: false,
+            autoConnect: true,
         })
 
         socketInstance.on("connect", () => {
