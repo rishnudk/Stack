@@ -86,6 +86,9 @@ export const messagingRouter = router({
           conversationId: input.conversationId,
           senderId: ctx.session.user.id,
         },
+        include: {
+          sender: { select: { id: true, name: true, image: true }}
+        }
       });
 
       // Update conversation timestamp & notify other participant
@@ -94,6 +97,14 @@ export const messagingRouter = router({
         data: { updatedAt: new Date() },
       });
 
+      ctx.io?.to(input.conversationId).emit('new_message', message);
+
+      ctx.io?.emit('conversation_updated', {
+        conversationId: input.conversationId,
+        lastMessage: message,
+      })
+
+      return message;
       // Mark others as unread
       await ctx.prisma.conversationParticipant.updateMany({
         where: {

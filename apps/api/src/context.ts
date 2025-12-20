@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { jwtVerify } from 'jose';
 import type { FastifyRequest, FastifyReply } from 'fastify';
+import { Server } from 'socket.io'
 
 const prisma = new PrismaClient()
 
@@ -14,6 +15,7 @@ export interface Context {
       image: string | null;
     };
   } | null;
+  io?: Server;
 }
 
 // Helper to extract JWT token from request
@@ -99,12 +101,14 @@ async function getSessionFromRequest(
 // createContext will be called for every request
 export const createContext = async (
   req?: FastifyRequest,
-  res?: FastifyReply
+  res?: FastifyReply,
+  io?: Server,
 ): Promise<Context> => {
   const session = req ? await getSessionFromRequest(req) : null;
 
   return {
     prisma,
     session,
+    io,
   }
 }

@@ -58,7 +58,7 @@ async function start() {
     trpcOptions: {
       router: appRouter,
       createContext: async (opts: { req: FastifyRequest; res: FastifyReply }) => {
-        return createContext(opts.req, opts.res);
+        return createContext(opts.req, opts.res, io);
       },
     },
   });
