@@ -1,10 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Session } from "next-auth";
 import ConversationList from "./ConversationList";
 import ChatWindow from "./ChatWindow";
-import { MessageCircle } from "lucide-react";
+import { Loader2, MessageCircle } from "lucide-react";
 import { SocketProvider } from "./SocketContext";
+import { useRouter, useSearchParams } from "next/navigation";
+import { trpc } from "@/utils/trpc";
 
 interface MessagesInterfaceProps {
   session: Session;
@@ -13,6 +15,41 @@ interface MessagesInterfaceProps {
 export default function MessagesInterface({ session }: MessagesInterfaceProps) {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const userIdToStart = searchParams.get("userId");
+  const utils = trpc.useUtils();
+
+  const startConversationMutation = trpc.messaging.startConversation.useMutation({
+    onSuccess: (conversation) => {
+      //when done, select it!
+      setSelectedConversationId(conversation.id)
+
+      utils.messaging.getConversations.invalidate();
+
+      router.replace("/messages");
+    },
+    onError: (error) => {
+      console.error("Failed to start conversation:", error);
+    }
+  })
+
+  useEffect(() => {
+    if (userIdToStart) {
+      startConversationMutation.mutate({
+        otherUserId: userIdToStart
+      })
+    }
+  }, [userIdToStart]);
+
+  if(startConversationMutation.isPending) {
+    return (
+      <div className="flex w-full h-full bg-black items-center justify-center text-white">
+        <Loader2 className="animate-spin mr-2" /> Loading...
+
+      </div>
+    )
+  }
   return (
     <SocketProvider>
       <div className="flex w-full h-full bg-black overflow-hidden rounded-2xl border border-neutral-800 my-4 mr-4">

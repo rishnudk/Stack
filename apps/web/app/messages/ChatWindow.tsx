@@ -20,14 +20,14 @@ export default function ChatWindow({
 }: ChatWindowProps) {
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [liveMessages, setLiveMessages] = useState<any[]>([]);
 
-  const { socket } = useSocket();
-  // API Hooks
+
+  const { socket, isConnected } = useSocket();
   const utils = trpc.useContext();
-  const { data: messages, isLoading } = trpc.messaging.getMessages.useQuery(
-    { conversationId },
-    
-  );
+
+  const { data: messages, isLoading } =
+    trpc.messaging.getMessages.useQuery({ conversationId });
 
   const sendMessageMutation = trpc.messaging.sendMessage.useMutation({
     onSuccess: () => {
@@ -37,29 +37,52 @@ export default function ChatWindow({
     },
   });
 
-  useEffect(() => {
-    if (!socket) return;
 
+  useEffect(() => {
+  if (messages) {
+    setLiveMessages(messages);
+  }
+}, [messages]);
+
+
+  /* --------------------------------
+     1️⃣ SOCKET LISTENER (ONCE)
+  -------------------------------- */
+useEffect(() => {
+  if (!socket || !isConnected) return;
+
+  const handleNewMessage = (message: any) => {
+    if (message.conversationId !== conversationId) return;
+
+    setLiveMessages((prev) => {
+      // avoid duplicates
+      if (prev.some((m) => m.id === message.id)) return prev;
+      return [...prev, message];
+    });
+  };
+
+  socket.on("new_message", handleNewMessage);
+  return () => socket.off("new_message", handleNewMessage);
+}, [socket, isConnected, conversationId]);
+
+  /* --------------------------------
+     2️⃣ JOIN / LEAVE ROOM
+  -------------------------------- */
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    console.log("📥 Joining room:", conversationId);
     socket.emit("join_conversation", conversationId);
 
-    const handleNewMessage = (message: any) => {
-      utils.messaging.getMessages.setData({ conversationId }, (oldMessages) => {
-        if (!oldMessages) return [message];
-        
-
-        if (oldMessages?.find((m) => m.id === message.id)) return oldMessages;
-
-        return [...oldMessages, message];     
-      })
-    }
-
-    socket.on("new_message", handleNewMessage);
-
     return () => {
-      socket.off("new_message", handleNewMessage);
-    }
+      console.log("📤 Leaving room:", conversationId);
+      socket.emit("leave_conversation", conversationId);
+    };
+  }, [socket, isConnected, conversationId]);
 
-  });
+  /* --------------------------------
+     3️⃣ AUTO SCROLL
+  -------------------------------- */
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -68,6 +91,7 @@ export default function ChatWindow({
 
   const handleSend = () => {
     if (!input.trim()) return;
+
     sendMessageMutation.mutate({
       conversationId,
       content: input,
@@ -85,27 +109,20 @@ export default function ChatWindow({
   return (
     <div className="flex flex-col h-full bg-black">
       {/* Header */}
-      <div className="p-4 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/50 backdrop-blur">
+      <div className="p-4 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/50">
         <span className="font-semibold text-white">Chat</span>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onVideoCall}
-          className="hover:bg-neutral-800 text-neutral-400 hover:text-white"
-        >
+        <Button variant="ghost" size="icon" onClick={onVideoCall}>
           <Video size={20} />
         </Button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4" ref={scrollRef}>
-        {messages?.map((msg) => {
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+        {liveMessages?.map((msg) => {
           const isMe = msg.senderId === sessionUserId;
+
           return (
-            <div
-              key={msg.id}
-              className={`flex ${isMe ? "justify-end" : "justify-start"}`}
-            >
+            <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
               <div className="flex items-end gap-2 max-w-[70%]">
                 {!isMe && (
                   <Avatar className="h-8 w-8">
@@ -114,7 +131,7 @@ export default function ChatWindow({
                   </Avatar>
                 )}
                 <div
-                  className={`px-4 py-2 rounded-2xl break-words text-sm ${
+                  className={`px-4 py-2 rounded-2xl text-sm ${
                     isMe
                       ? "bg-blue-600 text-white rounded-br-none"
                       : "bg-neutral-800 text-neutral-200 rounded-bl-none"
@@ -129,7 +146,7 @@ export default function ChatWindow({
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t border-neutral-800 bg-neutral-900/50">
+      <div className="p-4 border-t border-neutral-800">
         <form
           className="flex gap-2"
           onSubmit={(e) => {
@@ -141,13 +158,8 @@ export default function ChatWindow({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 bg-neutral-900 border-neutral-700 focus:border-blue-500 text-white"
           />
-          <Button
-            type="submit"
-            disabled={!input.trim() || sendMessageMutation.isPending}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
+          <Button type="submit" disabled={!input.trim()}>
             <Send size={18} />
           </Button>
         </form>

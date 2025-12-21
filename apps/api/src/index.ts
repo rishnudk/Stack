@@ -11,7 +11,7 @@ import { Server } from 'socket.io';
 
 const prisma = new PrismaClient();
 
-  let io: Server | undefined;
+const ioContainer = { io: undefined as Server | undefined };
 
 
 const server = Fastify({ logger: true });
@@ -36,35 +36,73 @@ async function start() {
     credentials: true, // Allow cookies
   });
 
+  // ✅ CRITICAL FIX: Create Socket.IO BEFORE registering tRPC
+  // This ensures ioContainer.io is defined when createContext is called
+  // Note: We don't need server.ready() - Socket.IO attaches to server.server directly
 
-  await server.register(fastifyTRPCPlugin, {
-    prefix: '/trpc',
-    trpcOptions: {
-      router: appRouter,
-      createContext: async (opts: { req: FastifyRequest; res: FastifyReply }) => {
-        return createContext(opts.req, opts.res, io);
-      },
-    },
-  });
-
-
-
-  await server.ready();
-  io = new Server(server.server, {
+  console.log('🔌 [INIT] Creating Socket.IO server...');
+  ioContainer.io = new Server(server.server, {
     cors: {
       origin: true,
       credentials: true,
     }
   });
+  console.log('✅ [INIT] Socket.IO server created successfully');
+  console.log('✅ [INIT] ioContainer.io is now:', !!ioContainer.io);
 
-  io.on('connection', (socket) => {
-    console.log('socked connected', socket.id)
+  // Setup Socket.IO connection handlers
+  ioContainer.io.on('connection', (socket) => {
+    console.log('\n🔌 [SOCKET.IO] New socket connected:', socket.id);
+    console.log('   📊 Total connected sockets:', ioContainer.io?.engine.clientsCount);
 
     socket.on('join_conversation', (conversationId: string) => {
-      socket.join(conversationId)
-      console.log(`Socket ${socket.id} joined  ${conversationId}`);
-    })
+      console.log('\n📥 [JOIN] Socket joining conversation');
+      console.log('   📌 Socket ID:', socket.id);
+      console.log('   📌 ConversationId:', conversationId);
+
+      socket.join(conversationId);
+
+      const room = ioContainer.io?.sockets.adapter.rooms.get(conversationId);
+      console.log('   📊 Sockets now in room:', room ? Array.from(room) : 'none');
+      console.log('   📊 Total in room:', room ? room.size : 0);
+      console.log('   ✅ Join complete\n');
+    });
+
+    socket.on('leave_conversation', (conversationId: string) => {
+      console.log('\n📤 [LEAVE] Socket leaving conversation');
+      console.log('   📌 Socket ID:', socket.id);
+      console.log('   📌 ConversationId:', conversationId);
+
+      socket.leave(conversationId);
+
+      const room = ioContainer.io?.sockets.adapter.rooms.get(conversationId);
+      console.log('   📊 Sockets remaining in room:', room ? Array.from(room) : 'none');
+      console.log('   📊 Total remaining:', room ? room.size : 0);
+      console.log('   ✅ Leave complete\n');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('\n🔴 [DISCONNECT] Socket disconnected:', socket.id);
+      console.log('   📊 Remaining connected sockets:', ioContainer.io?.engine.clientsCount);
+    });
   });
+
+  // NOW register tRPC with Socket.IO already initialized
+  console.log('🔌 [INIT] Registering tRPC with Socket.IO context...');
+  await server.register(fastifyTRPCPlugin, {
+    prefix: '/trpc',
+    trpcOptions: {
+      router: appRouter,
+      createContext: async (opts: { req: FastifyRequest; res: FastifyReply }) => {
+        const path = opts.req.url;
+        console.log(`🔧 [CONTEXT] Creating context for: ${path}`);
+        console.log('   📌 io available:', !!ioContainer.io);
+        return createContext(opts.req, opts.res, ioContainer.io);
+      },
+    },
+  });
+  console.log('✅ [INIT] tRPC registered successfully with io:', !!ioContainer.io);
+
 
   try {
     await server.listen({ port: 4000 });

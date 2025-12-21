@@ -3,6 +3,8 @@ import { trpc } from "@/utils/trpc";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import { format } from "date-fns";
 import { Loader2, Plus } from "lucide-react";
+import { useEffect } from "react";
+import { useSocket } from "./SocketContext";
 
 interface ConversationListProps {
   selectedId: string | null;
@@ -15,8 +17,28 @@ export default function ConversationList({
   onSelect,
   sessionUserId,
 }: ConversationListProps) {
+  const { socket, isConnected } = useSocket();
+  const utils = trpc.useUtils();
+
   // Fetch conversations from our API
   const { data: conversations, isLoading } = trpc.messaging.getConversations.useQuery();
+
+  // Listen for real-time conversation updates
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    const handleConversationUpdated = (data: { conversationId: string; lastMessage: any }) => {
+      console.log("Conversation updated event received:", data);
+      // Refresh the conversation list to show the new message preview
+      utils.messaging.getConversations.invalidate();
+    };
+
+    socket.on("conversation_updated", handleConversationUpdated);
+
+    return () => {
+      socket.off("conversation_updated", handleConversationUpdated);
+    };
+  }, [socket, isConnected, utils]);
 
   if (isLoading) {
     return (
@@ -37,19 +59,18 @@ export default function ConversationList({
       {/* List */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         {conversations?.map((conv) => {
-          // Find the "other" participant to display their name/avatar
+          // Find the "other" participant
           const otherParticipant = conv.participants.find(
             (p) => p.user.id !== sessionUserId
-          )?.user;
+          )?.user || conv.participants[0]?.user;
           const lastMessage = conv.messages[0];
 
           return (
             <button
               key={conv.id}
               onClick={() => onSelect(conv.id)}
-              className={`w-full p-4 flex gap-4 hover:bg-neutral-800 transition-colors text-left ${
-                selectedId === conv.id ? "bg-neutral-800" : ""
-              }`}
+              className={`w-full p-4 flex gap-4 hover:bg-neutral-800 transition-colors text-left ${selectedId === conv.id ? "bg-neutral-800" : ""
+                }`}
             >
               <Avatar className="h-12 w-12 border border-neutral-700">
                 <AvatarImage src={otherParticipant?.image || ""} />
