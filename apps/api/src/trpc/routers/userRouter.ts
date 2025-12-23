@@ -4,6 +4,16 @@ import type { Context } from "../../context.ts";
 import { getPinnedRepos } from "../../modules/github/github.service.ts";
 
 export const userRouter = router({
+  createUser: publicProcedure
+    .input(z.object({ name: z.string(), email: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.prisma.user.create({
+        data: {
+          name: input.name,
+          email: input.email,
+        },
+      });
+    }),
   getSidebarInfo: publicProcedure
     .input(z.object({ userId: z.string().optional() }))
     .query(async ({ ctx, input }) => {
@@ -15,11 +25,11 @@ export const userRouter = router({
         select: {
           id: true,
           name: true,
-            email: true,
-            image: true,
-            headline: true,
-            location: true,
-            
+          email: true,
+          image: true,
+          headline: true,
+          location: true,
+
         },
       });
 
@@ -115,8 +125,8 @@ export const userRouter = router({
     }),
 
 
-    //follow a user
-    follow: protectedProcedure
+  //follow a user
+  follow: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       if (ctx.session.user.id === input.userId) {
@@ -132,8 +142,8 @@ export const userRouter = router({
       return { success: true };
     }),
 
-    //unfollow a user
-    unfollow: protectedProcedure
+  //unfollow a user
+  unfollow: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       await ctx.prisma.follow.delete({
@@ -145,7 +155,7 @@ export const userRouter = router({
         },
       });
       return { success: true };
-    }), 
+    }),
   // Update user profile
   updateProfile: protectedProcedure
     .input(

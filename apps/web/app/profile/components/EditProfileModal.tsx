@@ -50,17 +50,17 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
   const [newSocialValue, setNewSocialValue] = useState("");
 
   const getPresignedUrlMutation = trpc.upload.getPresignedUrl.useMutation();
-  
+
   const updateProfileMutation = trpc.users.updateProfile.useMutation({
     onSuccess: () => {
       toast.success('Profile updated successfully!');
       onClose();
       window.location.reload(); // Refresh to show updated data
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || 'Failed to update profile');
     },
-  });
+  } as any);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -100,7 +100,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       let avatarUrl = formData.avatarUrl;
       let coverUrl = "";
@@ -159,10 +159,10 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
         coverUrl,
         coverGradient,
       };
-      
+
       console.log('🔍 Sending profile update with data:', profileData);
       console.log('📸 Cover type:', coverType, 'URL:', coverUrl, 'Gradient:', coverGradient);
-      
+
       await updateProfileMutation.mutateAsync(profileData);
     } catch (error) {
       console.error('❌ Error updating profile:', error);
@@ -234,7 +234,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
           {/* Basic Info */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Basic Information</h3>
-            
+
             <div>
               <label className="block text-sm font-medium text-neutral-300 mb-2">
                 Name
@@ -305,7 +305,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
               <label className="block text-sm font-medium text-neutral-300 mb-2">
                 Profile Image
               </label>
-              
+
               <div className="space-y-3">
                 {/* Image Preview */}
                 {imagePreview && (
@@ -354,7 +354,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
               <label className="block text-sm font-medium text-neutral-300 mb-2">
                 Cover Photo
               </label>
-              
+
               <div className="space-y-3">
                 {/* Cover Preview */}
                 <div className="relative w-full h-32 rounded-lg overflow-hidden border-2 border-neutral-700">
@@ -383,22 +383,20 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
                   <button
                     type="button"
                     onClick={() => setCoverType("gradient")}
-                    className={`px-4 py-2 font-medium transition-colors ${
-                      coverType === "gradient"
-                        ? "text-blue-400 border-b-2 border-blue-400"
-                        : "text-neutral-400 hover:text-neutral-300"
-                    }`}
+                    className={`px-4 py-2 font-medium transition-colors ${coverType === "gradient"
+                      ? "text-blue-400 border-b-2 border-blue-400"
+                      : "text-neutral-400 hover:text-neutral-300"
+                      }`}
                   >
                     Gradient
                   </button>
                   <button
                     type="button"
                     onClick={() => setCoverType("upload")}
-                    className={`px-4 py-2 font-medium transition-colors ${
-                      coverType === "upload"
-                        ? "text-blue-400 border-b-2 border-blue-400"
-                        : "text-neutral-400 hover:text-neutral-300"
-                    }`}
+                    className={`px-4 py-2 font-medium transition-colors ${coverType === "upload"
+                      ? "text-blue-400 border-b-2 border-blue-400"
+                      : "text-neutral-400 hover:text-neutral-300"
+                      }`}
                   >
                     Upload
                   </button>
@@ -419,11 +417,10 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
                         key={gradient.value}
                         type="button"
                         onClick={() => setSelectedGradient(gradient.value)}
-                        className={`h-16 rounded-lg bg-gradient-to-r ${gradient.value} transition-all ${
-                          selectedGradient === gradient.value
-                            ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-neutral-900"
-                            : "hover:scale-105"
-                        }`}
+                        className={`h-16 rounded-lg bg-gradient-to-r ${gradient.value} transition-all ${selectedGradient === gradient.value
+                          ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-neutral-900"
+                          : "hover:scale-105"
+                          }`}
                         title={gradient.name}
                       />
                     ))}
@@ -460,7 +457,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
           {/* Developer Profiles */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Developer Profiles</h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-neutral-300 mb-2">
@@ -492,7 +489,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
           {/* Skills */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Skills</h3>
-            
+
             <div className="flex gap-2">
               <input
                 type="text"
@@ -534,7 +531,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
           {/* Social Links */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Social Links</h3>
-            
+
             <div className="flex gap-2">
               <input
                 type="text"
@@ -600,8 +597,8 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
               {getPresignedUrlMutation.isPending
                 ? "Uploading..."
                 : updateProfileMutation.isPending
-                ? "Saving..."
-                : "Save Changes"}
+                  ? "Saving..."
+                  : "Save Changes"}
             </button>
           </div>
         </form>

@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { ProfileLeftSidebar } from "./components/ProfileLeftSidebar";
 import { ProfileContent } from "./components/ProfileContent";
@@ -7,10 +7,10 @@ import { DevStatsSidebar } from "./components/DevStatsSidebar";
 
 
 type Props = {
-  searchParams: { userId?: string}
+  searchParams: { userId?: string }
 }
 
-export default async function ProfilePage({searchParams}: Props) {
+export default async function ProfilePage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
 
   if (!session) {

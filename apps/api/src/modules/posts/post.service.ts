@@ -1,4 +1,4 @@
-postMessage.schema.tsimport { prisma } from "../../prismaClient";
+import { prisma } from "../../prismaClient.ts";
 
 export async function createPostService(
   userId: string,

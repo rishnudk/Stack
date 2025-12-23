@@ -38,13 +38,13 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
 
   const handleLike = async () => {
     const result = await toggleLikeMutation.mutateAsync({ commentId: comment.id });
-    
+
     if (result.liked) {
       setIsLiked(true);
-      setLikeCount(prev => prev + 1);
+      setLikeCount((prev: number) => prev + 1);
     } else {
       setIsLiked(false);
-      setLikeCount(prev => prev - 1);
+      setLikeCount((prev: number) => prev - 1);
     }
   };
 
@@ -89,11 +89,10 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
               >
                 <Heart
                   size={16}
-                  className={`transition-all ${
-                    isLiked
+                  className={`transition-all ${isLiked
                       ? "fill-red-500 text-red-500"
                       : "text-neutral-400 group-hover:text-red-500"
-                  }`}
+                    }`}
                 />
                 {likeCount > 0 && (
                   <span className={`text-sm ${isLiked ? "text-red-500" : "text-neutral-400"}`}>
@@ -109,11 +108,10 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
               >
                 <MessageCircle
                   size={16}
-                  className={`transition-colors ${
-                    showReplyBox
+                  className={`transition-colors ${showReplyBox
                       ? "text-blue-500"
                       : "text-neutral-400 group-hover:text-blue-500"
-                  }`}
+                    }`}
                 />
                 <span className="text-sm text-neutral-400">Reply</span>
               </button>
@@ -121,7 +119,7 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
 
             {/* Reply Input Box */}
             {showReplyBox && (
-              <div className="mt-3 flex gap-2"> 
+              <div className="mt-3 flex gap-2">
                 <input
                   type="text"
                   value={replyText}

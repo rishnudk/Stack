@@ -1,14 +1,14 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../../api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import FeedClient from "../../FeedClient";
 
 
 export default async function PostDetailPage() {
-    
+
     const session = await getServerSession(authOptions)
 
-    if(!session) {
+    if (!session) {
         redirect("/auth/login")
     }
 

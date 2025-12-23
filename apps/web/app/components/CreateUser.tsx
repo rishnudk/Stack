@@ -7,16 +7,16 @@ export default function CreateUser() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
-  const createUser = trpc.createUser.useMutation({
-    onSuccess: (data) => {
+  const createUser = trpc.users.createUser.useMutation({
+    onSuccess: (data: any) => {
       alert(`✅ User created: ${data.name}`);
       setName('');
       setEmail('');
     },
-    onError: (error) => { 
+    onError: (error: any) => {
       alert(`❌ Error: ${error.message}`);
     },
-  });
+  } as any);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

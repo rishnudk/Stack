@@ -39,31 +39,31 @@ export default function ChatWindow({
 
 
   useEffect(() => {
-  if (messages) {
-    setLiveMessages(messages);
-  }
-}, [messages]);
+    if (messages) {
+      setLiveMessages(messages);
+    }
+  }, [messages]);
 
 
   /* --------------------------------
      1️⃣ SOCKET LISTENER (ONCE)
   -------------------------------- */
-useEffect(() => {
-  if (!socket || !isConnected) return;
+  useEffect(() => {
+    if (!socket || !isConnected) return;
 
-  const handleNewMessage = (message: any) => {
-    if (message.conversationId !== conversationId) return;
+    const handleNewMessage = (message: any) => {
+      if (message.conversationId !== conversationId) return;
 
-    setLiveMessages((prev) => {
-      // avoid duplicates
-      if (prev.some((m) => m.id === message.id)) return prev;
-      return [...prev, message];
-    });
-  };
+      setLiveMessages((prev) => {
+        // avoid duplicates
+        if (prev.some((m) => m.id === message.id)) return prev;
+        return [...prev, message];
+      });
+    };
 
-  socket.on("new_message", handleNewMessage);
-  return () => socket.off("new_message", handleNewMessage);
-}, [socket, isConnected, conversationId]);
+    socket.on("new_message", handleNewMessage);
+    return () => { socket.off("new_message", handleNewMessage); };
+  }, [socket, isConnected, conversationId]);
 
   /* --------------------------------
      2️⃣ JOIN / LEAVE ROOM
@@ -111,7 +111,7 @@ useEffect(() => {
       {/* Header */}
       <div className="p-4 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/50">
         <span className="font-semibold text-white">Chat</span>
-        <Button variant="ghost" size="icon" onClick={onVideoCall}>
+        <Button variant="secondary" onClick={onVideoCall}>
           <Video size={20} />
         </Button>
       </div>
@@ -131,11 +131,10 @@ useEffect(() => {
                   </Avatar>
                 )}
                 <div
-                  className={`px-4 py-2 rounded-2xl text-sm ${
-                    isMe
-                      ? "bg-blue-600 text-white rounded-br-none"
-                      : "bg-neutral-800 text-neutral-200 rounded-bl-none"
-                  }`}
+                  className={`px-4 py-2 rounded-2xl text-sm ${isMe
+                    ? "bg-blue-600 text-white rounded-br-none"
+                    : "bg-neutral-800 text-neutral-200 rounded-bl-none"
+                    }`}
                 >
                   {msg.content}
                 </div>

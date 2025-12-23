@@ -47,7 +47,7 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
   const username = user.email?.split("@")[0] || "user";
 
   // Format join date
-  const joinedDate = new Date(user.createdAt).toLocaleDateString("en-US", {
+  const joinedDate = new Date(user.createdAt ?? new Date()).toLocaleDateString("en-US", {
     month: "long",
     year: "numeric",
   });
@@ -60,7 +60,7 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
   };
 
   // Fix for TypeScript "excessively deep" error - use simpler type assertion
-  const socialLinks = (user.socialLinks || {}) as SocialLinks;
+  const socialLinks = ((user as any).socialLinks || {}) as SocialLinks;
 
   return (
     <div className="border-b border-neutral-800">
@@ -90,10 +90,10 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
               className="rounded-full border-4 border-black"
             />
           </div>
-          
+
 
           <div className="flex gap-2 mt-20">
-             {!isOwnProfile && (
+            {!isOwnProfile && (
               <button
                 onClick={() => router.push(`/messages?userId=${userId}`)}
                 className="px-4 py-2 rounded-full font-semibold transition-colors bg-blue-600 hover:bg-blue-700 text-white"
@@ -192,15 +192,15 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
         {/* Stats */}
         <div className="flex gap-4 mb-4">
           <div className="hover:underline cursor-pointer">
-            <span className="font-bold text-white">{user._count.posts}</span>
+            <span className="font-bold text-white">{user._count?.posts ?? 0}</span>
             <span className="text-neutral-500 ml-1">Posts</span>
           </div>
           <div className="hover:underline cursor-pointer">
-            <span className="font-bold text-white">{user._count.followers}</span>
+            <span className="font-bold text-white">{user._count?.followers ?? 0}</span>
             <span className="text-neutral-500 ml-1">Followers</span>
           </div>
           <div className="hover:underline cursor-pointer">
-            <span className="font-bold text-white">{user._count.following}</span>
+            <span className="font-bold text-white">{user._count?.following ?? 0}</span>
             <span className="text-neutral-500 ml-1">Following</span>
           </div>
         </div>

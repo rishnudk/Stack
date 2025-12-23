@@ -1,16 +1,16 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
-import { Server } from "socket.io";
 import type { FastifyRequest, FastifyReply } from "fastify";
 
 import { appRouter } from "./trpc/appRouter.ts";
 import { createContext } from "./context.ts";
+import { initSocket, getIO } from "./socket.ts";
 
 const server = Fastify({ logger: true });
 
-// ✅ SINGLE, GUARANTEED SOCKET.IO INSTANCE
-let io: Server;
+// 🔥 INITIALIZE SOCKET AT MODULE LOAD TIME
+initSocket(server.server);
 
 // -----------------------------
 // JSON body parser
@@ -27,13 +27,6 @@ server.addContentTypeParser(
   }
 );
 
-// -----------------------------
-// Debug hook (optional)
-// -----------------------------
-server.addHook("preHandler", async (request) => {
-  console.log("Raw body:", request.body);
-});
-
 async function start() {
   // -----------------------------
   // CORS
@@ -44,53 +37,31 @@ async function start() {
   });
 
   // -----------------------------
-  // SOCKET.IO — MUST COME FIRST
+  // SOCKET EVENTS (GET SINGLETON)
   // -----------------------------
-  console.log("🔌 [INIT] Creating Socket.IO server...");
-  io = new Server(server.server, {
-    cors: {
-      origin: true,
-      credentials: true,
-    },
-  });
-  console.log("✅ [INIT] Socket.IO server created");
+  const io = getIO(); // ✅ THIS WAS MISSING
 
-  // -----------------------------
-  // SOCKET EVENTS
-  // -----------------------------
   io.on("connection", (socket) => {
-    console.log("\n🔌 [SOCKET.IO] Connected:", socket.id);
-    console.log("   📊 Total sockets:", io.engine.clientsCount);
+    console.log("🔌 [SOCKET.IO] Connected:", socket.id);
 
     socket.on("join_conversation", (conversationId: string) => {
-      console.log("\n📥 [JOIN]");
-      console.log("   Socket:", socket.id);
-      console.log("   Conversation:", conversationId);
-
       socket.join(conversationId);
-
-      const room = io.sockets.adapter.rooms.get(conversationId);
-      console.log("   Room size:", room?.size ?? 0);
+      console.log("📥 Joined:", conversationId);
     });
 
     socket.on("leave_conversation", (conversationId: string) => {
-      console.log("\n📤 [LEAVE]");
-      console.log("   Socket:", socket.id);
-      console.log("   Conversation:", conversationId);
-
       socket.leave(conversationId);
+      console.log("📤 Left:", conversationId);
     });
 
     socket.on("disconnect", () => {
-      console.log("\n🔴 [DISCONNECT]", socket.id);
-      console.log("   Remaining sockets:", io.engine.clientsCount);
+      console.log("🔴 Disconnected:", socket.id);
     });
   });
 
   // -----------------------------
-  // tRPC — AFTER Socket.IO
+  // tRPC
   // -----------------------------
-  console.log("🔌 [INIT] Registering tRPC...");
   await server.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
     trpcOptions: {
@@ -98,24 +69,15 @@ async function start() {
       createContext: async (opts: {
         req: FastifyRequest;
         res: FastifyReply;
-      }) => {
-        console.log("🔧 [CONTEXT]", opts.req.url);
-        return createContext(opts.req, opts.res, io);
-      },
+      }) => createContext(opts.req, opts.res),
     },
   });
-  console.log("✅ [INIT] tRPC registered with Socket.IO");
 
   // -----------------------------
   // START SERVER
   // -----------------------------
-  try {
-    await server.listen({ port: 4000 });
-    console.log("🚀 Server running at http://localhost:4000");
-  } catch (err) {
-    server.log.error(err);
-    process.exit(1);
-  }
+  await server.listen({ port: 4000 });
+  console.log("🚀 Server running at http://localhost:4000");
 }
 
 start();

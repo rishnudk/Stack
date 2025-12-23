@@ -159,8 +159,8 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
               username={post.username}
               time={post.time}
               text={post.text}
-              imageUrl={post.imageUrl}
-              avatarUrl={post.avatarUrl}
+              imageUrl={post.imageUrl ?? undefined}
+              avatarUrl={post.avatarUrl ?? undefined}
               userId={post.userId}
               likeCount={post.likeCount}
               commentCount={post.commentCount}

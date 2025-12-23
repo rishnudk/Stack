@@ -109,4 +109,27 @@ export const postRouter = router({
 
       return posts;
     }),
+
+  deletePost: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const post = await ctx.prisma.post.findUnique({ where: { id: input.id } });
+      if (!post) throw new Error("Post not found");
+      if (post.authorId !== ctx.session.user.id) throw new Error("Unauthorized");
+
+      return ctx.prisma.post.delete({ where: { id: input.id } });
+    }),
+
+  editPost: protectedProcedure
+    .input(z.object({ id: z.string(), content: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const post = await ctx.prisma.post.findUnique({ where: { id: input.id } });
+      if (!post) throw new Error("Post not found");
+      if (post.authorId !== ctx.session.user.id) throw new Error("Unauthorized");
+
+      return ctx.prisma.post.update({
+        where: { id: input.id },
+        data: { content: input.content },
+      });
+    }),
 });

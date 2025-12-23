@@ -1,7 +1,7 @@
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { appRouter } from '@api/trpc/appRouter';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 import { prisma } from '@/server/db/client';
 import type { Context } from '@api/context';
 
@@ -15,14 +15,15 @@ const handler = async (req: Request) => {
       prisma,
       session: session
         ? {
-            user: {
-              id: session.user.id,
-              email: session.user.email || null,
-              name: session.user.name || null,
-              image: session.user.image || null,
-            },
-          }
+          user: {
+            id: session.user.id,
+            email: session.user.email || null,
+            name: session.user.name || null,
+            image: session.user.image || null,
+          },
+        }
         : null,
+      io: null as any, // ⚠️ Mocking io for Next.js API route environment
     };
   };
 

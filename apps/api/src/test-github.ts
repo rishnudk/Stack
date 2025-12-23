@@ -1,4 +1,4 @@
-import { getPinnedRepos } from "./modules/github/github.service";
+import { getPinnedRepos } from "./modules/github/github.service.ts";
 import * as dotenv from "dotenv";
 import path from "path";
 
@@ -10,7 +10,7 @@ console.log(`Loading .env from ${envPath}`);
 dotenv.config({ path: envPath });
 
 async function test() {
-  const username = "rishnudk"; 
+  const username = "rishnudk";
   console.log(`Fetching pinned repos for ${username}...`);
   try {
     const repos = await getPinnedRepos(username);
