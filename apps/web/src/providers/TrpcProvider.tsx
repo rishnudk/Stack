@@ -20,12 +20,16 @@ export const TrpcProvider = ({ children }: { children: React.ReactNode }) => {
         httpBatchLink({
           // Use external API server which has the socket connection
           url: 'http://localhost:4000/trpc',
-          // Include cookies for NextAuth
-          fetch(url, options) {
-            return fetch(url, {
-              ...options,
-              credentials: 'include',
-            });
+          async headers() {
+            const { getSession } = await import('next-auth/react');
+            const session = await getSession();
+            console.log("🌐 [tRPC] Session in headers:", !!session, "Token present:", !!session?.apiToken);
+            if (session?.apiToken) {
+              return {
+                Authorization: `Bearer ${session.apiToken}`,
+              };
+            }
+            return {};
           },
         }),
       ],

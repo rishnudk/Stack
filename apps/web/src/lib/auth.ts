@@ -5,6 +5,7 @@ import type { NextAuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma) as any,
@@ -68,9 +69,35 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+        async jwt({ token, user }) {
+            // New sign-in
+            if (user) {
+                console.log("🔐 [AUTH] JWT Callback: New user sign-in");
+                token.sub = user.id;
+            }
+
+            // Generate API token if missing and we have a user
+            if (!token.apiToken && token.sub) {
+                console.log("🔐 [AUTH] JWT Callback: Generating missing API token");
+                const secret = process.env.API_JWT_SECRET;
+                if (!secret) {
+                    console.error("❌ [AUTH] API_JWT_SECRET is missing!");
+                } else {
+                    token.apiToken = jwt.sign(
+                        { sub: token.sub, email: token.email },
+                        secret,
+                        { expiresIn: "30d" }
+                    );
+                    console.log("🔐 [AUTH] JWT Callback: API token signed");
+                }
+            }
+            return token;
+        },
         async session({ session, token }) {
             if (session.user && token.sub) {
                 session.user.id = token.sub as string;
+                session.apiToken = token.apiToken as string;
+                console.log("🔐 [AUTH] Session Callback: API token added to session:", !!session.apiToken);
             }
             return session;
         },

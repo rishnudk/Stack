@@ -1,10 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import type { FastifyRequest, FastifyReply } from "fastify";
-import { jwtDecrypt } from "jose";
 import { Server } from "socket.io";
 import { getIO } from "./socket.ts";
+import jwt from "jsonwebtoken";
 
-// ... existing code ...
 
 
 const prisma = new PrismaClient();
@@ -25,76 +24,47 @@ export interface Context {
 // -----------------------------
 // SESSION EXTRACTION
 // -----------------------------
+
 async function getSessionFromRequest(
   request: FastifyRequest
 ): Promise<Context["session"]> {
   try {
     const authHeader = request.headers.authorization;
-    let token: string | undefined;
 
-    console.log("🔐 [AUTH] Headers:", JSON.stringify(request.headers));
-
-    if (authHeader?.startsWith("Bearer ")) {
-      token = authHeader.substring(7);
-      console.log("🔐 [AUTH] Found Bearer token");
-    } else {
-      const cookieHeader = request.headers.cookie;
-      if (cookieHeader) {
-        const cookies = cookieHeader.split(";").reduce((acc, cookie) => {
-          const [key, value] = cookie.trim().split("=");
-          acc[key] = value;
-          return acc;
-        }, {} as Record<string, string>);
-
-        console.log("🔐 [AUTH] Cookies received:", Object.keys(cookies));
-
-        token =
-          cookies["next-auth.session-token"] ||
-          cookies["__Secure-next-auth.session-token"];
-
-        if (token) console.log("🔐 [AUTH] Found session token in cookies");
-        else console.log("🔐 [AUTH] NO session token found in cookies");
-      } else {
-        console.log("🔐 [AUTH] No cookie header found");
-      }
-    }
-
-    if (!token) {
-      console.log("🔐 [AUTH] No token found in request");
+    if (!authHeader?.startsWith("Bearer ")) {
+      console.log("🔐 [AUTH] No Bearer token found in Authorization header");
       return null;
     }
 
-    const secret = process.env.NEXTAUTH_SECRET;
-    if (!secret) {
-      console.error("❌ [AUTH] FATAL: NEXTAUTH_SECRET is missing in env!");
-      return null;
-    }
+    const token = authHeader.substring(7);
+    console.log("🔐 [AUTH] Bearer token found, verifying...");
 
-    const { payload } = await jwtDecrypt(
+    const decoded = jwt.verify(
       token,
-      new TextEncoder().encode(secret)
-    );
+      process.env.API_JWT_SECRET!
+    ) as { sub: string };
 
-    if (!payload?.sub) {
-      console.log("🔐 [AUTH] Token decrypted but no 'sub' in payload");
-      return null;
-    }
-
-    console.log("🔐 [AUTH] Token decrypted for user:", payload.sub);
+    console.log("🔐 [AUTH] Token verified for sub:", decoded.sub);
 
     const user = await prisma.user.findUnique({
-      where: { id: payload.sub as string },
-      select: { id: true, email: true, name: true, image: true },
+      where: { id: decoded.sub },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        image: true,
+      },
     });
 
     if (!user) {
-      console.log("🔐 [AUTH] User not found in DB");
+      console.log("🔐 [AUTH] User not found in DB for sub:", decoded.sub);
       return null;
     }
 
+    console.log("🔐 [AUTH] Session established for user:", user.email);
     return { user };
   } catch (err) {
-    console.error("❌ [AUTH] Verification error:", err);
+    console.error("❌ [AUTH] Invalid API token or verification error:", err);
     return null;
   }
 }

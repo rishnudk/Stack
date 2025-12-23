@@ -3,7 +3,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { LeftSidebar } from "../feed/components/LeftSidebar/LeftSidebar";
 // We will create this component in the next step!
-import MessagesInterface from "././MessagesInterface";
+import MessagesInterface from "./MessagesInterface";
+import { SocketProvider } from "./SocketContext";
 
 export default async function MessagesPage() {
   const session = await getServerSession(authOptions);
@@ -22,7 +23,9 @@ export default async function MessagesPage() {
 
         {/* Messaging Area */}
         <main className="flex-1 flex flex-col h-screen border-l border-neutral-800">
-          <MessagesInterface session={session} />
+          <SocketProvider>
+            <MessagesInterface session={session} />
+          </SocketProvider>
         </main>
       </div>
     </div>

@@ -2,7 +2,7 @@
 import { trpc } from "@/utils/trpc";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import { format } from "date-fns";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useSocket } from "./SocketContext";
 
@@ -17,24 +17,20 @@ export default function ConversationList({
   onSelect,
   sessionUserId,
 }: ConversationListProps) {
-  const { socket, isConnected } = useSocket();
+  // ✅ 1. Get onlineUsers from context inside the component
+  const { socket, isConnected, onlineUsers } = useSocket();
   const utils = trpc.useUtils();
 
-  // Fetch conversations from our API
   const { data: conversations, isLoading } = trpc.messaging.getConversations.useQuery();
 
-  // Listen for real-time conversation updates
   useEffect(() => {
     if (!socket || !isConnected) return;
 
     const handleConversationUpdated = (data: { conversationId: string; lastMessage: any }) => {
-      console.log("Conversation updated event received:", data);
-      // Refresh the conversation list to show the new message preview
       utils.messaging.getConversations.invalidate();
     };
 
     socket.on("conversation_updated", handleConversationUpdated);
-
     return () => {
       socket.off("conversation_updated", handleConversationUpdated);
     };
@@ -50,20 +46,17 @@ export default function ConversationList({
 
   return (
     <div className="w-full h-full flex flex-col bg-neutral-900 border-r border-neutral-800">
-      {/* Header */}
-      <div className="p-4 border-b border-neutral-800 flex justify-between items-center">
+      <div className="p-4 border-b border-neutral-800">
         <h2 className="font-semibold text-lg text-white">Messages</h2>
-        {/* We can add a 'New Chat' button here later */}
       </div>
 
-      {/* List */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         {conversations?.map((conv) => {
-          // Find the "other" participant
-          const otherParticipant = conv.participants.find(
-            (p) => p.user.id !== sessionUserId
-          )?.user || conv.participants[0]?.user;
+          const otherParticipant = conv.participants.find(p => p.user.id !== sessionUserId)?.user;
           const lastMessage = conv.messages[0];
+
+          // ✅ 2. Check if this specific participant is in the online list
+          const isOnline = onlineUsers.includes(otherParticipant?.id || "");
 
           return (
             <button
@@ -72,10 +65,16 @@ export default function ConversationList({
               className={`w-full p-4 flex gap-4 hover:bg-neutral-800 transition-colors text-left ${selectedId === conv.id ? "bg-neutral-800" : ""
                 }`}
             >
-              <Avatar className="h-12 w-12 border border-neutral-700">
-                <AvatarImage src={otherParticipant?.image || ""} />
-                <AvatarFallback>{otherParticipant?.name?.[0] || "?"}</AvatarFallback>
-              </Avatar>
+              <div className="relative">
+                <Avatar className="h-12 w-12 border border-neutral-700">
+                  <AvatarImage src={otherParticipant?.image || ""} />
+                  <AvatarFallback>{otherParticipant?.name?.[0] || "?"}</AvatarFallback>
+                </Avatar>
+
+                {isOnline && (
+                  <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 border-2 border-neutral-900 rounded-full" />
+                )}
+              </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-baseline mb-1">
@@ -84,7 +83,7 @@ export default function ConversationList({
                   </span>
                   {lastMessage && (
                     <span className="text-xs text-neutral-500">
-                      {format(new Date(lastMessage.createdAt), "MMM d")}
+                      {format(new Date(lastMessage.createdAt), "HH:mm")}
                     </span>
                   )}
                 </div>
@@ -95,12 +94,6 @@ export default function ConversationList({
             </button>
           );
         })}
-
-        {conversations?.length === 0 && (
-          <div className="p-8 text-center text-neutral-500 text-sm">
-            No conversations yet.
-          </div>
-        )}
       </div>
     </div>
   );

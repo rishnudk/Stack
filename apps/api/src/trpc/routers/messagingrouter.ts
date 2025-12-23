@@ -61,6 +61,9 @@ export const messagingRouter = router({
             { participants: { some: { userId: input.otherUserId } } },
           ],
         },
+        include: {
+          participants: true
+        }
       });
 
       if (existing) return existing;
