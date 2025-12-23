@@ -29,6 +29,7 @@ export default function MessagesInterface({ session }: MessagesInterfaceProps) {
   useEffect(() => {
     if (!socket) return;
     socket.on("incoming-call", ({ offer, fromUserId, fromSocketId }) => {
+      console.log("📥 [MessagesInterface] Incoming call event received", { fromUserId, fromSocketId });
       setCallData({ isActive: true, isIncoming: true, otherUserId: fromUserId, offer, fromSocketId });
     });
     return () => { socket.off("incoming-call"); };

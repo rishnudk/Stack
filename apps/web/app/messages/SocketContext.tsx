@@ -19,10 +19,10 @@ const SocketContext = createContext<SocketContextProps>({
 export const useSocket = () => useContext(SocketContext);
 
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
-    const { data: session} = useSession();
-    const [ socket, setSocket ] = useState<Socket | null>(null); 
-    const [ isConnected, setIsConnected ] = useState(false); 
-    const [ onlineUsers, setOnlineUsers ] = useState<string[]>([]);
+    const { data: session } = useSession();
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [isConnected, setIsConnected] = useState(false);
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
     useEffect(() => {
         // If no session or no apiToken, do nothing
@@ -36,7 +36,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
             }
         })
 
-          // Listen for online/offline updates
+        // Listen for online/offline updates
         socketInstance.on("user_status", ({ userId, status }) => {
             setOnlineUsers(prev => {
                 if (status === "online") {
@@ -46,10 +46,15 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
                 }
             });
         });
+        socketInstance.on("connect", () => {
+            console.log("🔌 [SOCKET] Connected to server");
+            setIsConnected(true);
+        })
         socketInstance.on("disconnect", () => {
+            console.log("🔌 [SOCKET] Disconnected from server");
             setIsConnected(false);
         })
-        
+
         setSocket(socketInstance);
         return () => {
             socketInstance.disconnect();
