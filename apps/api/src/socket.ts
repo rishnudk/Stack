@@ -19,5 +19,6 @@ export const getIO = () => {
   if (!io) {
     throw new Error("❌ Socket.IO not initialized yet");
   }
+  console.log("🔌 [SOCKET] getIO returning server instance:", !!io);
   return io;
 };

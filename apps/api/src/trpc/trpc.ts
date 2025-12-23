@@ -7,6 +7,10 @@ export const router = t.router;
 export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
+  console.log("🔒 [MIDDLEWARE] protectedProcedure called");
+  console.log("🔒 [MIDDLEWARE] ctx keys:", Object.keys(ctx));
+  console.log("🔒 [MIDDLEWARE] ctx.io present:", !!(ctx as any).io);
+
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }

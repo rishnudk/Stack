@@ -69,7 +69,10 @@ async function start() {
       createContext: async (opts: {
         req: FastifyRequest;
         res: FastifyReply;
-      }) => createContext(opts.req, opts.res),
+      }) => {
+        console.log("⚡ [INDEX] createContext callback triggered");
+        return createContext(opts.req, opts.res);
+      },
     },
   });
 

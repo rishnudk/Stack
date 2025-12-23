@@ -18,8 +18,8 @@ export const TrpcProvider = ({ children }: { children: React.ReactNode }) => {
     trpc.createClient({
       links: [
         httpBatchLink({
-          // Use Next.js API route which has access to NextAuth session
-          url: '/api/trpc',
+          // Use external API server which has the socket connection
+          url: 'http://localhost:4000/trpc',
           // Include cookies for NextAuth
           fetch(url, options) {
             return fetch(url, {
