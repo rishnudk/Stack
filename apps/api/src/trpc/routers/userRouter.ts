@@ -2,6 +2,8 @@ import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../trpc.ts";
 import type { Context } from "../../context.ts";
 import { getPinnedRepos } from "../../modules/github/github.service.ts";
+import type { SocialLinks } from "../../../../../packages/types/user.ts";
+
 
 export const userRouter = router({
   createUser: publicProcedure
@@ -121,7 +123,11 @@ export const userRouter = router({
         })
         isFollowing = !!follow;
       }
-      return { ...user, isFollowing };
+      return {
+        ...user, isFollowing,
+        socialLinks: user?.socialLinks as SocialLinks | null,
+
+      };
     }),
 
 
@@ -169,7 +175,15 @@ export const userRouter = router({
         leetcodeUsername: z.string().optional(),
         githubUsername: z.string().optional(),
         skills: z.array(z.string()).optional(),
-        socialLinks: z.record(z.string(), z.string()).optional(),
+        socialLinks: z
+          .object({
+            github: z.string().optional(),
+            linkedin: z.string().optional(),
+            twitter: z.string().optional(),
+            website: z.string().optional(),
+          })
+          .optional(),
+
         coverUrl: z.string().optional(),
         coverGradient: z.string().optional(),
       })

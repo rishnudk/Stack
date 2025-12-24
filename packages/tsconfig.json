@@ -1,8 +1,9 @@
 {
-    "extends": "../../tsconfig.json",
+    "extends": "../tsconfig.json",
     "compilerOptions": {
       "jsx": "react-jsx",
       "allowJs": true,
+      "module": "ESNext",
       "moduleResolution": "bundler",
       "esModuleInterop": true,
       "skipLibCheck": true

@@ -87,8 +87,8 @@ export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChang
   ];
 
   return (
-    <div 
-      className="relative transition-all duration-200" 
+    <div
+      className="relative transition-all duration-200"
       ref={menuRef}
       style={{ marginTop: isGroupsDropdownOpen ? '280px' : '0px' }}
     >
@@ -163,16 +163,15 @@ export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChang
         </div>
         <ChevronUp
           size={16}
-          className={`text-neutral-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`text-neutral-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
         />
       </button>
 
       {/* Hire Me Settings Modal */}
-      <HireMeSettingsModal 
-        isOpen={isHireMeModalOpen} 
-        onClose={() => setIsHireMeModalOpen(false)} 
+      <HireMeSettingsModal
+        isOpen={isHireMeModalOpen}
+        onClose={() => setIsHireMeModalOpen(false)}
       />
 
       {/* Edit Profile Modal */}
@@ -191,7 +190,7 @@ export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChang
             githubUsername: userData.githubUsername || "",
             skills: userData.skills || [],
             socialLinks: (userData.socialLinks as any) || {},
-          }}
+          } as any}
         />
       )}
     </div>
