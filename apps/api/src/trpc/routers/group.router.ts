@@ -33,7 +33,7 @@ export const groupRouter = router({
         createdAt: "desc",
       },
     });
-    return groups.map((group) => ({
+    return groups.map((group: any) => ({
       id: group.id,
       name: group.name,
       description: group.description,
@@ -107,7 +107,7 @@ export const groupRouter = router({
           createdAt: "desc",
         },
       });
-      return posts.map((post) => ({
+      return posts.map((post: any) => ({
         id: post.id,
         text: post.content,
         imageUrl: post.images[0] || null,
@@ -136,7 +136,7 @@ export const groupRouter = router({
       },
       take: 3,
     });
-    return groups.map((group) => ({
+    return groups.map((group: any) => ({
       id: group.id,
       name: group.name,
     }));
