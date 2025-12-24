@@ -8,8 +8,7 @@
   "keywords": [],
   "packageManager": "pnpm@9.12.0",
   "engines": {
-    "node": "20.x",
-    "pnpm": ">=9.12.0"
+    "node": ">=20"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
