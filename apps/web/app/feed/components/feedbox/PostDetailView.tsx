@@ -112,7 +112,7 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
       {/* Comments List */}
       <div>
         {comments && comments.length > 0 ? (
-          comments.map((comment) => (
+          comments.map((comment: any) => (
             <Comment
               key={comment.id}
               comment={comment}

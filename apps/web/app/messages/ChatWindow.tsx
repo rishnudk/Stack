@@ -21,7 +21,7 @@ export default function ChatWindow({
   const [input, setInput] = useState("");
   const [liveMessages, setLiveMessages] = useState<any[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
-  
+
   // ✅ 1. Typing state and Socket hooks
   const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -56,7 +56,7 @@ export default function ChatWindow({
 
     socket.on("user_typing", handleTyping);
     socket.on("stop_typing", handleStopTyping);
-    
+
     return () => {
       socket.off("user_typing", handleTyping);
       socket.off("stop_typing", handleStopTyping);
@@ -101,7 +101,7 @@ export default function ChatWindow({
       </div>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
-        {liveMessages?.map((msg) => {
+        {liveMessages?.map((msg: any) => {
           const isMe = msg.senderId === sessionUserId;
           return (
             <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>

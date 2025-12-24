@@ -51,8 +51,8 @@ export default function ConversationList({
       </div>
 
       <div className="flex-1 overflow-y-auto scrollbar-hide">
-        {conversations?.map((conv) => {
-          const otherParticipant = conv.participants.find(p => p.user.id !== sessionUserId)?.user;
+        {conversations?.map((conv: any) => {
+          const otherParticipant = conv.participants.find((p: any) => p.user.id !== sessionUserId)?.user;
           const lastMessage = conv.messages[0];
 
           // ✅ 2. Check if this specific participant is in the online list

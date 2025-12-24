@@ -90,8 +90,8 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
                 <Heart
                   size={16}
                   className={`transition-all ${isLiked
-                      ? "fill-red-500 text-red-500"
-                      : "text-neutral-400 group-hover:text-red-500"
+                    ? "fill-red-500 text-red-500"
+                    : "text-neutral-400 group-hover:text-red-500"
                     }`}
                 />
                 {likeCount > 0 && (
@@ -109,8 +109,8 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
                 <MessageCircle
                   size={16}
                   className={`transition-colors ${showReplyBox
-                      ? "text-blue-500"
-                      : "text-neutral-400 group-hover:text-blue-500"
+                    ? "text-blue-500"
+                    : "text-neutral-400 group-hover:text-blue-500"
                     }`}
                 />
                 <span className="text-sm text-neutral-400">Reply</span>
