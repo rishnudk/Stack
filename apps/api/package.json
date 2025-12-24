@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "api/index.ts",
+  "main": "index.ts",
   "scripts": {
-    "dev": "ts-node src/index.ts",
+    "dev": "ts-node index.ts",
     "build": "tsc"
   },
   "keywords": [],
