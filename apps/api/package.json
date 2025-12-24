@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "index.js",
+  "main": "api/index.ts",
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc"
