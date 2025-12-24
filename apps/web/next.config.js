@@ -1,5 +1,4 @@
- /** @type {import('next').NextConfig}  */
-const  nextConfig = {
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -24,6 +23,12 @@ const  nextConfig = {
         hostname: 'images.unsplash.com',
       },
     ],
+  },
+  webpack: (config) => {
+    config.resolve.extensionAlias = {
+      '.js': ['.js', '.ts', '.tsx'],
+    };
+    return config;
   },
 };
 
