@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure, publicProcedure } from "../trpc.ts";
+import { router, protectedProcedure, publicProcedure } from "../trpc.js";
 import { TRPCError } from "@trpc/server";
 export const groupRouter = router({
   // Endpoint 1: Get all groups
@@ -10,13 +10,13 @@ export const groupRouter = router({
           { privacy: "PUBLIC" },
           ctx.session?.user?.id
             ? {
-                members: {
-                  some: {
-                    userId: ctx.session.user.id,
-                    status: "ACCEPTED",
-                  },
+              members: {
+                some: {
+                  userId: ctx.session.user.id,
+                  status: "ACCEPTED",
                 },
-              }
+              },
+            }
             : {},
         ],
       },
@@ -209,7 +209,7 @@ export const groupRouter = router({
 // Helper function
 function formatTimeAgo(date: Date): string {
   const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-  
+
   if (seconds < 60) return `${seconds}s`;
   if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
   if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;

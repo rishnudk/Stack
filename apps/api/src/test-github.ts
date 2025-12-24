@@ -1,4 +1,4 @@
-import { getPinnedRepos } from "./modules/github/github.service.ts";
+import { getPinnedRepos } from "./modules/github/github.service.js";
 import * as dotenv from "dotenv";
 import path from "path";
 

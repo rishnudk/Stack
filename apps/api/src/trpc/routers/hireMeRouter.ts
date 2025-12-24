@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc.ts";
+import { router, protectedProcedure } from "../trpc.js";
 
 export const hireMeRouter = router({
   // Get current user's hire me status

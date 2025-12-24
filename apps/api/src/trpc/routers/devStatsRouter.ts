@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../trpc.ts";
+import { publicProcedure, router } from "../trpc.js";
 
 // Simple in-memory cache (5 min TTL)
 const cache = new Map<string, { data: any; timestamp: number }>();
@@ -102,10 +102,10 @@ export const devStatsRouter = router({
 
       try {
         const githubToken = process.env.GITHUB_TOKEN;
-        const headers: Record<string, string> = githubToken 
+        const headers: Record<string, string> = githubToken
           ? { Authorization: `Bearer ${githubToken}` }
           : {};
-        
+
         const userResponse = await fetch(
           `https://api.github.com/users/${input.username}`,
           { headers }
@@ -131,12 +131,12 @@ export const devStatsRouter = router({
         const totalStars = repos.reduce((sum: number, repo: any) => sum + (repo.stargazers_count || 0), 0);
 
         const pushEvents = events.filter((e: any) => e.type === "PushEvent");
-        
+
         const recentCommits = pushEvents
           .map((e: any) => {
             const payload = e.payload;
             const commitCount = payload.size || payload.distinct_size || (payload.commits?.length) || 1;
-            
+
             return {
               repo: e.repo.name,
               message: `Pushed ${commitCount} commit${commitCount > 1 ? 's' : ''}`,

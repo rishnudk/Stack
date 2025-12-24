@@ -1,13 +1,13 @@
-import { mergeRouters, router } from "./trpc.ts";
-import { userRouter } from "./routers/userRouter.ts";
-import { likeRouter } from "./routers/likeRouter.ts";
-import { postRouter } from "./routers/postRouter.ts";
-import { commentRouter } from "./routers/commentRouter.ts";
-import { uploadRouter } from "./routers/uploadRouter.ts";
-import { devStatsRouter } from "./routers/devStatsRouter.ts";
-import { hireMeRouter } from "./routers/hireMeRouter.ts";
-import { groupRouter } from "./routers/group.router.ts";
-import { messagingRouter } from "./routers/messagingrouter.ts";
+import { mergeRouters, router } from "./trpc.js";
+import { userRouter } from "./routers/userRouter.js";
+import { likeRouter } from "./routers/likeRouter.js";
+import { postRouter } from "./routers/postRouter.js";
+import { commentRouter } from "./routers/commentRouter.js";
+import { uploadRouter } from "./routers/uploadRouter.js";
+import { devStatsRouter } from "./routers/devStatsRouter.js";
+import { hireMeRouter } from "./routers/hireMeRouter.js";
+import { groupRouter } from "./routers/group.router.js";
+import { messagingRouter } from "./routers/messagingrouter.js";
 
 export const appRouter = mergeRouters(
   router({

@@ -1,5 +1,5 @@
 import z from "zod";
-import { protectedProcedure, router } from "../trpc.ts";
+import { protectedProcedure, router } from "../trpc.js";
 
 export const commentRouter = router({
   getComments: protectedProcedure

@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import type { FastifyRequest, FastifyReply } from "fastify";
 import { Server } from "socket.io";
-import { getIO } from "./socket.ts";
+import { getIO } from "./socket.js";
 import jwt from "jsonwebtoken";
 
 

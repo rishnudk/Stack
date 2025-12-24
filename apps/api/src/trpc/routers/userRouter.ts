@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure } from "../trpc.ts";
-import type { Context } from "../../context.ts";
-import { getPinnedRepos } from "../../modules/github/github.service.ts";
-import type { SocialLinks } from "../../../../../packages/types/user.ts";
+import { router, publicProcedure, protectedProcedure } from "../trpc.js";
+import type { Context } from "../../context.js";
+import { getPinnedRepos } from "../../modules/github/github.service.js";
+import type { SocialLinks } from "../../../../../packages/types/user.js";
 
 
 export const userRouter = router({

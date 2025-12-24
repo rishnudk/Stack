@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { protectedProcedure, router, publicProcedure } from "../trpc.ts";
+import { protectedProcedure, router, publicProcedure } from "../trpc.js";
 
 
 export const postRouter = router({

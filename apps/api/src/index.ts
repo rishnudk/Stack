@@ -3,9 +3,9 @@ import cors from "@fastify/cors";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import type { FastifyRequest, FastifyReply } from "fastify";
 
-import { appRouter } from "./trpc/appRouter.ts";
-import { createContext } from "./context.ts";
-import { initSocket, getIO } from "./socket.ts";
+import { appRouter } from "./trpc/appRouter.js";
+import { createContext } from "./context.js";
+import { initSocket, getIO } from "./socket.js";
 
 const server = Fastify({ logger: true });
 

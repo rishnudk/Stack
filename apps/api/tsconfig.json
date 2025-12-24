@@ -8,8 +8,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
-    "outDir": "dist",
-    "allowImportingTsExtensions": true,
+    "outDir": "dist"
   },
   "include": [
     "src"

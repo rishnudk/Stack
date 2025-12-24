@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc.ts";
-import { createPresignedUrl } from "../../modules/uploads/s3.service.ts";
+import { protectedProcedure, router } from "../trpc.js";
+import { createPresignedUrl } from "../../modules/uploads/s3.service.js";
 
 export const uploadRouter = router({
   getPresignedUrl: protectedProcedure
