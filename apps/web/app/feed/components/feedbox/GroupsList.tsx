@@ -60,7 +60,7 @@ export function GroupsList() {
 
   return (
     <div className="flex flex-col">
-      {groups.map((group) => (
+      {groups.map((group: any) => (
         <div
           key={group.id}
           onClick={() => handleGroupClick(group.id)}
@@ -81,7 +81,7 @@ export function GroupsList() {
           <Button
             variant="secondary"
             className="rounded-full px-6 py-1.5 font-bold bg-black text-black hover:bg-[#e7e7e8] transition-colors"
-            onClick={(e) => {
+            onClick={(e: any) => {
               e.stopPropagation();
               handleGroupClick(group.id);
             }}

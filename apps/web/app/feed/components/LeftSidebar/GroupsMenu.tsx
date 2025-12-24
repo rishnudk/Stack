@@ -106,7 +106,7 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
             {isLoadingTop ? (
               <div className="px-4 py-2 text-sm text-neutral-500">Loading...</div>
             ) : topGroups && topGroups.length > 0 ? (
-              topGroups.map((group) => (
+              topGroups.map((group: any) => (
                 <button
                   key={group.id}
                   onClick={() => handleGroupClick(group.id)}
@@ -128,7 +128,7 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
             {isLoadingAll ? (
               <div className="px-4 py-2 text-sm text-neutral-500">Loading...</div>
             ) : allGroups && allGroups.length > 0 ? (
-              allGroups.slice(0, 5).map((group) => (
+              allGroups.slice(0, 5).map((group: any) => (
                 <button
                   key={`all-${group.id}`}
                   onClick={() => handleGroupClick(group.id)}

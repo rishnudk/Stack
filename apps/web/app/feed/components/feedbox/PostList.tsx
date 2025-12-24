@@ -14,7 +14,7 @@ export function PostList() {
 
   return (
     <div>
-      {posts.map((post) => (
+      {posts.map((post: any) => (
         <PostCard
           key={post.id}
           postId={post.id}

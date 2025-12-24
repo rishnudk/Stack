@@ -151,7 +151,7 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
             <p className="text-neutral-500 text-sm mt-2">Be the first to post in this group!</p>
           </div>
         ) : (
-          posts.map((post) => (
+          posts.map((post: any) => (
             <PostCard
               key={post.id}
               postId={post.id}
