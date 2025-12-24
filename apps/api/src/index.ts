@@ -27,60 +27,74 @@ server.addContentTypeParser(
   }
 );
 
-async function start() {
-  // -----------------------------
-  // CORS
-  // -----------------------------
-  await server.register(cors, {
-    origin: true,
-    credentials: true,
+// -----------------------------
+// CORS
+// -----------------------------
+await server.register(cors, {
+  origin: true,
+  credentials: true,
+});
+
+// -----------------------------
+// SOCKET EVENTS (GET SINGLETON)
+// -----------------------------
+const io = getIO();
+
+io.on("connection", (socket) => {
+  console.log("🔌 [SOCKET.IO] Connected:", socket.id);
+
+  socket.on("join_conversation", (conversationId: string) => {
+    socket.join(conversationId);
+    console.log("📥 Joined:", conversationId);
   });
 
-  // -----------------------------
-  // SOCKET EVENTS (GET SINGLETON)
-  // -----------------------------
-  const io = getIO(); // ✅ THIS WAS MISSING
-
-  io.on("connection", (socket) => {
-    console.log("🔌 [SOCKET.IO] Connected:", socket.id);
-
-    socket.on("join_conversation", (conversationId: string) => {
-      socket.join(conversationId);
-      console.log("📥 Joined:", conversationId);
-    });
-
-    socket.on("leave_conversation", (conversationId: string) => {
-      socket.leave(conversationId);
-      console.log("📤 Left:", conversationId);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("🔴 Disconnected:", socket.id);
-    });
+  socket.on("leave_conversation", (conversationId: string) => {
+    socket.leave(conversationId);
+    console.log("📤 Left:", conversationId);
   });
 
-  // -----------------------------
-  // tRPC
-  // -----------------------------
-  await server.register(fastifyTRPCPlugin, {
-    prefix: "/trpc",
-    trpcOptions: {
-      router: appRouter,
-      createContext: async (opts: {
-        req: FastifyRequest;
-        res: FastifyReply;
-      }) => {
-        console.log("⚡ [INDEX] createContext callback triggered");
-        return createContext(opts.req, opts.res);
-      },
+  socket.on("disconnect", () => {
+    console.log("🔴 Disconnected:", socket.id);
+  });
+});
+
+// -----------------------------
+// tRPC
+// -----------------------------
+await server.register(fastifyTRPCPlugin, {
+  prefix: "/trpc",
+  trpcOptions: {
+    router: appRouter,
+    createContext: async (opts: {
+      req: FastifyRequest;
+      res: FastifyReply;
+    }) => {
+      console.log("⚡ [INDEX] createContext callback triggered");
+      return createContext(opts.req, opts.res);
     },
-  });
+  },
+});
 
-  // -----------------------------
-  // START SERVER
-  // -----------------------------
-  await server.listen({ port: 4000 });
-  console.log("🚀 Server running at http://localhost:4000");
+// -----------------------------
+// VERCEL HANDLER EXPORT
+// -----------------------------
+export default async (req: any, res: any) => {
+  await server.ready();
+  server.server.emit('request', req, res);
+};
+
+// -----------------------------
+// START SERVER (ONLY IF NOT VERCEL)
+// -----------------------------
+if (!process.env.VERCEL) {
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 4000;
+  server.listen({ port, host: '0.0.0.0' }, (err) => {
+    if (err) {
+      server.log.error(err);
+      process.exit(1);
+    }
+    console.log(`🚀 Server running at http://localhost:${port}`);
+  });
 }
 
-start();
+export { server };

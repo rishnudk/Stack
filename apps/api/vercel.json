@@ -1,5 +1,9 @@
 {
     "installCommand": "npx pnpm@9.12.0 install",
-    "buildCommand": "pnpm build",
-    "outputDirectory": "dist"
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "src/index.ts"
+        }
+    ]
 }
