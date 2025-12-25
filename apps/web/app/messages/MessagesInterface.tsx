@@ -91,9 +91,9 @@ export default function MessagesInterface({ session }: MessagesInterfaceProps) {
             sessionUserId={session.user.id}
             onVideoCall={() => {
               // Find the other user ID in the conversation
-              const conversation = conversations?.find((c) => c.id === selectedConversationId);
-              const otherUser = conversation?.participants.find(
-                (p) => p.userId !== session.user.id
+              const conversation = (conversations as any[])?.find((c) => c.id === selectedConversationId);
+              const otherUser = (conversation?.participants as any[])?.find(
+                (p: any) => p.userId !== session.user.id
               );
               if (otherUser) {
                 setCallData({
