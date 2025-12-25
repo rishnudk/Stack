@@ -27,6 +27,7 @@
     "@aws-sdk/client-s3": "^3.930.0",
     "@aws-sdk/s3-request-presigner": "^3.930.0",
     "@prisma/client": "^6.18.0",
+    "@radix-ui/react-slot": "^1.2.3",
     "date-fns": "^4.1.0"
   }
 }

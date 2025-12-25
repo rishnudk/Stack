@@ -13,14 +13,16 @@
     "./badge": "./badge.tsx",
     "./separator": "./separator.tsx"
   },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0"
+  },
   "peerDependencies": {
-  "react": "^18 || ^19",
-  "react-dom": "^18 || ^19"
-},
-"devDependencies": {
-  "@types/react": "^19",
-  "@types/react-dom": "^19",
-  "typescript": "^5"
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5"
+  }
 }
-}
-
