@@ -11,7 +11,7 @@ interface RecentActivityCardProps {
 export function RecentActivityCard({ userId }: RecentActivityCardProps) {
   // Fetch user data
   const { data: user } = trpc.users.getUserById.useQuery({ userId });
-  
+
   // Fetch user's recent posts
   const { data: posts } = trpc.posts.getUserPosts.useQuery({ userId });
 
@@ -81,7 +81,7 @@ export function RecentActivityCard({ userId }: RecentActivityCardProps) {
         Recent Activity
       </h3>
       <div className="space-y-2">
-        {recentActivities.map((activity, index) => {
+        {(recentActivities as any[]).map((activity: any, index: number) => {
           const Icon = activity.icon;
           return (
             <div key={index} className="p-2 bg-neutral-800/50 rounded-lg hover:bg-neutral-800 transition-colors">

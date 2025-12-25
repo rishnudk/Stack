@@ -412,7 +412,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
                       { name: "Forest", value: "from-green-500 via-emerald-500 to-teal-600" },
                       { name: "Fire", value: "from-yellow-500 via-orange-500 to-red-600" },
                       { name: "Night", value: "from-indigo-600 via-purple-600 to-pink-600" },
-                    ].map((gradient) => (
+                    ].map((gradient: any) => (
                       <button
                         key={gradient.value}
                         type="button"
@@ -510,7 +510,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
             </div>
 
             <div className="flex flex-wrap gap-2">
-              {formData.skills.map((skill) => (
+              {(formData.skills as any[]).map((skill: any) => (
                 <div
                   key={skill}
                   className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm font-medium border border-blue-600/30 flex items-center gap-2"
@@ -559,7 +559,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser }: EditProfileMo
             </div>
 
             <div className="space-y-2">
-              {Object.entries(formData.socialLinks).map(([key, value]) => (
+              {(Object.entries(formData.socialLinks) as any[]).map(([key, value]: [string, any]) => (
                 <div
                   key={key}
                   className="flex items-center justify-between p-3 bg-neutral-800 rounded-lg"

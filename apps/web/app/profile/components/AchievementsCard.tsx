@@ -10,7 +10,7 @@ interface AchievementsCardProps {
 export function AchievementsCard({ userId }: AchievementsCardProps) {
   // Fetch user data to get usernames
   const { data: user } = trpc.users.getUserById.useQuery({ userId });
-  
+
   // Fetch LeetCode stats
   const { data: leetcodeStats } = trpc.devStats.getLeetCodeStats.useQuery(
     { username: user?.leetcodeUsername || "" },
@@ -179,7 +179,7 @@ export function AchievementsCard({ userId }: AchievementsCardProps) {
             </div>
           </div>
           <div className="space-y-2">
-            {achievements.map((achievement, index) => (
+            {(achievements as any[]).map((achievement: any, index: number) => (
               <div
                 key={index}
                 className={`flex items-center gap-3 p-2 rounded-lg border ${getColorClasses(achievement.color)}`}
