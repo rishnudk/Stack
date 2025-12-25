@@ -28,7 +28,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
         // If no session or no apiToken, do nothing
         if (!session?.apiToken) return;
 
-        const socketInstance = io("http://localhost:4000", {
+        const socketInstance = io(process.env.NEXT_PUBLIC_API_URL, {
             withCredentials: true,
             autoConnect: true,
             auth: {

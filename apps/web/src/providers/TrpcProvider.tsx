@@ -19,7 +19,7 @@ export const TrpcProvider = ({ children }: { children: React.ReactNode }) => {
       links: [
         httpBatchLink({
           // Use external API server which has the socket connection
-          url: 'http://localhost:4000/trpc',
+          url:process.env.NEXT_PUBLIC_API_URL + '/trpc',
           async headers() {
             const { getSession } = await import('next-auth/react');
             const session = await getSession();
