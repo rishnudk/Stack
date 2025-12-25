@@ -3,7 +3,8 @@
   "tasks": {
     "build": {
       "dependsOn": [
-        "^build"
+        "^build",
+        "db:generate"
       ],
       "outputs": [
         "dist/**",
@@ -23,6 +24,9 @@
       "persistent": true
     },
     "lint": {},
+    "db:generate": {
+      "cache": false
+    },
     "test": {}
   }
 }

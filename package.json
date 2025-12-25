@@ -12,6 +12,7 @@
   },
   "scripts": {
     "postinstall": "prisma generate --schema=apps/api/prisma/schema.prisma",
+    "db:generate": "prisma generate --schema=apps/api/prisma/schema.prisma",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
