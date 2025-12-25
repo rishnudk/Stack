@@ -31,7 +31,7 @@ export function RecentActivityCard({ userId }: RecentActivityCardProps) {
 
   // Add recent posts
   if (posts && posts.length > 0) {
-    posts.slice(0, 3).forEach((post) => {
+    (posts.slice(0, 3) as any[]).forEach((post: any) => {
       const preview = post.content.substring(0, 50);
       activities.push({
         type: "post",
