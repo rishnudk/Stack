@@ -18,7 +18,7 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
   // Fetch user's posts
   const { data: posts, isLoading: postsLoading } = trpc.posts.getUserPosts.useQuery(
     { userId },
-    { enabled: activeTab === "posts" } 
+    { enabled: activeTab === "posts" }
   );
 
   // Fetch user data for About section
@@ -42,11 +42,10 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
       <div className="flex border-b border-neutral-800 sticky top-0 bg-black/80 backdrop-blur-sm z-10">
         <button
           onClick={() => setActiveTab("posts")}
-          className={`flex-1 py-4 font-semibold transition-colors relative ${
-            activeTab === "posts"
+          className={`flex-1 py-4 font-semibold transition-colors relative ${activeTab === "posts"
               ? "text-white"
               : "text-neutral-500 hover:text-neutral-300"
-          }`}
+            }`}
         >
           Posts
           {activeTab === "posts" && (
@@ -55,11 +54,10 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
         </button>
         <button
           onClick={() => setActiveTab("projects")}
-          className={`flex-1 py-4 font-semibold transition-colors relative ${
-            activeTab === "projects"
+          className={`flex-1 py-4 font-semibold transition-colors relative ${activeTab === "projects"
               ? "text-white"
               : "text-neutral-500 hover:text-neutral-300"
-          }`}
+            }`}
         >
           Projects
           {activeTab === "projects" && (
@@ -68,11 +66,10 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
         </button>
         <button
           onClick={() => setActiveTab("about")}
-          className={`flex-1 py-4 font-semibold transition-colors relative ${
-            activeTab === "about"
+          className={`flex-1 py-4 font-semibold transition-colors relative ${activeTab === "about"
               ? "text-white"
               : "text-neutral-500 hover:text-neutral-300"
-          }`}
+            }`}
         >
           About
           {activeTab === "about" && (
@@ -91,7 +88,7 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
                 <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
               </div>
             ) : posts && posts.length > 0 ? (
-              posts.map((post) => (
+              (posts as any[]).map((post: any) => (
                 <PostCard
                   key={post.id}
                   userId={post.author.id}
