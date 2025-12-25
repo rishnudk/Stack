@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
-    "dev": "ts-node index.ts",
+    "dev": "ts-node src/index.ts",
     "db:generate": "prisma generate",
     "build": "tsc && pnpm db:generate",
     "start": "node dist/index.js"
