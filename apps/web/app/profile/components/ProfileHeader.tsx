@@ -208,7 +208,7 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
         {/* Skills */}
         {user.skills && user.skills.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {user.skills.map((skill) => (
+            {(user.skills as any[]).map((skill: any) => (
               <span
                 key={skill}
                 className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm font-medium border border-blue-600/30 hover:bg-blue-600/30 transition-colors"
