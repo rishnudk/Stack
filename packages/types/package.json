@@ -1,0 +1,7 @@
+{
+  "name": "@stack/types",
+  "private": true,
+  "scripts": {
+    "build": "tsc -b"
+  }
+}

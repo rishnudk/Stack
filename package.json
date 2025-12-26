@@ -10,10 +10,17 @@
     "node": "20.x"
   },
   "scripts": {
-    "postinstall": "prisma generate --schema=apps/api/prisma/schema.prisma",
-    "db:generate": "prisma generate --schema=apps/api/prisma/schema.prisma",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "postinstall": "prisma generate --schema=apps/api/prisma/schema.prisma",
+
+  "build": "pnpm --filter ./packages/types build && pnpm --filter ./apps/api build",
+
+  "build:types": "pnpm --filter ./packages/types build",
+  "build:api": "pnpm --filter ./apps/api build",
+
+  "db:generate": "prisma generate --schema=apps/api/prisma/schema.prisma",
+  "test": "echo \"Error: no test specified\" && exit 1"
+}
+,
   "devDependencies": {
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
