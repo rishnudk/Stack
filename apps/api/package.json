@@ -5,18 +5,16 @@
   "description": "",
   "type": "commonjs",
   "main": "dist/index.js",
-
   "scripts": {
     "dev": "ts-node src/index.ts",
     "build": "tsc -b ../../ && pnpm db:generate",
     "start": "node dist/index.js",
+    "postinstall": "prisma generate",
     "db:generate": "prisma generate"
   },
-
   "engines": {
     "node": "20.x"
   },
-
   "dependencies": {
     "@fastify/cors": "^11.1.0",
     "@fastify/jwt": "^10.0.0",
@@ -31,7 +29,6 @@
     "trpc-panel": "^1.3.4",
     "zod": "^4.1.12"
   },
-
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.19.23",
