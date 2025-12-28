@@ -57,6 +57,9 @@ importers:
       '@prisma/client':
         specifier: ^6.18.0
         version: 6.19.1(prisma@6.19.1(typescript@5.9.3))(typescript@5.9.3)
+      '@stack/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@trpc/client':
         specifier: ^11.7.0
         version: 11.8.1(@trpc/server@11.8.1(typescript@5.9.3))(typescript@5.9.3)
@@ -121,6 +124,9 @@ importers:
       '@shadcn/ui':
         specifier: ^0.0.4
         version: 0.0.4
+      '@stack/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@tanstack/react-query':
         specifier: ^5.90.5
         version: 5.90.12(react@18.2.0)
@@ -218,6 +224,8 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+
+  packages/types: {}
 
   packages/ui:
     dependencies:
