@@ -9,14 +9,25 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-
     "baseUrl": ".",
     "paths": {
-      "@stack/types": ["../../packages/types/index.ts"]
+      "@stack/types": [
+        "../../packages/types/index.ts"
+      ]
     }
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "references": [
-    { "path": "../../packages/types" }
-  ]
+    {
+      "path": "../../packages/types"
+    }
+  ],
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }
