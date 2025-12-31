@@ -1,4 +1,4 @@
-import { router, protectedProcedure } from "../trpc.js";
+import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
 
 console.log('🔧 [INIT] messagingrouter.ts loaded at', new Date().toISOString());

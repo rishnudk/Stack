@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure } from "../trpc.js";
-import type { Context } from "../../context.js";
-import { getPinnedRepos } from "../../modules/github/github.service.js";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
+import type { Context } from "../../context";
+import { getPinnedRepos } from "../../modules/github/github.service";
 import type { SocialLinks } from "@stack/types";
 
 

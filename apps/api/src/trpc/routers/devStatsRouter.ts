@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../trpc.js";
+import { publicProcedure, router } from "../trpc";
 
 // Simple in-memory cache (5 min TTL)
 const cache = new Map<string, { data: any; timestamp: number }>();

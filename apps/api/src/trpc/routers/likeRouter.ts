@@ -1,6 +1,6 @@
 
 import { z } from "zod";
-import { protectedProcedure, router } from "../trpc.js";
+import { protectedProcedure, router } from "../trpc";
 
 export const likeRouter = router({
   toggleLike: protectedProcedure
