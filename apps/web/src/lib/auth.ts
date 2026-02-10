@@ -69,6 +69,42 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+        async signIn({ user, account, profile }) {
+            // Handle OAuth account linking
+            if (account?.provider === 'google' || account?.provider === 'github') {
+                if (!user.email) return false;
+
+                // Check if user exists with this email
+                const existingUser = await prisma.user.findUnique({
+                    where: { email: user.email },
+                    include: { accounts: true }
+                });
+
+                // If user exists and doesn't have this OAuth provider linked
+                if (existingUser && !existingUser.accounts.some(acc => acc.provider === account.provider)) {
+                    console.log(`🔗 [AUTH] Linking ${account.provider} account to existing user: ${user.email}`);
+
+                    // Link the OAuth account to existing user
+                    await prisma.account.create({
+                        data: {
+                            userId: existingUser.id,
+                            type: account.type,
+                            provider: account.provider,
+                            providerAccountId: account.providerAccountId,
+                            access_token: account.access_token,
+                            refresh_token: account.refresh_token,
+                            expires_at: account.expires_at,
+                            token_type: account.token_type,
+                            scope: account.scope,
+                            id_token: account.id_token,
+                        }
+                    });
+
+                    console.log(`✅ [AUTH] Successfully linked ${account.provider} account`);
+                }
+            }
+            return true;
+        },
         async jwt({ token, user }) {
             // New sign-in
             if (user) {
