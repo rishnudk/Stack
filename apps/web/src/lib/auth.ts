@@ -81,7 +81,7 @@ export const authOptions: NextAuthOptions = {
                 });
 
                 // If user exists and doesn't have this OAuth provider linked
-                if (existingUser && !existingUser.accounts.some(acc => acc.provider === account.provider)) {
+                if (existingUser && !existingUser.accounts.some((acc: { provider: string }) => acc.provider === account.provider)) {
                     console.log(`🔗 [AUTH] Linking ${account.provider} account to existing user: ${user.email}`);
 
                     // Link the OAuth account to existing user
