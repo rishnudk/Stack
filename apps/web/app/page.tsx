@@ -1,4 +1,5 @@
-import { HeroSection } from "./landing/HeroSection";
+import Hero from "./landing/Hero";
+import Navbar from "./landing/Navbar";
 // import LandingPagegrid from "./landing/LandingPageGrid";
 // import {TestimonialSection} from "./landing/TestimonialSection";
 import { redirect } from "next/navigation";
@@ -15,9 +16,9 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white selection:bg-[#3B82F6]/30">
-      {/* <Navbar /> */}
-      <HeroSection />
+    <div className="min-h-screen bg-[#000000] text-white selection:bg-[#3B82F6]/30 dark">
+      <Navbar />
+      <Hero />
       {/* <LandingPagegrid /> */}
       {/* <TestimonialSection /> */}
 
