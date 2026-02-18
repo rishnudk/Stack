@@ -1,10 +1,11 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import Hero from "./landing/Hero";
+import Navbar from "./landing/Navbar";
+// import LandingPagegrid from "./landing/LandingPageGrid";
+// import {TestimonialSection} from "./landing/TestimonialSection";
 import { redirect } from "next/navigation";
-import HeroSection from "./landing/components/HeroSection";
-import BentoGridSection from "./landing/components/BentoGridSection";
-import TestimonialsSection from "./landing/components/TestimonialsSection";
-import FinalCTA from "./landing/components/FinalCTA";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+
 
 export default async function LandingPage() {
   const session = await getServerSession(authOptions);
@@ -15,11 +16,12 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white selection:bg-[#3B82F6]/30">
-      <HeroSection />
-      <BentoGridSection />
-      <TestimonialsSection />
-      <FinalCTA />
+    <div className="min-h-screen bg-[#000000] text-white selection:bg-[#3B82F6]/30 dark">
+      <Navbar />
+      <Hero />
+      {/* <LandingPagegrid /> */}
+      {/* <TestimonialSection /> */}
+
     </div>
   );
 }
