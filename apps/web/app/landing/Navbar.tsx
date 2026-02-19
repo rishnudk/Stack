@@ -2,13 +2,21 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
+<<<<<<< Updated upstream
 import { Home, User, Calendar, CreditCard, Menu, X, Sun, Moon } from "lucide-react"
+=======
+import { Home, User, Calendar, CreditCard, Menu, X, Sun, Moon, Github } from "lucide-react"
+>>>>>>> Stashed changes
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useSound } from "@/hooks/use-sound"
+<<<<<<< Updated upstream
 
 
+=======
+import SidebarLogo from "../feed/components/LeftSidebar/SidebarLogo"
+>>>>>>> Stashed changes
 
 // Theme Toggle Component
 const ThemeToggle = () => {
@@ -111,6 +119,14 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
             {/* Background & Lines Layer */}
             <div className="absolute inset-0 bg-white dark:bg-black">
               <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
+<<<<<<< Updated upstream
+=======
+                {/* To adjust these lines: 
+                    - y1/y2: vertical position (current: 63.5 and 60.5)
+                    - strokeOpacity: line visibility (current: 0.2)
+                    - strokeWidth: line thickness (current: 0.5)
+                */}
+>>>>>>> Stashed changes
                 <line x1="0" y1="63.5" x2="100%" y2="63.5" stroke="currentColor" strokeOpacity={0.2} strokeWidth={0.5} className="text-foreground" />
                 <line x1="0" y1="60.5" x2="100%" y2="60.5" stroke="currentColor" strokeOpacity={0.2} strokeWidth={0.5} className="text-foreground" />
               </svg>
@@ -120,6 +136,7 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
 
 
 
+<<<<<<< Updated upstream
               {/* Desktop Logo - centered */}
               <div className="hidden md:flex shrink-0 items-center justify-center translate-x-2">
                 {props.logo || (
@@ -131,6 +148,11 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
                     />
                   </Link>
                 )}
+=======
+              {/* Desktop Logo - Left Aligned */}
+              <div className="hidden md:flex shrink-0 items-center translate-y-[-2px]">
+                <SidebarLogo />
+>>>>>>> Stashed changes
               </div>
 
               {/* Mobile Menu Button (Left) */}
@@ -142,6 +164,7 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
+<<<<<<< Updated upstream
               {/* Logo (Center) - Mobile */}
               <div className="md:hidden flex-1 flex justify-center shrink-0 mx-2 md:mx-4 mt-1">
                 {props.logo || (
@@ -157,11 +180,47 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
 
 
 
+=======
+              {/* Logo - Mobile */}
+              <div className="md:hidden flex-1 flex justify-center shrink-0 mx-2 md:mx-4 mt-1">
+                <SidebarLogo />
+              </div>              {/* Desktop Right Actions */}
+              <div className="hidden md:flex items-center gap-6 mb-1">
+                <Link
+                  href="https://github.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 hover:text-foreground transition-colors"
+                >
+                  <Github className="w-5 h-5" />
+                </Link>
+
+                <Link
+                  href="/login"
+                  className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
+                >
+                  Login
+                </Link>
+
+                <Link
+                  href="/signup"
+                  className="px-4 py-1.5 bg-foreground text-background rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  Getting Started
+                </Link>
+
+                <ThemeToggle />
+              </div>
+
+>>>>>>> Stashed changes
               {/* Mobile Right Actions */}
               <div className="md:hidden flex items-center gap-2 mb-1">
                 <MobileThemeToggle />
               </div>
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
             </div>
           </div>
 

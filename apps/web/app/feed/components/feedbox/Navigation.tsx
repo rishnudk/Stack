@@ -1,7 +1,5 @@
 'use client'
 
-'use client'
-
 import React from 'react'
 import { Button } from '@repo/ui/button'
 import { Card, CardContent } from '@repo/ui/card'
