@@ -40,7 +40,7 @@ const Letter = memo(function Letter({
                     filter: "blur(0px)",
                     transition: {
                         duration: letterDuration,
-                        ease: [0.2, 0.65, 0.3, 0.9],
+                        ease: [0.2, 0.65, 0.3, 0.9] as [number, number, number, number],
                     },
                 },
                 exit: {
