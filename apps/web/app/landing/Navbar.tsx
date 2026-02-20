@@ -2,51 +2,13 @@
 
 import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
-<<<<<<< Updated upstream
-import { Home, User, Calendar, CreditCard, Menu, X, Sun, Moon } from "lucide-react"
-=======
 import { Home, User, Calendar, CreditCard, Menu, X, Sun, Moon, Github } from "lucide-react"
->>>>>>> Stashed changes
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useSound } from "@/hooks/use-sound"
-<<<<<<< Updated upstream
-
-
-=======
+import { Button } from "@/components/ui/button"
 import SidebarLogo from "../feed/components/LeftSidebar/SidebarLogo"
->>>>>>> Stashed changes
-
-// Theme Toggle Component
-const ThemeToggle = () => {
-  const { theme, setTheme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-  const playClick = useSound("/audio/ui-sounds/click.wav");
-
-  const isDark = (theme === 'dark' || resolvedTheme === 'dark')
-
-  const switchTheme = useCallback(() => {
-    playClick();
-    setTheme(isDark ? 'light' : 'dark');
-  }, [setTheme, isDark, playClick])
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) return <div className="w-9 h-9" />
-
-  return (
-    <button
-      onClick={switchTheme}
-      className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-foreground/5 transition-colors text-foreground/70 hover:text-foreground"
-      aria-label="Toggle theme"
-    >
-      {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-    </button>
-  )
-}
 
 // Helper component for navigation links
 const NavLink = ({ href, icon: Icon, label }: { href: string; icon: React.ComponentType<{ className?: string }>; label: string }) => (
@@ -58,29 +20,6 @@ const NavLink = ({ href, icon: Icon, label }: { href: string; icon: React.Compon
     <span>{label}</span>
   </Link>
 )
-
-// Simple Theme Toggle for Mobile
-const MobileThemeToggle = () => {
-  const { theme, setTheme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => setMounted(true), [])
-
-  if (!mounted) return <div className="w-9 h-9" />
-
-  const isDark = (theme === 'dark' || resolvedTheme === 'dark')
-
-  return (
-    <button
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-foreground/5 transition-colors text-foreground/70 hover:text-foreground"
-      aria-label="Toggle theme"
-    >
-      {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-    </button>
-  )
-}
-
 
 const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { logo?: React.ReactNode }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -119,40 +58,43 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
             {/* Background & Lines Layer */}
             <div className="absolute inset-0 bg-white dark:bg-black">
               <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none">
-<<<<<<< Updated upstream
-=======
-                {/* To adjust these lines: 
-                    - y1/y2: vertical position (current: 63.5 and 60.5)
-                    - strokeOpacity: line visibility (current: 0.2)
-                    - strokeWidth: line thickness (current: 0.5)
-                */}
->>>>>>> Stashed changes
                 <line x1="0" y1="63.5" x2="100%" y2="63.5" stroke="currentColor" strokeOpacity={0.2} strokeWidth={0.5} className="text-foreground" />
                 <line x1="0" y1="60.5" x2="100%" y2="60.5" stroke="currentColor" strokeOpacity={0.2} strokeWidth={0.5} className="text-foreground" />
               </svg>
             </div>
             {/* Content Layer */}
-            <div className="relative w-full h-full flex items-end justify-between pb-2 px-4 md:px-8">
+            <div className="relative w-full h-full flex items-center justify-between pb-0 px-4 md:px-8">
 
 
 
-<<<<<<< Updated upstream
-              {/* Desktop Logo - centered */}
-              <div className="hidden md:flex shrink-0 items-center justify-center translate-x-2">
-                {props.logo || (
-                  <Link href="/" className="transition-opacity hover:opacity-80">
-                    <img
-                      src="/logo/bg-less.png"
-                      alt="Logo"
-                      className="h-8 w-auto dark:invert rotate-180"
-                    />
-                  </Link>
-                )}
-=======
-              {/* Desktop Logo - Left Aligned */}
-              <div className="hidden md:flex shrink-0 items-center translate-y-[-2px]">
-                <SidebarLogo />
->>>>>>> Stashed changes
+              {/* Desktop Logo */}
+              <div className="hidden md:flex shrink-0 items-center justify-start h-full">
+                <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+                  <img
+                    src="/logo.png"
+                    alt="Logo"
+                    className="h-8 w-auto"
+                  />
+                  <span className="text-xl font-bold tracking-tight text-foreground leading-none mb-0.5">stack</span>
+                </Link>
+              </div>
+
+              {/* Desktop Actions */}
+              <div className="hidden md:flex items-center gap-4">
+                <Button variant="ghost" size="sm">
+                  Login
+                </Button>
+                <Button size="sm">
+                  Getting Started
+                </Button>
+                <Link
+                  href="https://github.com/rishnudk/Stack"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground/70 hover:text-foreground transition-colors"
+                >
+                  <Github className="w-5 h-5" />
+                </Link>
               </div>
 
               {/* Mobile Menu Button (Left) */}
@@ -164,63 +106,29 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
                 {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
-<<<<<<< Updated upstream
               {/* Logo (Center) - Mobile */}
-              <div className="md:hidden flex-1 flex justify-center shrink-0 mx-2 md:mx-4 mt-1">
-                {props.logo || (
-                  <Link href="/" className="transition-opacity hover:opacity-80">
-                    <img
-                      src="/logo/bg-less.png"
-                      alt="Logo"
-                      className="h-8 w-auto dark:invert"
-                    />
-                  </Link>
-                )}
+              <div className="md:hidden flex-1 flex justify-center shrink-0 mx-2 md:mx-4">
+                <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+                  <img
+                    src="/logo.png"
+                    alt="Logo"
+                    className="h-8 w-auto"
+                  />
+                  <span className="text-xl font-bold tracking-tight text-foreground leading-none">stack</span>
+                </Link>
               </div>
 
-
-
-=======
-              {/* Logo - Mobile */}
-              <div className="md:hidden flex-1 flex justify-center shrink-0 mx-2 md:mx-4 mt-1">
-                <SidebarLogo />
-              </div>              {/* Desktop Right Actions */}
-              <div className="hidden md:flex items-center gap-6 mb-1">
+              {/* Mobile Right Actions */}
+              <div className="md:hidden flex items-center gap-3 mb-1">
                 <Link
-                  href="https://github.com"
+                  href="https://github.com/rishnudk/Stack"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-foreground/70 hover:text-foreground transition-colors"
                 >
                   <Github className="w-5 h-5" />
                 </Link>
-
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors"
-                >
-                  Login
-                </Link>
-
-                <Link
-                  href="/signup"
-                  className="px-4 py-1.5 bg-foreground text-background rounded-full text-sm font-medium hover:opacity-90 transition-opacity"
-                >
-                  Getting Started
-                </Link>
-
-                <ThemeToggle />
               </div>
-
->>>>>>> Stashed changes
-              {/* Mobile Right Actions */}
-              <div className="md:hidden flex items-center gap-2 mb-1">
-                <MobileThemeToggle />
-              </div>
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
             </div>
           </div>
 
