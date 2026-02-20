@@ -21,7 +21,11 @@ function FloatingPaths({ position }: { position: number }) {
                 viewBox="0 0 696 316"
                 fill="none"
             >
+<<<<<<< Updated upstream
                 <title>Background Paths</title>
+=======
+                <title>Where Developer</title>
+>>>>>>> Stashed changes
                 {paths.map((path) => (
                     <motion.path
                         key={path.id}
@@ -48,9 +52,17 @@ function FloatingPaths({ position }: { position: number }) {
 }
 
 export function BackgroundPaths({
+<<<<<<< Updated upstream
     title = "Background Paths",
 }: {
     title?: string;
+=======
+    title = "Where Developers",
+    subtitle,
+}: {
+    title?: string;
+    subtitle?: React.ReactNode;
+>>>>>>> Stashed changes
 }) {
     const words = title.split(" ");
 
@@ -98,6 +110,15 @@ export function BackgroundPaths({
                         ))}
                     </h1>
 
+<<<<<<< Updated upstream
+=======
+                    {subtitle && (
+                        <div className="text-5xl sm:text-7xl md:text-8xl font-bold tracking-tighter mb-12">
+                            {subtitle}
+                        </div>
+                    )}
+
+>>>>>>> Stashed changes
                     <div
                         className="inline-block group relative bg-gradient-to-b from-black/10 to-white/10 
                         dark:from-white/10 dark:to-black/10 p-px rounded-2xl backdrop-blur-lg 
@@ -112,7 +133,11 @@ export function BackgroundPaths({
                             hover:shadow-md dark:hover:shadow-neutral-800/50"
                         >
                             <span className="opacity-90 group-hover:opacity-100 transition-opacity">
+<<<<<<< Updated upstream
                                 Discover Excellence
+=======
+                                Discover More
+>>>>>>> Stashed changes
                             </span>
                             <span
                                 className="ml-3 opacity-70 group-hover:opacity-100 group-hover:translate-x-1.5 
