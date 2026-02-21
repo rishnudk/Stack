@@ -1,6 +1,6 @@
 import Hero from "./landing/Hero";
 import Navbar from "./landing/Navbar";
-import { BentoSection } from "@/components/landing/BentoSection";
+import { BentoSection } from "app/landing/BentoSection";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
