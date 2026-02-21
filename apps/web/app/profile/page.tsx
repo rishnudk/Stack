@@ -14,7 +14,7 @@ export default async function ProfilePage({ searchParams }: Props) {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/auth/signin");
+    redirect("/signin");
   }
 
   const targetUserId = searchParams.userId || session.user.id;

@@ -135,38 +135,38 @@ export default function SignupClient() {
                 </div>
 
                 {/* SOCIAL ICON BUTTONS (HORIZONTAL) */}
-                       <div className="flex flex-wrap items-center justify-center gap-4">
-               
-                         <button
-                           onClick={() => handleSignIn("google")}
-                           disabled={isLoading !== null}
-                           className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition-all shadow-sm disabled:opacity-50"
-                         >
-                           <FcGoogle size={28} />
-                         </button>
-               
-                         <button
-                           onClick={() => handleSignIn("github")}
-                           disabled={isLoading !== null}
-                           className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition-all shadow-sm disabled:opacity-50"
-                         >
-                           <FaGithub size={28} className="text-white" />
-                         </button>
-               
-                         <button
-                           onClick={() => handleSignIn("linkedin")}
-                           disabled={isLoading !== null}
-                           className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition-all shadow-sm disabled:opacity-50"
-                         >
-                           <FaLinkedin size={28} className="text-blue-500" />
-                         </button>
-                         </div>
-               
+                <div className="flex flex-wrap items-center justify-center gap-4">
+
+                    <button
+                        onClick={() => handleSignIn("google")}
+                        disabled={isLoading !== null}
+                        className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition-all shadow-sm disabled:opacity-50"
+                    >
+                        <FcGoogle size={28} />
+                    </button>
+
+                    <button
+                        onClick={() => handleSignIn("github")}
+                        disabled={isLoading !== null}
+                        className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition-all shadow-sm disabled:opacity-50"
+                    >
+                        <FaGithub size={28} className="text-white" />
+                    </button>
+
+                    <button
+                        onClick={() => handleSignIn("linkedin")}
+                        disabled={isLoading !== null}
+                        className="w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center rounded-xl bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition-all shadow-sm disabled:opacity-50"
+                    >
+                        <FaLinkedin size={28} className="text-blue-500" />
+                    </button>
+                </div>
+
 
                 {/* Sign In Link */}
                 <p className="text-center text-neutral-500 text-sm mt-6">
                     Already have an account?{" "}
-                    <a href="/auth/signin" className="text-blue-400 hover:underline">
+                    <a href="/signin" className="text-blue-400 hover:underline">
                         Sign in
                     </a>
                 </p>

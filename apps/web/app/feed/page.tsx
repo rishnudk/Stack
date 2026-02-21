@@ -7,7 +7,7 @@ export default async function FeedPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/signin");
   }
 
   return (

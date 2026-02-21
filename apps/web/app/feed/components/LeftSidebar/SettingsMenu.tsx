@@ -44,7 +44,7 @@ export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChang
   }, [isOpen, onOpenChange]);
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: "/auth/signin" });
+    await signOut({ callbackUrl: "/signin" });
   };
 
   const menuItems = [

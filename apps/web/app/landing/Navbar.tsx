@@ -81,11 +81,11 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
 
               {/* Desktop Actions */}
               <div className="hidden md:flex items-center gap-4">
-                <Button variant="ghost" size="sm">
-                  Login
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/signin">Login</Link>
                 </Button>
-                <Button size="sm">
-                  Getting Started
+                <Button size="sm" asChild>
+                  <Link href="/signup">Getting Started</Link>
                 </Button>
                 <Link
                   href="https://github.com/rishnudk/Stack"

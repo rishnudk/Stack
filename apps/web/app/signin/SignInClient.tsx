@@ -124,7 +124,7 @@ export default function SignInClient() {
         {/* SIGN UP LINK — MUST BE OUTSIDE BUTTON ROW */}
         <p className="text-center text-neutral-500 text-sm mt-6">
           Don’t have an account?{" "}
-          <a href="/auth/signup" className="text-blue-400 hover:underline">
+          <a href="/signup" className="text-blue-400 hover:underline">
             Sign up
           </a>
         </p>
