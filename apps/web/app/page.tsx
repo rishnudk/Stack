@@ -5,6 +5,7 @@ import { TestimonialsCard } from "@/components/ui/testimonials-card";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import FlowingMenu from "@/components/ui/FlowingMenu";
 
 const testimonials = [
   {
@@ -27,6 +28,13 @@ const testimonials = [
   },
 ];
 
+const demoItems = [
+  { link: '#', text: 'Mojave', image: 'https://picsum.photos/600/400?random=1' },
+  { link: '#', text: 'Sonoma', image: 'https://picsum.photos/600/400?random=2' },
+  { link: '#', text: 'Monterey', image: 'https://picsum.photos/600/400?random=3' },
+  { link: '#', text: 'Sequoia', image: 'https://picsum.photos/600/400?random=4' }
+];
+
 export default async function LandingPage() {
   const session = await getServerSession(authOptions);
 
@@ -46,6 +54,17 @@ export default async function LandingPage() {
         </h2>
         <TestimonialsCard items={testimonials} width={500} autoPlay={true} />
       </div>
+      <div style={{ height: '600px', position: 'relative' }}>
+        <FlowingMenu items={demoItems}
+          speed={15}
+          textColor="#ffffff"
+          bgColor="#060010"
+          marqueeBgColor="#ffffff"
+          marqueeTextColor="#060010"
+          borderColor="#ffffff"
+        />
+      </div>
     </div>
   );
 }
+
