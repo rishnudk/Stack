@@ -6,9 +6,12 @@ export const postRouter = router({
   createPost: protectedProcedure
     .input(
       z.object({
-        content: z.string().min(1),
-        images: z.array(z.string()).default([]), // S3 URLs
-        groupId: z.string().optional(), // Optional group ID for group posts
+        content: z.string(),
+        images: z.array(z.string()).default([]),
+        groupId: z.string().optional(),
+      }).refine(data => data.content.trim().length > 0 || data.images.length > 0, {
+        message: "Post must have either content or at least one image",
+        path: ["content"]
       })
     )
     .mutation(async ({ ctx, input }) => {
