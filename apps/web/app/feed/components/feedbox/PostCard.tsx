@@ -85,7 +85,7 @@ export function PostCard({
               {!isExpanded && !isDetailView && isLongText && (
                 <button
                   onClick={() => setIsExpanded(true)}
-                  className="text-blue-500 hover:text-blue-400 text-sm mt-1"
+                  className="text-grey-300 hover:text-blue-400 text-sm mt-1"
                 >
                   ...more
                 </button>
