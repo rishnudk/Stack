@@ -1,13 +1,10 @@
 'use client'
 
 import React from 'react'
-import { Button } from '@repo/ui/button'
-import { Card, CardContent } from '@repo/ui/card'
-import { Separator } from '@repo/ui/separator'
 
 
 export function Navigation({ activeTab, onTabChange }: { activeTab: string, onTabChange: (tab: string) => void }) {
-  const tabs = ["For you", "Following", "Startup Community", "Groups"];
+  const tabs = ["For you", "Following", "Groups"];
 
   return (
     <nav className="flex justify-around border-b border-neutral-800 bg-black text-white sticky top-0 z-10">
