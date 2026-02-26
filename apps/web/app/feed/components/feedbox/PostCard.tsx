@@ -83,12 +83,14 @@ export function PostCard({
                 {text}
               </p>
               {!isExpanded && !isDetailView && isLongText && (
-                <button
-                  onClick={() => setIsExpanded(true)}
-                  className="text-grey-300 hover:text-blue-400 text-sm mt-1"
-                >
-                  ...more
-                </button>
+                <div className="flex">
+                  <button
+                    onClick={() => setIsExpanded(true)}
+                    className="text-neutral-400 hover:text-blue-800 text-sm mt-1"
+                  >
+                    ...more
+                  </button>
+                </div>
               )}
             </div>
           </div>
