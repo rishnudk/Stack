@@ -4,8 +4,10 @@ import { Ellipsis, Heart, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PostDetailView } from "./PostDetailView";
-
-
+import { StackLogos } from "./StackLogos";
+import { PostMenu } from "./PostMenu";
+import { useSession } from "next-auth/react";
+import { trpc } from "@/utils/trpc";
 export function PostCard({
   name,
   username,
@@ -18,6 +20,8 @@ export function PostCard({
   isDetailView = false,
   avatarUrl,
   userId,
+  skills = [],
+  isSaved: initialIsSaved = false,
 }: {
   name: string;
   username: string;
@@ -30,11 +34,18 @@ export function PostCard({
   isDetailView?: boolean;
   avatarUrl?: string;
   userId?: string;
+  skills?: string[];
+  isSaved?: boolean;
 }) {
+  const { data: session } = useSession();
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isSaved, setIsSaved] = useState(initialIsSaved);
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  const isOwner = session?.user?.id === userId;
 
   const handleLike = () => {
     if (isLiked) {
@@ -59,6 +70,8 @@ export function PostCard({
 
   const isLongText = text.length > 200; // Heuristic for long text
 
+  if (isDeleted) return null;
+
   return (
     <div className="flex flex-col border-b border-neutral-800 bg-black text-white p-4">
       <div className="flex justify-between items-start">
@@ -72,9 +85,13 @@ export function PostCard({
             onClick={handleProfileClick}
           />
           <div className="flex-1">
-            <p onClick={handleProfileClick} className="font-semibold cursor-pointer">
-              {name} <span className="text-neutral-500">@{username} · {time}</span>
-            </p>
+            <div className="flex items-center gap-1">
+              <p onClick={handleProfileClick} className="font-semibold cursor-pointer hover:underline flex items-center">
+                {name}
+              </p>
+              <StackLogos skills={skills} isOwnPost={isOwner} />
+              <span className="text-neutral-500 text-sm ml-1">· {time}</span>
+            </div>
             <div className="mt-1">
               <p
                 className={`text-neutral-200 whitespace-pre-wrap ${!isExpanded && !isDetailView && isLongText ? "line-clamp-3" : ""
@@ -95,7 +112,15 @@ export function PostCard({
             </div>
           </div>
         </div>
-        <Ellipsis className="text-neutral-400 shrink-0 ml-2" size={18} />
+        {postId && (
+          <PostMenu
+            postId={postId}
+            isSaved={isSaved}
+            isOwner={isOwner}
+            onSaveToggle={setIsSaved}
+            onDelete={() => setIsDeleted(true)}
+          />
+        )}
       </div>
 
       {imageUrl && (
@@ -115,8 +140,8 @@ export function PostCard({
             <Heart
               size={18}
               className={`transition-all ${isLiked
-                  ? "fill-red-500 text-red-500"
-                  : "text-neutral-400 group-hover:text-red-500"
+                ? "fill-red-500 text-red-500"
+                : "text-neutral-400 group-hover:text-red-500"
                 }`}
             />
             {likeCount > 0 && (

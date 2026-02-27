@@ -66,17 +66,19 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
       {/* Original Post */}
       <div className="border-b border-neutral-800">
         <PostCard
-          userId={post.author.id}
-          name={post.author.name || "Unknown"}
-          username={post.author.email?.split("@")[0] || "user"}
-          time={formatPostTime(new Date(post.createdAt))}
-          text={post.content}
-          imageUrl={post.images?.[0]}
-          postId={post.id}
-          likeCount={post.likes.length}
-          commentCount={post.comments.length}
+          userId={(post as any).author.id}
+          name={(post as any).author.name || "Unknown"}
+          username={(post as any).author.email?.split("@")[0] || "user"}
+          time={formatPostTime(new Date((post as any).createdAt))}
+          text={(post as any).content}
+          imageUrl={(post as any).images?.[0]}
+          postId={(post as any).id}
+          likeCount={(post as any).likes.length}
+          commentCount={(post as any).comments.length}
           isDetailView={true}
-          avatarUrl={post.author.avatarUrl || post.author.image || undefined}
+          avatarUrl={(post as any).author.avatarUrl || (post as any).author.image || undefined}
+          skills={(post as any).author.skills || []}
+          isSaved={(post as any).isSaved}
         />
       </div>
 

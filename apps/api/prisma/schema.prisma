@@ -46,6 +46,7 @@ model User {
   views             View[]
   groups            GroupMember[]
   groupMessages     GroupMessage[]
+  savedPosts        SavedPost[]
 }
 
 model Conversation {
@@ -106,6 +107,7 @@ model Post {
   likes     Like[]
   author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   group     Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  savedBy   SavedPost[]
 
   @@index([createdAt])
 }
@@ -190,6 +192,17 @@ model Like {
   createdAt DateTime @default(now())
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+}
+
+model SavedPost {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([postId, userId])
 }

@@ -45,20 +45,27 @@ export const postRouter = router({
               email: true,
               image: true,
               avatarUrl: true,
+              skills: true,
             },
           },
           likes: true,
           comments: true,
+          savedBy: {
+            where: { userId: ctx.session.user.id },
+            take: 1,
+          },
         },
       });
 
-      let nextCursor = null;
-      if (posts.length > input.limit) {
-        const nextItem = posts.pop();
-        nextCursor = nextItem!.id;
-      }
+      const nextCursor = posts.length > input.limit ? posts.pop()?.id : null;
 
-      return { posts, nextCursor };
+      return {
+        posts: posts.map((post) => ({
+          ...post,
+          isSaved: post.savedBy.length > 0,
+        })),
+        nextCursor,
+      };
     }),
 
   getPostById: protectedProcedure
@@ -74,6 +81,7 @@ export const postRouter = router({
               email: true,
               image: true,
               avatarUrl: true,
+              skills: true,
             },
           },
           likes: true,
@@ -82,10 +90,19 @@ export const postRouter = router({
               user: true,
             },
           },
+          savedBy: {
+            where: { userId: ctx.session.user.id },
+            take: 1,
+          },
         },
       });
 
-      return post;
+      if (!post) return null;
+
+      return {
+        ...post,
+        isSaved: post.savedBy.length > 0,
+      };
     }),
 
   // Get posts by user ID for profile page
@@ -103,14 +120,22 @@ export const postRouter = router({
               email: true,
               image: true,
               avatarUrl: true,
+              skills: true,
             },
           },
           likes: true,
           comments: true,
+          savedBy: {
+            where: { userId: ctx.session?.user?.id || "" },
+            take: 1,
+          },
         },
       });
 
-      return posts;
+      return posts.map((post) => ({
+        ...post,
+        isSaved: post.savedBy.length > 0,
+      }));
     }),
 
   deletePost: protectedProcedure
@@ -134,5 +159,36 @@ export const postRouter = router({
         where: { id: input.id },
         data: { content: input.content },
       });
+    }),
+
+  toggleSavePost: protectedProcedure
+    .input(z.object({ postId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+      const existingSave = await ctx.prisma.savedPost.findUnique({
+        where: {
+          postId_userId: {
+            postId: input.postId,
+            userId,
+          },
+        },
+      });
+
+      if (existingSave) {
+        await ctx.prisma.savedPost.delete({
+          where: {
+            id: existingSave.id,
+          },
+        });
+        return { isSaved: false };
+      }
+
+      await ctx.prisma.savedPost.create({
+        data: {
+          postId: input.postId,
+          userId,
+        },
+      });
+      return { isSaved: true };
     }),
 });
