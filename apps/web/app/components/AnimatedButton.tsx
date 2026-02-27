@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface AnimatedButtonProps {
@@ -11,7 +11,8 @@ interface AnimatedButtonProps {
 
 export default function AnimatedButton({ children, className, onClick }: AnimatedButtonProps) {
   return (
-    <motion.button
+    <LazyMotion features={domAnimation}>
+    <m.button
       onClick={onClick}
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
@@ -25,12 +26,13 @@ export default function AnimatedButton({ children, className, onClick }: Animate
         className
       )}
     >
-      <motion.span
+      <m.span
         className="absolute inset-0 rounded-full opacity-0 bg-white/10 dark:bg-black/10"
         whileHover={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
       />
       {children}
-    </motion.button>
+    </m.button>
+    </LazyMotion>
   );
 }

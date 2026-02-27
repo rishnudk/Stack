@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useMemo, useCallback, memo } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 interface FlipFadeTextProps {
@@ -24,7 +24,7 @@ const Letter = memo(function Letter({
     letterDuration: number
 }) {
     return (
-        <motion.span
+        <m.span
             style={{ transformStyle: "preserve-3d" }}
             variants={{
                 initial: {
@@ -57,7 +57,7 @@ const Letter = memo(function Letter({
             className="inline-block"
         >
             {char === " " ? "\u00A0" : char}
-        </motion.span>
+        </m.span>
     )
 })
 
@@ -77,7 +77,7 @@ const Word = memo(function Word({
     const letters = useMemo(() => text.split(""), [text])
 
     return (
-        <motion.div
+        <m.div
             className={cn(
                 "flex gap-[0.1em] text-4xl md:text-6xl font-bold uppercase tracking-wider text-neutral-800 dark:text-neutral-100",
                 textClassName
@@ -108,7 +108,7 @@ const Word = memo(function Word({
                     letterDuration={letterDuration}
                 />
             ))}
-        </motion.div>
+        </m.div>
     )
 })
 
@@ -135,20 +135,22 @@ export function FlipFadeText({
     const currentWord = useMemo(() => words[index], [words, index])
 
     return (
-        <div className={cn("flex items-center justify-center min-h-[100px]", className)}>
-            <div className="relative flex items-center justify-center" style={{ perspective: "1000px" }}>
-                <AnimatePresence mode="wait">
-                    <Word
-                        key={currentWord}
-                        text={currentWord}
-                        staggerDelay={staggerDelay}
-                        exitStaggerDelay={exitStaggerDelay}
-                        letterDuration={letterDuration}
-                        textClassName={textClassName}
-                    />
-                </AnimatePresence>
+        <LazyMotion features={domAnimation}>
+            <div className={cn("flex items-center justify-center min-h-[100px]", className)}>
+                <div className="relative flex items-center justify-center" style={{ perspective: "1000px" }}>
+                    <AnimatePresence mode="wait">
+                        <Word
+                            key={currentWord}
+                            text={currentWord}
+                            staggerDelay={staggerDelay}
+                            exitStaggerDelay={exitStaggerDelay}
+                            letterDuration={letterDuration}
+                            textClassName={textClassName}
+                        />
+                    </AnimatePresence>
+                </div>
             </div>
-        </div>
+        </LazyMotion>
     )
 }
 

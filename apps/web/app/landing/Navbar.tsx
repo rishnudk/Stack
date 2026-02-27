@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import { Home, User, Calendar, CreditCard, Menu, X, Sun, Moon, Github } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { motion, AnimatePresence } from "framer-motion"
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useSound } from "@/hooks/use-sound"
 import { Button } from "@/components/ui/button"
@@ -156,19 +156,20 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
       </header>
 
       {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 z-40 bg-neutral-50 dark:bg-neutral-900 border-b border-foreground/5 p-4 md:hidden shadow-lg"
-          >
-
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <LazyMotion features={domAnimation}>
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <m.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-x-0 top-16 z-40 bg-neutral-50 dark:bg-neutral-900 border-b border-foreground/5 p-4 md:hidden shadow-lg"
+            >
+            </m.div>
+          )}
+        </AnimatePresence>
+      </LazyMotion>
 
     </>
   )

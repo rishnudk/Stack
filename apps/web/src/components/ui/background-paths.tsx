@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 function FloatingPaths({ position }: { position: number }) {
@@ -23,7 +23,7 @@ function FloatingPaths({ position }: { position: number }) {
             >
                 <title>Where Developer</title>
                 {paths.map((path) => (
-                    <motion.path
+                    <m.path
                         key={path.id}
                         d={path.d}
                         stroke="currentColor"
@@ -64,7 +64,8 @@ export function BackgroundPaths({
             </div>
 
             <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
-                <motion.div
+                <LazyMotion features={domAnimation}>
+                <m.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 2 }}
@@ -77,7 +78,7 @@ export function BackgroundPaths({
                                 className="inline-block mr-4 last:mr-0"
                             >
                                 {word.split("").map((letter, letterIndex) => (
-                                    <motion.span
+                                    <m.span
                                         key={`${wordIndex}-${letterIndex}`}
                                         initial={{ y: 100, opacity: 0 }}
                                         animate={{ y: 0, opacity: 1 }}
@@ -94,7 +95,7 @@ export function BackgroundPaths({
                                         dark:from-white dark:to-white/80"
                                     >
                                         {letter}
-                                    </motion.span>
+                                    </m.span>
                                 ))}
                             </span>
                         ))}
@@ -130,7 +131,8 @@ export function BackgroundPaths({
                             </span>
                         </Button>
                     </div>
-                </motion.div>
+                </m.div>
+                </LazyMotion>
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence} from "framer-motion";
 import { Bookmark, BookmarkCheck, Trash2, Ellipsis, AlertCircle } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
@@ -79,10 +79,10 @@ export function PostMenu({ postId, isSaved, isOwner, onDelete, onSaveToggle }: P
             >
                 <Ellipsis size={20} />
             </button>
-
+            <LazyMotion features={domAnimation}>
             <AnimatePresence>
                 {isOpen && (
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, scale: 0.95, y: -10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -132,9 +132,10 @@ export function PostMenu({ postId, isSaved, isOwner, onDelete, onSaveToggle }: P
                                 </>
                             )}
                         </div>
-                    </motion.div>
+                    </m.div>
                 )}
             </AnimatePresence>
+            </LazyMotion>
         </div>
     );
 }
