@@ -56,7 +56,8 @@ export const authOptions: NextAuthOptions = {
                     email: user.email,
                     name: user.name,
                     image: user.image,
-                };
+                    onboardingCompleted: user.onboardingCompleted,
+                } as any;
             }
         })
     ],
@@ -68,9 +69,22 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
+        async jwt({ token, user, trigger, session }) {
+            if (user) {
+                token.onboardingCompleted = (user as any).onboardingCompleted;
+            }
+
+            // If we're updating the session manually (e.g. after onboarding)
+            if (trigger === "update" && session?.onboardingCompleted !== undefined) {
+                token.onboardingCompleted = session.onboardingCompleted;
+            }
+
+            return token;
+        },
         async session({ session, token }) {
-            if (session.user && token.sub) {
+            if (session.user) {
                 session.user.id = token.sub as string;
+                (session.user as any).onboardingCompleted = token.onboardingCompleted;
             }
             return session;
         },

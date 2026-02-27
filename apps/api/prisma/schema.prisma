@@ -47,6 +47,7 @@ model User {
   groups            GroupMember[]
   groupMessages     GroupMessage[]
   savedPosts        SavedPost[]
+  onboardingCompleted Boolean @default(false)
 }
 
 model Conversation {

@@ -32,9 +32,10 @@ export const userRouter = router({
           image: true,
           headline: true,
           location: true,
-
+          onboardingCompleted: true,
         },
       });
+
 
       const profileViews = await ctx.prisma.view.count({ where: { userId: id } });
       const postImpressions = await ctx.prisma.impression.count({ where: { userId: id } });
@@ -205,5 +206,15 @@ export const userRouter = router({
     .input(z.object({ username: z.string() }))
     .query(async ({ input }) => {
       return await getPinnedRepos(input.username);
+    }),
+
+  // Mark onboarding as completed
+  completeOnboarding: protectedProcedure
+    .mutation(async ({ ctx }) => {
+      if (!ctx.session?.user?.id) throw new Error("Unauthorized");
+      return ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: { onboardingCompleted: true },
+      });
     }),
 });
