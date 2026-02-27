@@ -50,7 +50,7 @@ export default function ConversationList({
         <h2 className="font-semibold text-lg text-white">Messages</h2>
       </div>
 
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
+      <div className="flex-1 overflow-y-auto scrollbar-hide p-2 space-y-1">
         {conversations?.map((conv: any) => {
           const otherParticipant = conv.participants.find((p: any) => p.user.id !== sessionUserId)?.user;
           const lastMessage = conv.messages[0];
@@ -62,32 +62,32 @@ export default function ConversationList({
             <button
               key={conv.id}
               onClick={() => onSelect(conv.id)}
-              className={`w-full p-4 flex gap-4 hover:bg-neutral-800 transition-colors text-left ${selectedId === conv.id ? "bg-neutral-800" : ""
+              className={`w-full p-3 flex gap-3 hover:bg-neutral-800/60 transition-all rounded-xl text-left ${selectedId === conv.id ? "bg-neutral-800 shadow-sm" : ""
                 }`}
             >
-              <div className="relative">
-                <Avatar className="h-12 w-12 border border-neutral-700">
+              <div className="relative shrink-0">
+                <Avatar className="h-11 w-11 border border-neutral-700/50 shadow-sm">
                   <AvatarImage src={otherParticipant?.image || ""} />
                   <AvatarFallback>{otherParticipant?.name?.[0] || "?"}</AvatarFallback>
                 </Avatar>
 
                 {isOnline && (
-                  <span className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 border-2 border-neutral-900 rounded-full" />
+                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-neutral-900 rounded-full" />
                 )}
               </div>
 
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-baseline mb-1">
-                  <span className="font-medium text-white truncate">
+              <div className="flex-1 min-w-0 flex flex-col justify-center">
+                <div className="flex justify-between items-baseline mb-0.5">
+                  <span className="font-medium text-white text-[15px] truncate">
                     {otherParticipant?.name || "Unknown User"}
                   </span>
                   {lastMessage && (
-                    <span className="text-xs text-neutral-500">
+                    <span className="text-[11px] text-neutral-500 font-medium">
                       {format(new Date(lastMessage.createdAt), "HH:mm")}
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-neutral-400 truncate">
+                <p className={`text-[13px] truncate ${selectedId === conv.id ? 'text-neutral-300' : 'text-neutral-400'}`}>
                   {lastMessage?.content || "No messages yet"}
                 </p>
               </div>
