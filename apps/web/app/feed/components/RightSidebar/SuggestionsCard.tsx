@@ -96,11 +96,24 @@ export function SuggestionsCard() {
                       {user.headline}
                     </p>
                   )}
-                  {user.sharedSkillCount > 0 && (
-                    <p className="text-xs text-sky-400">
-                      {user.sharedSkillCount} shared skill{user.sharedSkillCount > 1 ? "s" : ""}
-                    </p>
-                  )}
+                  {/* Match reason badges */}
+                  <div className="flex flex-wrap gap-1 mt-0.5">
+                    {user.sharedSkillCount > 0 && (
+                      <span className="text-xs text-sky-400">
+                        {user.sharedSkillCount} shared skill{user.sharedSkillCount > 1 ? "s" : ""}
+                      </span>
+                    )}
+                    {user.sameCompany && user.company && (
+                      <span className="text-xs text-purple-400">
+                        · {user.company}
+                      </span>
+                    )}
+                    {user.sameLocation && user.location && (
+                      <span className="text-xs text-emerald-400">
+                        · {user.location}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </button>
 

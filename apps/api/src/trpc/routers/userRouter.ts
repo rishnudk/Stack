@@ -223,28 +223,54 @@ export const userRouter = router({
     .query(async ({ ctx }) => {
       const currentUserId = ctx.session.user.id;
 
-      // Get current user's skills and list of users they already follow
+      // Get current user's profile data and already-followed list
       const currentUser = await ctx.prisma.user.findUnique({
         where: { id: currentUserId },
         select: {
           skills: true,
+          company: true,
+          location: true,
           following: { select: { followingId: true } },
         },
       });
 
       if (!currentUser) return [];
 
-      const mySkills: string[] = currentUser.skills ?? [];
+      const mySkillsLower = (currentUser.skills ?? []).map((s) =>
+        s.toLowerCase()
+      );
+      const myCompanyLower = currentUser.company?.toLowerCase() ?? null;
+      const myLocationLower = currentUser.location?.toLowerCase() ?? null;
       const followingIds = currentUser.following.map((f) => f.followingId);
-
-      // Exclude self and already-followed users
       const excludedIds = [currentUserId, ...followingIds];
 
-      // Find candidates who share at least one skill
+      // Build OR conditions — a candidate is relevant if they share at least
+      // one skill, the same company, or the same location.
+      const orConditions: object[] = [];
+
+      if (mySkillsLower.length > 0) {
+        // Prisma hasSome is case-sensitive, so we match lowercased on the
+        // application side after fetching — but we still use hasSome with the
+        // original casing as a broad pre-filter to keep the query efficient.
+        orConditions.push({ skills: { hasSome: currentUser.skills } });
+      }
+      if (myCompanyLower) {
+        orConditions.push({
+          company: { equals: currentUser.company, mode: "insensitive" },
+        });
+      }
+      if (myLocationLower) {
+        orConditions.push({
+          location: { equals: currentUser.location, mode: "insensitive" },
+        });
+      }
+
+      if (orConditions.length === 0) return [];
+
       const candidates = await ctx.prisma.user.findMany({
         where: {
           id: { notIn: excludedIds },
-          skills: mySkills.length > 0 ? { hasSome: mySkills } : undefined,
+          OR: orConditions,
         },
         select: {
           id: true,
@@ -254,21 +280,48 @@ export const userRouter = router({
           avatarUrl: true,
           headline: true,
           skills: true,
+          company: true,
+          location: true,
         },
-        take: 20, // fetch more than needed so we can sort client-side by overlap
+        take: 30,
       });
 
-      // Sort by number of shared skills (descending) and return top 5
+      // Score each candidate (case-insensitive everywhere)
       const ranked = candidates
         .map((user) => {
-          const sharedSkills = (user.skills ?? []).filter((s) =>
-            mySkills.includes(s)
+          const theirSkillsLower = (user.skills ?? []).map((s) =>
+            s.toLowerCase()
           );
-          return { ...user, sharedSkillCount: sharedSkills.length };
+          const sharedSkills = theirSkillsLower.filter((s) =>
+            mySkillsLower.includes(s)
+          );
+
+          const sameCompany =
+            myCompanyLower !== null &&
+            user.company?.toLowerCase() === myCompanyLower;
+
+          const sameLocation =
+            myLocationLower !== null &&
+            user.location?.toLowerCase() === myLocationLower;
+
+          // Weighted score: skills +2 each, company +3, location +2
+          const score =
+            sharedSkills.length * 2 +
+            (sameCompany ? 3 : 0) +
+            (sameLocation ? 2 : 0);
+
+          return {
+            ...user,
+            sharedSkillCount: sharedSkills.length,
+            sameCompany,
+            sameLocation,
+            score,
+          };
         })
-        .sort((a, b) => b.sharedSkillCount - a.sharedSkillCount)
+        .sort((a, b) => b.score - a.score)
         .slice(0, 5);
 
       return ranked;
     }),
 });
+

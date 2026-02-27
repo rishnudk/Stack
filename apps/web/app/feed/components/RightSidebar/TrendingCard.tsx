@@ -1,15 +1,44 @@
 "use client";
 
+import { trpc } from "@/utils/trpc";
+
 export function TrendingCard() {
-  const trends = [
-    { topic: "React Conf", posts: "12.3K" },
-    { topic: "Next.js 15 Release", posts: "8.9K" },
-    { topic: "TypeScript 5.6", posts: "4.2K" },
-  ];
+  const { data: trends = [], isLoading } = trpc.posts.getTrending.useQuery(
+    undefined,
+    { staleTime: 5 * 60 * 1000 } // re-fetch at most every 5 minutes
+  );
+
+  if (isLoading) {
+    return (
+      <div className="bg-neutral-900 rounded-2xl p-4 text-white border border-neutral-800">
+        <h3 className="font-bold text-lg mb-3">What&apos;s happening</h3>
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="animate-pulse space-y-1 p-2">
+              <div className="h-2 w-20 rounded bg-neutral-700" />
+              <div className="h-3 w-32 rounded bg-neutral-700" />
+              <div className="h-2 w-16 rounded bg-neutral-700" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (trends.length === 0) {
+    return (
+      <div className="bg-neutral-900 rounded-2xl p-4 text-white border border-neutral-800">
+        <h3 className="font-bold text-lg mb-3">What&apos;s happening</h3>
+        <p className="text-sm text-neutral-500">
+          No trending topics yet. Start using hashtags in your posts!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-neutral-900 rounded-2xl p-4 text-white border border-neutral-800">
-      <h3 className="font-bold text-lg mb-3">What’s happening</h3>
+      <h3 className="font-bold text-lg mb-3">What&apos;s happening</h3>
 
       <div className="space-y-3">
         {trends.map((trend, idx) => (
@@ -23,10 +52,6 @@ export function TrendingCard() {
           </div>
         ))}
       </div>
-
-      <button className="text-sky-500 text-sm mt-4 hover:underline">
-        Show more
-      </button>
     </div>
   );
 }

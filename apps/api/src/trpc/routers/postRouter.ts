@@ -161,6 +161,57 @@ export const postRouter = router({
       });
     }),
 
+  // Trending hashtags derived from recent post content
+  getTrending: publicProcedure.query(async ({ ctx }) => {
+    const since = new Date();
+    since.setDate(since.getDate() - 7); // look-back window: 7 days
+
+    const recentPosts = await ctx.prisma.post.findMany({
+      where: { createdAt: { gte: since } },
+      select: { content: true, likes: { select: { id: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+    });
+
+    // Tally hashtags
+    const tagMap = new Map<string, { count: number; likeWeight: number }>();
+    const hashtagRegex = /#([\w]+)/g;
+
+    for (const post of recentPosts) {
+      const tags = [...post.content.matchAll(hashtagRegex)].map((m) =>
+        m[1]!.toLowerCase()
+      );
+      const likeBoost = post.likes.length * 0.5;
+
+      for (const tag of new Set(tags)) {
+        const prev = tagMap.get(tag) ?? { count: 0, likeWeight: 0 };
+        tagMap.set(tag, {
+          count: prev.count + 1,
+          likeWeight: prev.likeWeight + likeBoost,
+        });
+      }
+    }
+
+    // Sort by combined score and pick top 5
+    const sorted = [...tagMap.entries()]
+      .map(([tag, { count, likeWeight }]) => ({
+        topic: `#${tag}`,
+        score: count + likeWeight,
+        postCount: count,
+      }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+
+    // Format post count for display (e.g. 1200 → "1.2K")
+    const fmt = (n: number) =>
+      n >= 1000 ? `${(n / 1000).toFixed(1)}K` : String(n);
+
+    return sorted.map(({ topic, postCount }) => ({
+      topic,
+      posts: fmt(postCount),
+    }));
+  }),
+
   toggleSavePost: protectedProcedure
     .input(z.object({ postId: z.string() }))
     .mutation(async ({ ctx, input }) => {
