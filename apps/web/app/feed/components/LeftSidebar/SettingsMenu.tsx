@@ -7,17 +7,26 @@ import HireMeSettingsModal from "../../../profile/components/HireMeSettingsModal
 import { EditProfileModal } from "../../../profile/components/EditProfileModal";
 import { trpc } from "@/utils/trpc";
 
+type MenuVariant = "standalone" | "top" | "middle" | "bottom";
+
 interface SettingsMenuProps {
-  isGroupsDropdownOpen?: boolean;
   onOpenChange?: (isOpen: boolean) => void;
+  variant?: MenuVariant;
 }
 
-export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChange }: SettingsMenuProps) {
+export default function SettingsMenu({ onOpenChange, variant = "standalone" }: SettingsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isHireMeModalOpen, setIsHireMeModalOpen] = useState(false);
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const { data: session } = useSession();
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const variantStyles = {
+    standalone: "bg-neutral-900 border border-neutral-800 rounded-xl hover:bg-neutral-800",
+    top: "rounded-t-xl hover:bg-white/5",
+    middle: "rounded-none hover:bg-white/5",
+    bottom: "rounded-b-xl hover:bg-white/5",
+  };
 
   // Fetch user data for edit profile modal
   const { data: userData } = trpc.users.getUserById.useQuery(
@@ -90,11 +99,10 @@ export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChang
     <div
       className="relative transition-all duration-200"
       ref={menuRef}
-      style={{ marginTop: isGroupsDropdownOpen ? '280px' : '0px' }}
     >
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200 z-30">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200 z-50">
           {/* User Info Header */}
           <div className="p-3 border-b border-neutral-800 bg-neutral-800/50">
             <div className="flex items-center gap-3">
@@ -153,7 +161,7 @@ export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChang
           setIsOpen(newState);
           onOpenChange?.(newState);
         }}
-        className="w-full flex items-center justify-between px-4 py-3 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-xl transition-colors group"
+        className={`w-full flex items-center justify-between px-4 py-3 transition-colors group ${variantStyles[variant]}`}
       >
         <div className="flex items-center gap-3">
           <Settings size={20} className="text-neutral-400 group-hover:text-white transition-colors" />
@@ -175,24 +183,26 @@ export default function SettingsMenu({ isGroupsDropdownOpen = false, onOpenChang
       />
 
       {/* Edit Profile Modal */}
-      {userData && (
-        <EditProfileModal
-          isOpen={isEditProfileModalOpen}
-          onClose={() => setIsEditProfileModalOpen(false)}
-          currentUser={{
-            name: userData.name || "",
-            bio: userData.bio || "",
-            location: userData.location || "",
-            company: userData.company || "",
-            headline: userData.headline || "",
-            avatarUrl: userData.avatarUrl || userData.image || "",
-            leetcodeUsername: userData.leetcodeUsername || "",
-            githubUsername: userData.githubUsername || "",
-            skills: userData.skills || [],
-            socialLinks: (userData.socialLinks as any) || {},
-          } as any}
-        />
-      )}
-    </div>
+      {
+        userData && (
+          <EditProfileModal
+            isOpen={isEditProfileModalOpen}
+            onClose={() => setIsEditProfileModalOpen(false)}
+            currentUser={{
+              name: userData.name || "",
+              bio: userData.bio || "",
+              location: userData.location || "",
+              company: userData.company || "",
+              headline: userData.headline || "",
+              avatarUrl: userData.avatarUrl || userData.image || "",
+              leetcodeUsername: userData.leetcodeUsername || "",
+              githubUsername: userData.githubUsername || "",
+              skills: userData.skills || [],
+              socialLinks: (userData.socialLinks as any) || {},
+            } as any}
+          />
+        )
+      }
+    </div >
   );
 }

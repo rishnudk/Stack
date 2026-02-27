@@ -5,15 +5,25 @@ import { Users, Plus, Star, Trophy, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import CreateGroupModal from "./CreateGroupModal";
 
+type MenuVariant = "standalone" | "top" | "middle" | "bottom";
+
 interface GroupsMenuProps {
   onOpenChange?: (isOpen: boolean) => void;
+  variant?: MenuVariant;
 }
 
-export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
+export default function GroupsMenu({ onOpenChange, variant = "standalone" }: GroupsMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  const variantStyles = {
+    standalone: "bg-neutral-900 border border-neutral-800 rounded-xl hover:bg-neutral-800",
+    top: "rounded-t-xl hover:bg-white/5",
+    middle: "rounded-none hover:bg-white/5",
+    bottom: "rounded-b-xl hover:bg-white/5",
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -86,7 +96,7 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
   bg-neutral-900 border border-neutral-800
   rounded-xl shadow-lg
   animate-in fade-in slide-in-from-top-2
-  duration-200 z-20
+  duration-200 z-50
 ">
           <div className="p-2 border-b border-neutral-800">
             <button
@@ -150,7 +160,7 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
           setIsOpen(newState);
           onOpenChange?.(newState);
         }}
-        className="w-full flex items-center justify-between px-4 py-3 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 rounded-xl transition-colors group"
+        className={`w-full flex items-center justify-between px-4 py-3 transition-colors group ${variantStyles[variant]}`}
       >
         <div className="flex items-center gap-3">
           <Users size={20} className="text-neutral-400 group-hover:text-white transition-colors" />
@@ -172,6 +182,6 @@ export default function GroupsMenu({ onOpenChange }: GroupsMenuProps) {
         onSubmit={handleCreateGroup}
         isLoading={createGroupMutation.isPending}
       />
-    </div>
+    </div >
   );
 }
