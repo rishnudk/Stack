@@ -1,6 +1,5 @@
-"use client";
-
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { useEditProfile } from "../hooks/useEditProfile";
 import { BasicInfoSection } from "./edit-profile/BasicInfoSection";
@@ -45,11 +44,17 @@ export function EditProfileModal({ isOpen, onClose, currentUser, isOnboarding }:
     isSubmitting,
   } = useEditProfile(currentUser, isOnboarding, onClose);
 
-  if (!isOpen) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-neutral-900 rounded-2xl border border-neutral-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+      <div className="bg-neutral-900 rounded-2xl border border-neutral-800 w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide">
         <div className="sticky top-0 bg-neutral-900 border-b border-neutral-800 p-4 flex items-center justify-between z-10">
           <h2 className="text-xl font-bold text-white">
             {isOnboarding ? "Complete Your Profile" : "Edit Profile"}
@@ -114,6 +119,7 @@ export function EditProfileModal({ isOpen, onClose, currentUser, isOnboarding }:
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

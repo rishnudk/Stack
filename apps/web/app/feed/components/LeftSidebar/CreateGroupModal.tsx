@@ -1,5 +1,5 @@
-"use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 interface CreateGroupModalProps {
@@ -23,6 +23,11 @@ export default function CreateGroupModal({
     const [description, setDescription] = useState("");
     const [privacy, setPrivacy] = useState<"PUBLIC" | "PRIVATE">("PUBLIC");
     const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const validateForm = () => {
         const newErrors: { name?: string; description?: string } = {};
@@ -69,10 +74,10 @@ export default function CreateGroupModal({
         onClose();
     };
 
-    if (!isOpen) return null;
+    if (!isOpen || !mounted) return null;
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
             {/* Backdrop */}
             <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -95,7 +100,7 @@ export default function CreateGroupModal({
 
                 {/* Form - Scrollable */}
                 <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
-                    <div className="p-4 sm:p-6 space-y-5 overflow-y-auto flex-1">
+                    <div className="p-4 sm:p-6 space-y-5 overflow-y-auto flex-1 scrollbar-hide">
                         {/* Group Name */}
                         <div>
                             <label htmlFor="groupName" className="block text-sm font-medium text-neutral-300 mb-2">
@@ -217,6 +222,7 @@ export default function CreateGroupModal({
                     </div>
                 </form>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
