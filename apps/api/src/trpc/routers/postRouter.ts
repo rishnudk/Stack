@@ -15,7 +15,7 @@ export const postRouter = router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.prisma.post.create({
+      const post = await ctx.prisma.post.create({
         data: {
           content: input.content,
           images: input.images,
@@ -23,6 +23,23 @@ export const postRouter = router({
           groupId: input.groupId,
         },
       });
+
+      // Extract and track hashtags at write-time
+      const tags = [...input.content.matchAll(/#([\w]+)/g)].map((m) =>
+        m[1]!.toLowerCase()
+      );
+      for (const tag of new Set(tags)) {
+        const hashtag = await ctx.prisma.hashtag.upsert({
+          where: { tag },
+          create: { tag },
+          update: {},
+        });
+        await ctx.prisma.postHashtag.create({
+          data: { postId: post.id, hashtagId: hashtag.id },
+        });
+      }
+
+      return post;
     }),
 
   getPosts: protectedProcedure
@@ -161,56 +178,94 @@ export const postRouter = router({
       });
     }),
 
-  // Trending hashtags derived from recent post content
+  // Trending hashtags — efficient groupBy on the PostHashtag pivot
   getTrending: publicProcedure.query(async ({ ctx }) => {
     const since = new Date();
-    since.setDate(since.getDate() - 7); // look-back window: 7 days
+    since.setDate(since.getDate() - 7);
 
-    const recentPosts = await ctx.prisma.post.findMany({
-      where: { createdAt: { gte: since } },
-      select: { content: true, likes: { select: { id: true } } },
-      orderBy: { createdAt: "desc" },
-      take: 500,
-    });
-
-    // Tally hashtags
-    const tagMap = new Map<string, { count: number; likeWeight: number }>();
-    const hashtagRegex = /#([\w]+)/g;
-
-    for (const post of recentPosts) {
-      const tags = [...post.content.matchAll(hashtagRegex)].map((m) =>
-        m[1]!.toLowerCase()
-      );
-      const likeBoost = post.likes.length * 0.5;
-
-      for (const tag of new Set(tags)) {
-        const prev = tagMap.get(tag) ?? { count: 0, likeWeight: 0 };
-        tagMap.set(tag, {
-          count: prev.count + 1,
-          likeWeight: prev.likeWeight + likeBoost,
-        });
-      }
-    }
-
-    // Sort by combined score and pick top 5
-    const sorted = [...tagMap.entries()]
-      .map(([tag, { count, likeWeight }]) => ({
-        topic: `#${tag}`,
-        score: count + likeWeight,
-        postCount: count,
-      }))
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 5);
-
-    // Format post count for display (e.g. 1200 → "1.2K")
     const fmt = (n: number) =>
       n >= 1000 ? `${(n / 1000).toFixed(1)}K` : String(n);
 
-    return sorted.map(({ topic, postCount }) => ({
-      topic,
-      posts: fmt(postCount),
+    const rows = await ctx.prisma.postHashtag.groupBy({
+      by: ["hashtagId"],
+      _count: { postId: true },
+      where: { post: { createdAt: { gte: since } } },
+      orderBy: { _count: { postId: "desc" } },
+      take: 5,
+    });
+
+    if (rows.length === 0) return [];
+
+    const ids = rows.map((r) => r.hashtagId);
+    const hashtags = await ctx.prisma.hashtag.findMany({
+      where: { id: { in: ids } },
+    });
+    const tagById = new Map(hashtags.map((h) => [h.id, h.tag]));
+
+    return rows.map((r) => ({
+      topic: `#${tagById.get(r.hashtagId) ?? r.hashtagId}`,
+      posts: fmt(r._count.postId),
     }));
   }),
+
+  // Posts filtered by a specific hashtag (for /hashtag/[tag] page)
+  getPostsByHashtag: publicProcedure
+    .input(
+      z.object({
+        tag: z.string(),
+        cursor: z.string().nullish(),
+        limit: z.number().default(10),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const hashtag = await ctx.prisma.hashtag.findUnique({
+        where: { tag: input.tag.toLowerCase().replace(/^#/, "") },
+      });
+
+      if (!hashtag) return { posts: [], nextCursor: null };
+
+      const pivots = await ctx.prisma.postHashtag.findMany({
+        where: { hashtagId: hashtag.id },
+        select: { postId: true },
+      });
+      const postIds = pivots.map((p) => p.postId);
+
+      const posts = await ctx.prisma.post.findMany({
+        where: { id: { in: postIds } },
+        take: input.limit + 1,
+        cursor: input.cursor ? { id: input.cursor } : undefined,
+        orderBy: { createdAt: "desc" },
+        include: {
+          author: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+              avatarUrl: true,
+              skills: true,
+            },
+          },
+          likes: true,
+          comments: true,
+          savedBy: input.cursor
+            ? { where: { userId: ctx.session?.user?.id ?? "" }, take: 1 }
+            : ctx.session?.user?.id
+              ? { where: { userId: ctx.session.user.id }, take: 1 }
+              : false,
+        },
+      });
+
+      const nextCursor = posts.length > input.limit ? posts.pop()?.id : null;
+
+      return {
+        posts: posts.map((post) => ({
+          ...post,
+          isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
+        })),
+        nextCursor,
+      };
+    }),
 
   toggleSavePost: protectedProcedure
     .input(z.object({ postId: z.string() }))

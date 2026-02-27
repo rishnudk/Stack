@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { PostDetailView } from "./PostDetailView";
 import { StackLogos } from "./StackLogos";
 import { PostMenu } from "./PostMenu";
+import { PostContent } from "./PostContent";
 import { useSession } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
 export function PostCard({
@@ -97,7 +98,7 @@ export function PostCard({
                 className={`text-neutral-200 whitespace-pre-wrap ${!isExpanded && !isDetailView && isLongText ? "line-clamp-3" : ""
                   }`}
               >
-                {text}
+                <PostContent text={text} />
               </p>
               {!isExpanded && !isDetailView && isLongText && (
                 <div className="flex">
