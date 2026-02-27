@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/utils/trpc";
-import { PostCard } from "@/app/feed/components/feedbox/PostCard";
+import { PostCard } from "../../feed/components/feedbox/PostCard";
 import { formatPostTime } from "@/utils/formatTime";
 import { Hash } from "lucide-react";
 
