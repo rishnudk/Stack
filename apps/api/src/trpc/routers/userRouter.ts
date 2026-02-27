@@ -217,4 +217,58 @@ export const userRouter = router({
         data: { onboardingCompleted: true },
       });
     }),
+
+  // Skills-based user suggestions
+  getSuggestions: protectedProcedure
+    .query(async ({ ctx }) => {
+      const currentUserId = ctx.session.user.id;
+
+      // Get current user's skills and list of users they already follow
+      const currentUser = await ctx.prisma.user.findUnique({
+        where: { id: currentUserId },
+        select: {
+          skills: true,
+          following: { select: { followingId: true } },
+        },
+      });
+
+      if (!currentUser) return [];
+
+      const mySkills: string[] = currentUser.skills ?? [];
+      const followingIds = currentUser.following.map((f) => f.followingId);
+
+      // Exclude self and already-followed users
+      const excludedIds = [currentUserId, ...followingIds];
+
+      // Find candidates who share at least one skill
+      const candidates = await ctx.prisma.user.findMany({
+        where: {
+          id: { notIn: excludedIds },
+          skills: mySkills.length > 0 ? { hasSome: mySkills } : undefined,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          avatarUrl: true,
+          headline: true,
+          skills: true,
+        },
+        take: 20, // fetch more than needed so we can sort client-side by overlap
+      });
+
+      // Sort by number of shared skills (descending) and return top 5
+      const ranked = candidates
+        .map((user) => {
+          const sharedSkills = (user.skills ?? []).filter((s) =>
+            mySkills.includes(s)
+          );
+          return { ...user, sharedSkillCount: sharedSkills.length };
+        })
+        .sort((a, b) => b.sharedSkillCount - a.sharedSkillCount)
+        .slice(0, 5);
+
+      return ranked;
+    }),
 });
