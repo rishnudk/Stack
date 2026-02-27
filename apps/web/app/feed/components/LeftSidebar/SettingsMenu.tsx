@@ -100,11 +100,33 @@ export default function SettingsMenu({ onOpenChange, variant = "standalone" }: S
       className="relative transition-all duration-200"
       ref={menuRef}
     >
+      {/* Trigger Button */}
+      <button
+        onClick={() => {
+          const newState = !isOpen;
+          setIsOpen(newState);
+          onOpenChange?.(newState);
+        }}
+        className={`w-full flex items-center justify-between px-4 py-3 transition-colors group ${variantStyles[variant]}`}
+      >
+        <div className="flex items-center gap-3">
+          <Settings size={20} className="text-neutral-400 group-hover:text-white transition-colors" />
+          <span className="text-sm font-medium text-neutral-300 group-hover:text-white transition-colors">
+            Settings
+          </span>
+        </div>
+        <ChevronUp
+          size={16}
+          className={`text-neutral-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
+        />
+      </button>
+
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-neutral-900 border border-neutral-800 rounded-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200 z-50">
+        <div className="bg-black/20 border-t border-neutral-800/50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           {/* User Info Header */}
-          <div className="p-3 border-b border-neutral-800 bg-neutral-800/50">
+          <div className="p-3 border-b border-neutral-800/50 bg-neutral-800/30">
             <div className="flex items-center gap-3">
               <Image
                 src={session?.user?.image || "/profile.png"}
@@ -132,7 +154,7 @@ export default function SettingsMenu({ onOpenChange, variant = "standalone" }: S
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors"
                 >
                   <Icon size={18} />
                   <span>{item.label}</span>
@@ -141,10 +163,10 @@ export default function SettingsMenu({ onOpenChange, variant = "standalone" }: S
             })}
 
             {/* Logout */}
-            <div className="border-t border-neutral-800 mt-1 pt-1">
+            <div className="border-t border-neutral-800/50 mt-1 pt-1">
               <button
                 onClick={handleLogout}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400 hover:bg-neutral-800 hover:text-red-300 transition-colors"
+                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-400/90 hover:bg-white/5 hover:text-red-400 transition-colors"
               >
                 <LogOut size={18} />
                 <span>Logout</span>
@@ -154,54 +176,30 @@ export default function SettingsMenu({ onOpenChange, variant = "standalone" }: S
         </div>
       )}
 
-      {/* Trigger Button */}
-      <button
-        onClick={() => {
-          const newState = !isOpen;
-          setIsOpen(newState);
-          onOpenChange?.(newState);
-        }}
-        className={`w-full flex items-center justify-between px-4 py-3 transition-colors group ${variantStyles[variant]}`}
-      >
-        <div className="flex items-center gap-3">
-          <Settings size={20} className="text-neutral-400 group-hover:text-white transition-colors" />
-          <span className="text-sm font-medium text-neutral-300 group-hover:text-white transition-colors">
-            Settings
-          </span>
-        </div>
-        <ChevronUp
-          size={16}
-          className={`text-neutral-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-            }`}
-        />
-      </button>
-
       {/* Hire Me Settings Modal */}
       <HireMeSettingsModal
         isOpen={isHireMeModalOpen}
         onClose={() => setIsHireMeModalOpen(false)}
       />
 
-      {/* Edit Profile Modal */}
-      {
-        userData && (
-          <EditProfileModal
-            isOpen={isEditProfileModalOpen}
-            onClose={() => setIsEditProfileModalOpen(false)}
-            currentUser={{
-              name: userData.name || "",
-              bio: userData.bio || "",
-              location: userData.location || "",
-              company: userData.company || "",
-              headline: userData.headline || "",
-              avatarUrl: userData.avatarUrl || userData.image || "",
-              leetcodeUsername: userData.leetcodeUsername || "",
-              githubUsername: userData.githubUsername || "",
-              skills: userData.skills || [],
-              socialLinks: (userData.socialLinks as any) || {},
-            } as any}
-          />
-        )
+      {userData && (
+        <EditProfileModal
+          isOpen={isEditProfileModalOpen}
+          onClose={() => setIsEditProfileModalOpen(false)}
+          currentUser={{
+            name: userData.name || "",
+            bio: userData.bio || "",
+            location: userData.location || "",
+            company: userData.company || "",
+            headline: userData.headline || "",
+            avatarUrl: userData.avatarUrl || userData.image || "",
+            leetcodeUsername: userData.leetcodeUsername || "",
+            githubUsername: userData.githubUsername || "",
+            skills: userData.skills || [],
+            socialLinks: (userData.socialLinks as any) || {},
+          } as any}
+        />
+      )
       }
     </div >
   );

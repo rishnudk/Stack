@@ -87,73 +87,6 @@ export default function GroupsMenu({ onOpenChange, variant = "standalone" }: Gro
 
   return (
     <div className="relative" ref={menuRef}>
-      {isOpen && (
-        <div className="
-  max-h-60
-  overflow-y-auto
-  scrollbar-hide
-  absolute top-full left-0 right-0 mt-2
-  bg-neutral-900 border border-neutral-800
-  rounded-xl shadow-lg
-  animate-in fade-in slide-in-from-top-2
-  duration-200 z-50
-">
-          <div className="p-2 border-b border-neutral-800">
-            <button
-              onClick={handleOpenModal}
-              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
-            >
-              <Plus size={16} />
-              <span>Create Group</span>
-            </button>
-          </div>
-
-          <div className="py-2">
-            <div className="px-4 py-1 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
-              <Trophy size={12} />
-              Top Joined
-            </div>
-            {isLoadingTop ? (
-              <div className="px-4 py-2 text-sm text-neutral-500">Loading...</div>
-            ) : topGroups && topGroups.length > 0 ? (
-              topGroups.map((group: any) => (
-                <button
-                  key={group.id}
-                  onClick={() => handleGroupClick(group.id)}
-                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
-                >
-                  <span className="truncate">{group.name}</span>
-                </button>
-              ))
-            ) : (
-              <div className="px-4 py-2 text-sm text-neutral-500">No groups joined yet</div>
-            )}
-          </div>
-
-          <div className="py-2 border-t border-neutral-800">
-            <div className="px-4 py-1 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
-              <Star size={12} />
-              All Groups
-            </div>
-            {isLoadingAll ? (
-              <div className="px-4 py-2 text-sm text-neutral-500">Loading...</div>
-            ) : allGroups && allGroups.length > 0 ? (
-              allGroups.slice(0, 5).map((group: any) => (
-                <button
-                  key={`all-${group.id}`}
-                  onClick={() => handleGroupClick(group.id)}
-                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-300 hover:bg-neutral-800 hover:text-white transition-colors"
-                >
-                  <span className="truncate">{group.name}</span>
-                </button>
-              ))
-            ) : (
-              <div className="px-4 py-2 text-sm text-neutral-500">No groups available</div>
-            )}
-          </div>
-        </div>
-      )}
-
       <button
         onClick={() => {
           const newState = !isOpen;
@@ -174,6 +107,71 @@ export default function GroupsMenu({ onOpenChange, variant = "standalone" }: Gro
             }`}
         />
       </button>
+
+      {isOpen && (
+        <div className="
+          max-h-60
+          overflow-y-auto
+          scrollbar-hide
+          bg-black/20 border-t border-neutral-800/50
+          animate-in fade-in slide-in-from-top-2
+          duration-200
+        ">
+          <div className="p-2 border-b border-neutral-800/50">
+            <button
+              onClick={handleOpenModal}
+              className="w-full flex items-center gap-3 px-3 py-2 text-sm text-white bg-blue-600/90 hover:bg-blue-600 rounded-lg transition-colors font-medium"
+            >
+              <Plus size={16} />
+              <span>Create Group</span>
+            </button>
+          </div>
+
+          <div className="py-2">
+            <div className="px-4 py-1 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
+              <Trophy size={12} />
+              Top Joined
+            </div>
+            {isLoadingTop ? (
+              <div className="px-4 py-2 text-sm text-neutral-500">Loading...</div>
+            ) : topGroups && topGroups.length > 0 ? (
+              topGroups.map((group: any) => (
+                <button
+                  key={group.id}
+                  onClick={() => handleGroupClick(group.id)}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors text-left"
+                >
+                  <span className="truncate">{group.name}</span>
+                </button>
+              ))
+            ) : (
+              <div className="px-4 py-2 text-sm text-neutral-500">No groups joined yet</div>
+            )}
+          </div>
+
+          <div className="py-2 border-t border-neutral-800/50">
+            <div className="px-4 py-1 text-xs font-semibold text-neutral-500 uppercase tracking-wider flex items-center gap-2">
+              <Star size={12} />
+              All Groups
+            </div>
+            {isLoadingAll ? (
+              <div className="px-4 py-2 text-sm text-neutral-500">Loading...</div>
+            ) : allGroups && allGroups.length > 0 ? (
+              allGroups.slice(0, 5).map((group: any) => (
+                <button
+                  key={`all-${group.id}`}
+                  onClick={() => handleGroupClick(group.id)}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors text-left"
+                >
+                  <span className="truncate">{group.name}</span>
+                </button>
+              ))
+            ) : (
+              <div className="px-4 py-2 text-sm text-neutral-500">No groups available</div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Create Group Modal */}
       <CreateGroupModal
