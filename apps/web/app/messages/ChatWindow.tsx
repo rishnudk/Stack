@@ -53,13 +53,27 @@ export default function ChatWindow({
     const handleStopTyping = (data: { conversationId: string }) => {
       if (data.conversationId === conversationId) setIsOtherUserTyping(false);
     };
+    const handleNewMessage = (message: any) => {
+      if (message.conversationId === conversationId) {
+        setLiveMessages((prev) => {
+          // Prevent duplicates
+          if (prev.some(m => m.id === message.id)) return prev;
+          return [...prev, message];
+        });
+      }
+    };
+
+    socket.emit("join_conversation", conversationId);
 
     socket.on("user_typing", handleTyping);
     socket.on("stop_typing", handleStopTyping);
+    socket.on("new_message", handleNewMessage);
 
     return () => {
+      socket.emit("leave_conversation", conversationId);
       socket.off("user_typing", handleTyping);
       socket.off("stop_typing", handleStopTyping);
+      socket.off("new_message", handleNewMessage);
     };
   }, [socket, isConnected, conversationId]);
 

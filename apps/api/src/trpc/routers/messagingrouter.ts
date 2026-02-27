@@ -66,6 +66,11 @@ export const messagingRouter = router({
         }
       });
 
+      // Double check it's strictly a 1-on-1 between these two
+      if (existing && existing.participants.length === 2) {
+        return existing;
+      }
+
       if (existing) return existing;
 
       // Create new one
