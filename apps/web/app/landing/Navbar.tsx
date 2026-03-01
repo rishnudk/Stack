@@ -166,6 +166,20 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
               transition={{ duration: 0.2 }}
               className="fixed inset-x-0 top-16 z-40 bg-neutral-50 dark:bg-neutral-900 border-b border-foreground/5 p-4 md:hidden shadow-lg"
             >
+              <nav className="flex flex-col gap-4">
+                <NavLink href="/" icon={Home} label="Home" />
+                <NavLink href="/signin" icon={User} label="Login" />
+                <NavLink href="/signup" icon={CreditCard} label="Get Started" />
+                <a
+                  href="https://github.com/rishnudk/Stack"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
+                >
+                  <Github className="w-5 h-5" />
+                  <span>GitHub</span>
+                </a>
+              </nav>
             </m.div>
           )}
         </AnimatePresence>
