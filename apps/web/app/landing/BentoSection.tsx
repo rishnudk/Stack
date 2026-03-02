@@ -18,7 +18,7 @@ const features = [
         cta: "Learn more",
         background: (
             <Image
-                src="/images/bento/1.png"
+                src="/images/bento/6.png"
                 alt=""
                 fill
                 className="absolute -top-20 -right-20  object-cover"
@@ -74,7 +74,7 @@ const features = [
         href: "/",
         cta: "Learn more",
         background: (<Image
-            src="/images/bento/5.png"
+            src="/images/bento/7.png"
             alt=""
             fill
             className="absolute -top-20 -right-20  object-cover"
