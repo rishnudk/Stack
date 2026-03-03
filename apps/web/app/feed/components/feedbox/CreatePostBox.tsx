@@ -2,7 +2,7 @@
 import type React from "react";
 import { useState } from "react";
 import { Button } from "@repo/ui/button";
-import { Image, Smile, Link, Camera } from "lucide-react";
+import { Image, Smile} from "lucide-react";
 import ImageNext from "next/image";
 import { trpc } from '@/utils/trpc';
 import { toast } from 'sonner';
@@ -121,8 +121,6 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
         <div className="flex gap-4 text-neutral-400">
           <Image size={18} />
           <Smile size={18} />
-          <Link size={18} />
-          <Camera size={18} />
         </div>
         <Button
           onClick={() => handleSubmit()}
