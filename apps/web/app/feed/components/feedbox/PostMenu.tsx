@@ -1,6 +1,6 @@
 "use client";
 
-import { LazyMotion, domAnimation, m, AnimatePresence} from "framer-motion";
+import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion";
 import { Bookmark, BookmarkCheck, Trash2, Ellipsis, AlertCircle } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { trpc } from "@/utils/trpc";
@@ -62,7 +62,7 @@ export function PostMenu({ postId, isSaved, isOwner, onDelete, onSaveToggle }: P
     const handleDeleteClick = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (showDeleteConfirm) {
-            deletePost.mutate({ id: postId });
+            deletePost.mutate({ postId });
         } else {
             setShowDeleteConfirm(true);
         }
@@ -80,61 +80,61 @@ export function PostMenu({ postId, isSaved, isOwner, onDelete, onSaveToggle }: P
                 <Ellipsis size={20} />
             </button>
             <LazyMotion features={domAnimation}>
-            <AnimatePresence>
-                {isOpen && (
-                    <m.div
-                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                        className="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl z-50 overflow-hidden"
-                    >
-                        <div className="py-1">
-                            {/* Save Action */}
-                            <button
-                                onClick={handleSaveClick}
-                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-neutral-800 transition-colors text-left"
-                            >
-                                {isSaved ? (
+                <AnimatePresence>
+                    {isOpen && (
+                        <m.div
+                            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                            className="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl z-50 overflow-hidden"
+                        >
+                            <div className="py-1">
+                                {/* Save Action */}
+                                <button
+                                    onClick={handleSaveClick}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-neutral-800 transition-colors text-left"
+                                >
+                                    {isSaved ? (
+                                        <>
+                                            <BookmarkCheck size={18} className="text-blue-500" />
+                                            <span>Unsave Post</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Bookmark size={18} />
+                                            <span>Save Post</span>
+                                        </>
+                                    )}
+                                </button>
+
+                                {isOwner && (
                                     <>
-                                        <BookmarkCheck size={18} className="text-blue-500" />
-                                        <span>Unsave Post</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <Bookmark size={18} />
-                                        <span>Save Post</span>
+                                        <div className="h-px bg-neutral-800 my-1 mx-2" />
+
+                                        {/* Delete Action */}
+                                        <button
+                                            onClick={handleDeleteClick}
+                                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-left ${showDeleteConfirm ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "hover:bg-neutral-800 text-red-400"
+                                                }`}
+                                        >
+                                            {showDeleteConfirm ? (
+                                                <>
+                                                    <AlertCircle size={18} />
+                                                    <span className="font-medium">Confirm Delete?</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Trash2 size={18} />
+                                                    <span>Delete Post</span>
+                                                </>
+                                            )}
+                                        </button>
                                     </>
                                 )}
-                            </button>
-
-                            {isOwner && (
-                                <>
-                                    <div className="h-px bg-neutral-800 my-1 mx-2" />
-
-                                    {/* Delete Action */}
-                                    <button
-                                        onClick={handleDeleteClick}
-                                        className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-left ${showDeleteConfirm ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "hover:bg-neutral-800 text-red-400"
-                                            }`}
-                                    >
-                                        {showDeleteConfirm ? (
-                                            <>
-                                                <AlertCircle size={18} />
-                                                <span className="font-medium">Confirm Delete?</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Trash2 size={18} />
-                                                <span>Delete Post</span>
-                                            </>
-                                        )}
-                                    </button>
-                                </>
-                            )}
-                        </div>
-                    </m.div>
-                )}
-            </AnimatePresence>
+                            </div>
+                        </m.div>
+                    )}
+                </AnimatePresence>
             </LazyMotion>
         </div>
     );
