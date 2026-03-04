@@ -16,8 +16,8 @@ interface GitHubCommit {
 interface GitHubRepo {
   name: string;
   url: string;
-  description?: string;
-  language?: string;
+  description?: string | null;
+  language?: string | null;
   stars: number;
   forks: number;
 }

@@ -2,10 +2,10 @@
 const cache = new Map<string, { data: unknown; timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000;
 
-function getCached(key: string): unknown | null {
+function getCached<T>(key: string): T | null {
     const cached = cache.get(key);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-        return cached.data;
+        return cached.data as T;
     }
     cache.delete(key);
     return null;
@@ -40,9 +40,19 @@ interface GitHubEvent {
 // ──────────────────────────────────────────────
 // LEETCODE STATS
 // ──────────────────────────────────────────────
-export async function getLeetCodeStats(username: string) {
+export type LeetCodeStatsResult = {
+    username: string;
+    ranking: number;
+    reputation: number;
+    streak: number;
+    totalActiveDays: number;
+    problems: { easy: number; medium: number; hard: number; total: number };
+    calendar: Record<string, number>;
+};
+
+export async function getLeetCodeStats(username: string): Promise<LeetCodeStatsResult | null> {
     const cacheKey = `leetcode:${username}`;
-    const cached = getCached(cacheKey);
+    const cached = getCached<LeetCodeStatsResult>(cacheKey);
     if (cached) return cached;
 
     try {
@@ -122,9 +132,22 @@ export async function getLeetCodeStats(username: string) {
 // ──────────────────────────────────────────────
 // GITHUB STATS
 // ──────────────────────────────────────────────
-export async function getGitHubStats(username: string) {
+export type GitHubStatsResult = {
+    username: string;
+    name: string | null;
+    avatar: string;
+    bio: string | null;
+    publicRepos: number;
+    followers: number;
+    following: number;
+    totalStars: number;
+    recentCommits: { repo: string; message: string; date: string }[];
+    repos: { name: string; description: string | null; stars: number; forks: number; language: string | null; url: string }[];
+};
+
+export async function getGitHubStats(username: string): Promise<GitHubStatsResult | null> {
     const cacheKey = `github:${username}`;
-    const cached = getCached(cacheKey);
+    const cached = getCached<GitHubStatsResult>(cacheKey);
     if (cached) return cached;
 
     try {
