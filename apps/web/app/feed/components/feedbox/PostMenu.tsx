@@ -26,7 +26,7 @@ export function PostMenu({ postId, isSaved, isOwner, onDelete, onSaveToggle }: P
         },
         onError: (error) => {
             toast.error("Failed to update save status");
-            console.error(error);
+            console.error(error)
         }
     });
 
@@ -34,7 +34,7 @@ export function PostMenu({ postId, isSaved, isOwner, onDelete, onSaveToggle }: P
         onSuccess: () => {
             onDelete?.();
             toast.success("Post deleted");
-            setIsOpen(false);
+            setIsOpen(false); 
         },
         onError: (error) => {
             toast.error("Failed to delete post");
