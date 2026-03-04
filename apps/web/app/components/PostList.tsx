@@ -55,7 +55,7 @@ export function PostList() {
 
   const handleDelete = (postId: string) => {
     if (confirm('Are you sure you want to delete this post?')) {
-      deletePost.mutate({ id: postId });
+      deletePost.mutate({ postId });
     }
   };
 
