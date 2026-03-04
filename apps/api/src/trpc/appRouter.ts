@@ -6,7 +6,7 @@ import { commentRouter } from "./routers/commentRouter";
 import { uploadRouter } from "./routers/uploadRouter";
 import { devStatsRouter } from "./routers/devStatsRouter";
 import { hireMeRouter } from "./routers/hireMeRouter";
-import { groupRouter } from "./routers/group.router";
+import { groupRouter } from "../modules/group/group.router";
 import { messagingRouter } from "./routers/messagingrouter";
 
 export const appRouter = mergeRouters(
