@@ -1,8 +1,15 @@
-import { prisma } from "../../prismaClient.js";
+import type { PrismaClient } from "@prisma/client";
 
-export async function toggleLikeService(userId: string, postId: string) {
+// ──────────────────────────────────────────────
+// TOGGLE LIKE
+// ──────────────────────────────────────────────
+export async function toggleLike(
+  prisma: PrismaClient,
+  userId: string,
+  postId: string
+) {
   const existing = await prisma.like.findFirst({
-    where: { userId, postId },
+    where: { postId, userId },
   });
 
   if (existing) {
@@ -11,10 +18,7 @@ export async function toggleLikeService(userId: string, postId: string) {
   }
 
   await prisma.like.create({
-    data: {
-      userId,
-      postId,
-    },
+    data: { postId, userId },
   });
 
   return { liked: true };

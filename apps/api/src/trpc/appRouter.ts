@@ -1,13 +1,13 @@
 import { mergeRouters, router } from "./trpc";
 import { userRouter } from "../modules/user/user.router";
-import { likeRouter } from "./routers/likeRouter";
+import { likeRouter } from "../modules/likes/like.router";
 import { postRouter } from "../modules/posts/post.router";
-import { commentRouter } from "./routers/commentRouter";
-import { uploadRouter } from "./routers/uploadRouter";
-import { devStatsRouter } from "./routers/devStatsRouter";
-import { hireMeRouter } from "./routers/hireMeRouter";
+import { commentRouter } from "../modules/comment/comment.router";
+import { uploadRouter } from "../modules/uploads/upload.router";
+import { devStatsRouter } from "../modules/dev-stats/dev-stats.router";
+import { hireMeRouter } from "../modules/hire-me/hire-me.router";
 import { groupRouter } from "../modules/group/group.router";
-import { messagingRouter } from "./routers/messagingrouter";
+import { messagingRouter } from "../modules/messaging/messaging.router";
 
 export const appRouter = mergeRouters(
   router({
