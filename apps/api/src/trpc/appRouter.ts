@@ -1,7 +1,7 @@
 import { mergeRouters, router } from "./trpc";
-import { userRouter } from "./routers/userRouter";
+import { userRouter } from "../modules/user/user.router";
 import { likeRouter } from "./routers/likeRouter";
-import { postRouter } from "./routers/postRouter";
+import { postRouter } from "../modules/posts/post.router";
 import { commentRouter } from "./routers/commentRouter";
 import { uploadRouter } from "./routers/uploadRouter";
 import { devStatsRouter } from "./routers/devStatsRouter";

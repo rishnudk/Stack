@@ -6,7 +6,7 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 
 import { appRouter } from "./trpc/appRouter";
 import { createContext } from "./context";
-import { initSocket, getIO } from "./socket";
+import { initSocket, getIO } from "./lib/socket";
 
 const server = Fastify({ logger: true });
 
