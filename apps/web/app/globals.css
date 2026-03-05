@@ -183,3 +183,29 @@ opacity: 0;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes placeholderSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.animate-placeholder {
+  animation: placeholderSlide 3s ease-in-out;
+}

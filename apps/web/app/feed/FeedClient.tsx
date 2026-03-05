@@ -43,7 +43,7 @@ export default function FeedClient({ session }: FeedClientProps) {
 
         {/* Feed Section */}
         <main className="flex-1 flex justify-center">
-          <div className="w-full max-w-[600px] px-4 py-0">
+          <div className="w-full max-w-[700px] px-4 py-0">
             <FeedBox />
           </div>
         </main>
