@@ -3,8 +3,8 @@ import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { Settings, User, Briefcase, Shield, LogOut, ChevronUp } from "lucide-react";
 import Image from "next/image";
-import HireMeSettingsModal from "../../../profile/components/HireMeSettingsModal";
-import { EditProfileModal } from "../../../profile/components/EditProfileModal";
+import HireMeSettingsModal from "../../../../app/profile/components/HireMeSettingsModal";
+import { EditProfileModal } from "../../../../app/profile/components/EditProfileModal";
 import { trpc } from "@/utils/trpc";
 
 type MenuVariant = "standalone" | "top" | "middle" | "bottom";

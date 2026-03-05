@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Ellipsis, Heart, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PostDetailView } from "./PostDetailView";
+// import { PostDetailView } from "./PostDetailView";
 import { StackLogos } from "./StackLogos";
 import { PostMenu } from "./PostMenu";
 import { PostContent } from "./PostContent";
