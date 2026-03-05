@@ -49,7 +49,7 @@ export function LeftSidebar({ session }: LeftSidebarProps) {
         <SidebarLogo />
       </div>
       <div className="mb-4">
-        <ProfileCard session={session} />
+        {/* <ProfileCard session={session} /> */}
       </div>
 
       <nav className="flex-1 space-y-1">
@@ -88,7 +88,7 @@ export function LeftSidebar({ session }: LeftSidebarProps) {
       </nav>
 
       <div className="mt-auto pt-4 border-t border-neutral-800/50">
-        <SettingsMenu />
+        {/* <SettingsMenu /> */}
       </div>
     </aside>
   );
