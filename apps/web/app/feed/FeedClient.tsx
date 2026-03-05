@@ -6,8 +6,8 @@ import { Badge } from '@repo/ui/badge';
 import { Separator } from '@repo/ui/separator';
 import type { Session } from 'next-auth';
 
-import { LeftSidebar } from './components/LeftSidebar/LeftSidebar';
-import { RightSidebar } from './components/RightSidebar/RightSidebar';
+import { LeftSidebar } from './components/left-sidebar/LeftSidebar';
+import { RightSidebar } from './components/right-sidebar/RightSidebar';
 import { FeedBox } from './components/feedbox/FeedBox';
 import { EditProfileModal } from '../profile/components/EditProfileModal';
 import { trpc } from '@/utils/trpc';

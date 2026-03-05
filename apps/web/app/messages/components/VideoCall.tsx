@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { useSocket } from "./SocketContext";
+import { useSocket } from "../context/SocketContext";
 import { Button } from "@repo/ui/button";
 import { PhoneOff } from "lucide-react";
 

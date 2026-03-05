@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
-import { useSocket } from "./SocketContext";
+import { useSocket } from "../context/SocketContext";
 
 interface ConversationListProps {
   selectedId: string | null;

@@ -4,9 +4,9 @@ import type { Session } from "next-auth";
 import ConversationList from "./ConversationList";
 import ChatWindow from "./ChatWindow";
 import VideoCall from "./VideoCall"
-import { useSocket } from "./SocketContext";
+import { useSocket } from "../context/SocketContext";
 import { Loader2, MessageCircle } from "lucide-react";
-import { SocketProvider } from "./SocketContext";
+import { SocketProvider } from "../context/SocketContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { trpc } from "@/utils/trpc";
 

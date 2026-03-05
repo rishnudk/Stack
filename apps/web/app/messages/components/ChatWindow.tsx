@@ -6,7 +6,7 @@ import { Input } from "@repo/ui/input";
 import { Loader2, Send, Video, Smile } from "lucide-react";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
-import { useSocket } from "./SocketContext";
+import { useSocket } from "../context/SocketContext";
 
 interface ChatWindowProps {
   conversationId: string;

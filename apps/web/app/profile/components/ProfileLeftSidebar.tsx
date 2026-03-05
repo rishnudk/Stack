@@ -1,9 +1,9 @@
 "use client";
 import type { Session } from "next-auth";
-import SidebarLogo from "../../feed/components/LeftSidebar/SidebarLogo";
-import HireMeCard from "../../feed/components/LeftSidebar/HireMeCard";
-import AnalyticsCard from "../../feed/components/LeftSidebar/AnalyticsCard";
-import SettingsMenu from "../../feed/components/LeftSidebar/SettingsMenu";
+import SidebarLogo from "../../feed/components/left-sidebar/SidebarLogo";
+import HireMeCard from "../../feed/components/left-sidebar/HireMeCard";
+import AnalyticsCard from "../../feed/components/left-sidebar/AnalyticsCard";
+import SettingsMenu from "../../feed/components/left-sidebar/SettingsMenu";
 
 interface ProfileLeftSidebarProps {
   session: Session;

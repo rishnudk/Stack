@@ -1,7 +1,7 @@
-import Hero from "./landing/Hero";
-import Navbar from "./landing/Navbar";
-import { BentoSection } from "app/landing/BentoSection";
-import { TestimonialMarquee } from "./landing/marquee";
+import Hero from "./landing/components/Hero";
+import Navbar from "./landing/components/Navbar";
+import { BentoSection } from "./landing/components/BentoSection";
+import { TestimonialMarquee } from "./landing/components/Marquee";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";

@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { LeftSidebar } from "../feed/components/LeftSidebar/LeftSidebar";
-import MessagesInterface from "./MessagesInterface";
-import { SocketProvider } from "./SocketContext";
+import { LeftSidebar } from "../feed/components/left-sidebar/LeftSidebar";
+import MessagesInterface from "./components/MessagesInterface";
+import { SocketProvider } from "./context/SocketContext";
 
 export default async function MessagesPage() {
   const session = await getServerSession(authOptions);
