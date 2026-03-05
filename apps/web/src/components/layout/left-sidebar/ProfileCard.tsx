@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
 import type { Session } from "next-auth";
+import { useState } from "react";
+import VerifyModal from "./VerifyModal";
 
 interface ProfileCardProps {
   session?: Session | null;
@@ -12,6 +14,8 @@ interface ProfileCardProps {
 export default function ProfileCard({ session: propSession }: ProfileCardProps) {
   const { data: sessionData } = useSession();
   const session = propSession || sessionData;
+
+  const [open, setOpen] = useState(false);
 
   const { data: userData } = trpc.users.getSidebarInfo.useQuery(
     { userId: session?.user?.id },
@@ -22,61 +26,45 @@ export default function ProfileCard({ session: propSession }: ProfileCardProps) 
 
   if (!user) {
     return (
-      <div className="bg-neutral-900 rounded-2xl border border-neutral-800 h-48 animate-pulse" />
+      <div className="bg-neutral-900 rounded-2xl border border-neutral-800 h-40 animate-pulse" />
     );
   }
 
   return (
-    <div className="bg-neutral-900 rounded-2xl border border-neutral-800 overflow-hidden text-white">
-      {/* Cover */}
-      <div className="h-16 bg-gradient-to-r from-sky-600/90 to-indigo-600/90" />
-      <div className="flex flex-col items-center p-4 -mt-8 text-center">
-        <Image
-          src={user.image || "/profile.png"}
-          alt="Profile photo"
-          width={64}
-          height={64}
-          className="rounded-full border-4 border-neutral-900 shadow-sm"
-        />
-
-        {/* Name */}
-        <h2 className="mt-2 text-lg font-semibold">
-          {user.name || "Unnamed User"}
-        </h2>
-
-        {/* Headline / Title */}
-        <p className="text-sm text-neutral-400">
-          {user.headline ?? (
-            <span className="italic text-neutral-500">
-              Add your role or tech stack
-            </span>
-          )}
-        </p>
-
-        {/* Location */}
-        <p className="text-xs text-neutral-500 mt-1">
-          {user.location ?? (
-            <span className="italic">
-              Add your location
-            </span>
-          )}
-        </p>
-
-        {/* Stats */}
-        <div className="flex gap-4 mt-4 py-1">
-          <div className="flex flex-col items-center">
-            <span className="text-sm font-bold text-white">0</span>
-            <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-medium">Followers</span>
-          </div>
-          <div className="w-px h-8 bg-neutral-800 self-center" />
-          <div className="flex flex-col items-center">
-            <span className="text-sm font-bold text-white">0</span>
-            <span className="text-[10px] uppercase tracking-wider text-neutral-500 font-medium">Following</span>
-          </div>
+    <>
+      <div className="bg-neutral-900 rounded-2xl border border-neutral-800 p-5 text-center text-white">
+        
+        {/* Avatar */}
+        <div className="flex justify-center mb-3">
+          <Image
+            src={user.image || "/profile.png"}
+            alt="Profile"
+            width={60}
+            height={60}
+            className="rounded-full"
+          />
         </div>
+
+        {/* Title */}
+        <h3 className="text-xl italic font-serif">
+          Verify Identity!
+        </h3>
+
+        {/* Description */}
+        <p className="text-sm text-neutral-400 mt-2">
+          Get verified on Peerlist to boost your search ranking.
+        </p>
+
+        {/* Button */}
+        <button
+          onClick={() => setOpen(true)}
+          className="mt-4 bg-white text-black text-sm font-medium px-4 py-2 rounded-lg hover:bg-neutral-200 transition"
+        >
+          Get Verified →
+        </button>
       </div>
 
-
-    </div>
+      <VerifyModal user={user} open={open} setOpen={setOpen} />
+    </>
   );
 }

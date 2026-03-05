@@ -8,7 +8,9 @@ import {
   MessageCircle,
   Search,
   Megaphone,
-  Pencil
+  Pencil,
+  Users,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,6 +19,7 @@ import SidebarLogo from "./SidebarLogo";
 import ProfileCard from "./ProfileCard";
 import { cn } from "@/lib/utils";
 import SettingsMenu from "./SettingsMenu";
+import SidebarProfile from "./SidebarProfile";
 
 interface LeftSidebarProps {
   session: Session;
@@ -30,29 +33,23 @@ const navItems = [
   { icon: MessageCircle, label: "Inbox", href: "/messages" },
   { icon: Search, label: "Search", href: "/search" },
   { icon: Megaphone, label: "Advertise", href: "/advertise" },
+  { icon: Users, label: "Profile", href: "/profile" },
+  { icon: Settings, label: "Settings", href: "/settings" },
 ];
 
 export function LeftSidebar({ session }: LeftSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside
-      className="
-      w-72 bg-black/50 backdrop-blur-xl border-r border-neutral-800/50
-      sticky top-0
-      h-screen
-      flex flex-col
-      p-4
-    "
-    >
+    <aside className="w-72 bg-black/50 backdrop-blur-xl border-neutral-800/50 sticky top-0 h-screen flex flex-col">
+
       <div className="mb-8 px-2">
         <SidebarLogo />
       </div>
-      <div className="mb-4">
-        {/* <ProfileCard session={session} /> */}
-      </div>
+        <div className="flex-1 overflow-y-auto px-4 space-y-4 sidebar-scroll">
 
-      <nav className="flex-1 space-y-1">
+
+      <nav className=" space-y-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -86,10 +83,13 @@ export function LeftSidebar({ session }: LeftSidebarProps) {
           );
         })}
       </nav>
-
-      <div className="mt-auto pt-4 border-t border-neutral-800/50">
-        {/* <SettingsMenu /> */}
+      <div>
+        <SidebarProfile  />
+        <ProfileCard session={session} />
       </div>
+      </div>
+
+      
     </aside>
   );
 }

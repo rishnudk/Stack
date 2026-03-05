@@ -174,3 +174,12 @@ transform: translate(-50%, -50%) rotateX(-90deg) translateZ(0.6em);
 opacity: 0;
 --opacity: 1;
 }
+
+.sidebar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
