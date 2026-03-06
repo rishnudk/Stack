@@ -27,7 +27,6 @@ export function PostList() {
           likeCount={post.likes.length}
           commentCount={post.comments.length}
           avatarUrl={post.author.avatarUrl || post.author.image || undefined}
-          skills={post.author.skills || []}
           isSaved={post.isSaved}
         />
       ))}

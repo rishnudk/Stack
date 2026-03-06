@@ -8,7 +8,6 @@ import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion"
 import { useTheme } from "next-themes"
 import { useSound } from "@/hooks/use-sound"
 import { Button } from "@/components/ui/button"
-import SidebarLogo from "../../feed/components/left-sidebar/SidebarLogo"
 
 // Helper component for navigation links
 const NavLink = ({ href, icon: Icon, label }: { href: string; icon: React.ComponentType<{ className?: string }>; label: string }) => (

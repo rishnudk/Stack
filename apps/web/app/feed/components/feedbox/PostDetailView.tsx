@@ -78,7 +78,6 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
           commentCount={(post as any).comments.length}
           isDetailView={true}
           avatarUrl={(post as any).author.avatarUrl || (post as any).author.image || undefined}
-          skills={(post as any).author.skills || []}
           isSaved={(post as any).isSaved}
         />
       </div>
