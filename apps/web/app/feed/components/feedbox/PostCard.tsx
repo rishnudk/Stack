@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { Heart, MessageCircle } from "lucide-react";
+import { MessageCircle, Repeat2, Share, Bookmark } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PostMenu } from "./PostMenu";
@@ -53,6 +53,10 @@ export function PostCard({
 
     setIsLiked(!isLiked);
   };
+
+  const handleBookmark = () => {
+  setIsSaved(prev => !prev);
+};
 
   const handleCommentClick = () => {
     if (!isDetailView && postId) {
@@ -156,47 +160,64 @@ export function PostCard({
       )}
 
       {/* Actions */}
-      {!isDetailView && (
-        <div className="flex items-center gap-6 mt-3 ml-11">
+{!isDetailView && (
+  <div className="flex items-center gap-8 mt-3 ml-11">
 
-          <button
-            onClick={handleLike}
-            className="flex items-center gap-1 group"
-          >
-            <Heart
-              size={16}
-              className={`${
-                isLiked
-                  ? "fill-red-500 text-red-500"
-                  : "text-neutral-400 group-hover:text-red-500"
-              }`}
-            />
+    {/* Comment */}
+    <button
+      onClick={handleCommentClick}
+      className="flex items-center gap-1 group"
+    >
+      <MessageCircle
+        size={16}
+        className="text-neutral-400 group-hover:text-blue-500"
+      />
 
-            {likeCount > 0 && (
-              <span className="text-xs text-neutral-400">
-                {likeCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            onClick={handleCommentClick}
-            className="flex items-center gap-1 group"
-          >
-            <MessageCircle
-              size={16}
-              className="text-neutral-400 group-hover:text-blue-500"
-            />
-
-            {commentCount > 0 && (
-              <span className="text-xs text-neutral-400">
-                {commentCount}
-              </span>
-            )}
-          </button>
-
-        </div>
+      {commentCount > 0 && (
+        <span className="text-xs text-neutral-400">
+          {commentCount}
+        </span>
       )}
+    </button>
+
+    {/* Reshare */}
+    <button className="flex items-center gap-1 group">
+      <Repeat2
+        size={16}
+        className="text-neutral-400 group-hover:text-green-500"
+      />
+
+      <span className="text-xs text-neutral-400">0</span>
+    </button>
+
+    {/* Share */}
+    <button className="flex items-center gap-1 group">
+      <Share
+        size={16}
+        className="text-neutral-400 group-hover:text-neutral-200"
+      />
+
+      <span className="text-xs text-neutral-400">0</span>
+    </button>
+
+    {/* Bookmark */}
+    <button
+      onClick={handleBookmark}
+      className="flex items-center gap-1 group p-1 rounded-full hover:bg-neutral-800"
+    >
+      <Bookmark
+        size={16}
+        className={`${
+          isSaved
+            ? "fill-blue-500 text-blue-500"
+            : "text-neutral-400 group-hover:text-blue-500"
+        }`}
+      />
+    </button>
+
+  </div>
+)}
+
     </div>
   );
 }
