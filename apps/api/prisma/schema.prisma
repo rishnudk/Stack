@@ -48,6 +48,7 @@ model User {
   views               View[]
   groups              GroupMember[]
   groupMessages       GroupMessage[]
+  
 }
 
 model Conversation {

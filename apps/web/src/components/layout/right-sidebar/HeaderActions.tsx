@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Search, Bell, Coins } from "lucide-react";
+import ProfileMenu from "./ProfileMenu";
 
 export default function HeaderActions() {
   return (
@@ -36,14 +37,8 @@ export default function HeaderActions() {
         </span>
       </div>
 
-      {/* Avatar */}
-      <Image
-        src="/avatar.png"
-        alt="profile"
-        width={36}
-        height={36}
-        className="rounded-full border border-zinc-700 shrink-0"
-      />
+      {/* Profile Menu */}
+      <ProfileMenu />
     </div>
   );
 }
