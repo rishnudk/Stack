@@ -72,6 +72,18 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
           )}
         </button>
         <button
+          onClick={() => setActiveTab("projects")}
+          className={`flex-1 py-4 font-semibold transition-colors relative ${activeTab === "projects"
+            ? "text-white"
+            : "text-neutral-500 hover:text-neutral-300"
+            }`}
+        >
+          Projects
+          {activeTab === "projects" && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-t-full"></div>
+          )}
+        </button>
+        <button
           onClick={() => setActiveTab("posts")}
           className={`flex-1 py-4 font-semibold transition-colors relative ${activeTab === "posts"
             ? "text-white"
@@ -104,18 +116,6 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
         >
           Articles
           {activeTab === "articles" && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-t-full"></div>
-          )}
-        </button>
-        <button
-          onClick={() => setActiveTab("projects")}
-          className={`flex-1 py-4 font-semibold transition-colors relative ${activeTab === "projects"
-            ? "text-white"
-            : "text-neutral-500 hover:text-neutral-300"
-            }`}
-        >
-          Projects
-          {activeTab === "projects" && (
             <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-t-full"></div>
           )}
         </button>
