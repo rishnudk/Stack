@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
 import {
     Settings,
     Bookmark,
@@ -14,23 +13,9 @@ import {
     LogOut
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export default function ProfileMenu() {
-    const [isOpen, setIsOpen] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null);
-
-    // Close menu on click outside
-    useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
     const menuItems = [
         {
             icon: <Settings size={18} className="text-zinc-400" />,
@@ -78,86 +63,66 @@ export default function ProfileMenu() {
     ];
 
     return (
-        <div className="relative" ref={menuRef}>
-            {/* Avatar Trigger */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-center rounded-full border border-zinc-700 shrink-0 transition-transform active:scale-95 hover:border-zinc-500 overflow-hidden"
-            >
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="flex flex-col w-full pb-6"
+        >
+            {/* Header Identity */}
+            <div className="py-3 flex items-center gap-3 hover:bg-zinc-800/50 transition-colors cursor-pointer rounded-xl px-2">
                 <Image
-                    src="/avatar.png" // Fallback or dynamic based on session later
+                    src="/avatar.png"
                     alt="profile"
-                    width={36}
-                    height={36}
-                    className="object-cover"
+                    width={48}
+                    height={48}
+                    className="rounded-full border border-zinc-700 object-cover shrink-0"
                 />
-            </button>
+                <div className="flex flex-col">
+                    <span className="text-zinc-100 font-semibold text-[16px]">Rishnu Dk</span>
+                    <span className="text-zinc-400 text-[13px] leading-tight mt-0.5">Manage integrations, resume, collections, etc.</span>
+                </div>
+            </div>
 
-            {/* Dropdown Menu */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.15, ease: "easeOut" }}
-                        className="absolute right-0 top-12 w-[340px] bg-[#1a1a1a] border border-zinc-800 rounded-2xl shadow-xl overflow-hidden z-50 flex flex-col pt-2"
+            <div className="h-px bg-zinc-800/60 w-full my-2 shrink-0" />
+
+            {/* Menu Items */}
+            <div className="flex flex-col gap-0.5">
+                {menuItems.map((item, index) => (
+                    <button
+                        key={index}
+                        className="w-full flex items-start text-left gap-3 px-2 py-3 rounded-xl hover:bg-zinc-800/50 transition-colors group"
                     >
-                        {/* Header Identity */}
-                        <div className="px-4 py-3 flex items-center gap-3 hover:bg-zinc-800/50 transition-colors cursor-pointer mx-2 rounded-xl">
-                            <Image
-                                src="/avatar.png"
-                                alt="profile"
-                                width={40}
-                                height={40}
-                                className="rounded-full border border-zinc-700 object-cover"
-                            />
-                            <div className="flex flex-col">
-                                <span className="text-zinc-100 font-semibold text-[15px]">Rishnu Dk</span>
-                                <span className="text-zinc-400 text-[13px]">Manage integrations, resume, collections, etc.</span>
+                        <div className="mt-0.5 shrink-0 group-hover:text-zinc-200 transition-colors">
+                            {item.icon}
+                        </div>
+                        <div className="flex flex-col flex-1">
+                            <div className="flex items-center gap-2">
+                                <span className="text-zinc-200 font-medium text-[15px]">{item.title}</span>
+                                {item.badge && (
+                                    <span className={`text-[11px] px-1.5 py-0.5 rounded border ${item.badge.color} font-medium`}>
+                                        {item.badge.text}
+                                    </span>
+                                )}
                             </div>
+                            <span className="text-zinc-400 text-[13px] leading-tight mt-0.5">{item.description}</span>
                         </div>
+                    </button>
+                ))}
+            </div>
 
-                        {/* Menu Items */}
-                        <div className="flex flex-col px-2 py-2 gap-0.5 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                            {menuItems.map((item, index) => (
-                                <button
-                                    key={index}
-                                    className="w-full flex items-start text-left gap-3 px-3 py-2.5 rounded-xl hover:bg-zinc-800/50 transition-colors group"
-                                >
-                                    <div className="mt-0.5 shrink-0 group-hover:text-zinc-200 transition-colors">
-                                        {item.icon}
-                                    </div>
-                                    <div className="flex flex-col flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-zinc-200 font-medium text-[15px]">{item.title}</span>
-                                            {item.badge && (
-                                                <span className={`text-[11px] px-1.5 py-0.5 rounded border ${item.badge.color} font-medium`}>
-                                                    {item.badge.text}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <span className="text-zinc-400 text-[13px] leading-tight mt-0.5">{item.description}</span>
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
+            <div className="h-px bg-zinc-800/60 w-full my-2 shrink-0" />
 
-                        <div className="h-px bg-zinc-800/60 w-full mt-1" />
-
-                        {/* Logout Footer */}
-                        <div className="p-2">
-                            <button
-                                onClick={() => signOut()}
-                                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-500/10 text-red-500 hover:text-red-400 transition-colors"
-                            >
-                                <LogOut size={18} className="shrink-0" />
-                                <span className="font-medium text-[15px]">Logout</span>
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </div>
+            {/* Logout Footer */}
+            <div className="px-2 mt-1">
+                <button
+                    onClick={() => signOut()}
+                    className="w-full flex items-center gap-3 px-2 py-3 rounded-xl hover:bg-red-500/10 text-red-500 hover:text-red-400 transition-colors"
+                >
+                    <LogOut size={18} className="shrink-0" />
+                    <span className="font-medium text-[15px]">Logout</span>
+                </button>
+            </div>
+        </motion.div>
     );
 }
