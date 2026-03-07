@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/utils/trpc";
-import { MapPin, Building2, Calendar, Share2, Github, Linkedin, Globe, MoreVertical, MessageSquareText } from "lucide-react";
+import { MapPin, Building2, Calendar, Share2, Github, Linkedin, Globe, MoreVertical, MessageSquareText, Figma, Code2, Palette, Box, Layout, PenTool, Monitor } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -76,7 +76,7 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className={`w-full h-full bg-gradient-to-r ${user.coverGradient || 'from-blue-600 via-purple-600 to-pink-600'}`} />
+          <div className={`w-full h-full bg-linear-to-r ${user.coverGradient || 'from-blue-600 via-purple-600 to-pink-600'}`} />
         )}
       </div>
 
@@ -173,6 +173,35 @@ export function ProfileHeader({ userId, isOwnProfile }: ProfileHeaderProps) {
             <span>Joined {joinedDate}</span>
           </div>
         </div>
+
+        {/* Skills */}
+        {user.skills && (user.skills as any[]).length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 mb-4 mt-2">
+            {(user.skills as any[]).map((skill: any) => {
+              const skillLower = String(skill).toLowerCase();
+              let Icon = null;
+              let iconColor = "text-white";
+
+              if (skillLower.includes("figma")) { Icon = Figma; iconColor = "text-pink-500"; }
+              else if (skillLower.includes("react") || skillLower.includes("code") || skillLower.includes("dev")) { Icon = Code2; iconColor = "text-blue-400"; }
+              else if (skillLower.includes("canva")) { Icon = Palette; iconColor = "text-cyan-400"; }
+              else if (skillLower.includes("unity") || skillLower.includes("3d")) { Icon = Box; iconColor = "text-neutral-400"; }
+              else if (skillLower.includes("ui") || skillLower.includes("ux")) { Icon = Layout; iconColor = "text-orange-400"; }
+              else if (skillLower.includes("design") || skillLower.includes("art")) { Icon = PenTool; iconColor = "text-purple-400"; }
+              else if (skillLower.includes("web") || skillLower.includes("app")) { Icon = Monitor; iconColor = "text-green-400"; }
+
+              return (
+                <div
+                  key={skill}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-900 border border-neutral-700/60 rounded-full text-sm font-medium text-neutral-200 shadow-sm"
+                >
+                  {Icon && <Icon size={14} className={iconColor} />}
+                  <span className="leading-none pt-0.5">{skill}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Social Links */}
         {socialLinks && Object.keys(socialLinks).length > 0 && (
