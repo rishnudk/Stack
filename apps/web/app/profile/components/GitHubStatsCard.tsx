@@ -22,9 +22,6 @@ interface GitHubRepo {
   forks: number;
 }
 
-// Then use:
-// .map((commit: GitHubCommit, index: number) => ...)
-// .map((repo: GitHubRepo, index: number) => ...)
 
 export function GitHubStatsCard({ username }: GitHubStatsCardProps) {
   const { data: stats, isLoading, error } = trpc.devStats.getGitHubStats.useQuery(

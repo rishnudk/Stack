@@ -8,6 +8,7 @@ import { ProjectCard } from "./ProjectCard";
 import { formatPostTime } from "@/utils/formatTime";
 import { AddProjectModal } from "./AddProjectModal";
 import { Plus } from "lucide-react";
+import { ProfileTopBar } from "./ProfileTopBar";
 
 interface ProfileContentProps {
   userId: string;
@@ -29,10 +30,10 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
     { enabled: activeTab === "posts" }
   );
 
-  // Fetch user data for Work/Projects
+  // Fetch user data
   const { data: user } = trpc.users.getUserById.useQuery(
     { userId },
-    { enabled: activeTab === "work" || activeTab === "projects" }
+    { enabled: !!userId }
   );
 
   // Fetch GitHub pinned repos
@@ -49,6 +50,12 @@ export function ProfileContent({ userId, isOwnProfile }: ProfileContentProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto min-h-screen border-x border-neutral-800 bg-black text-white relative">
+      <ProfileTopBar
+        name={user?.name || "User"}
+        avatar={user?.avatarUrl || user?.image || "/default-avatar.png"}
+        followers={user?._count?.followers ?? 0}
+        following={user?._count?.following ?? 0}
+      />
       <AddProjectModal
         isOpen={isAddProjectModalOpen}
         onClose={() => setIsAddProjectModalOpen(false)}
