@@ -5,7 +5,6 @@ import { Settings, User, Briefcase, Shield, LogOut, ChevronUp } from "lucide-rea
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import HireMeSettingsModal from "../../../../app/profile/components/HireMeSettingsModal";
-import { EditProfileModal } from "../../../../app/profile/components/EditProfileModal";
 import { trpc } from "@/utils/trpc";
 
 type MenuVariant = "standalone" | "top" | "middle" | "bottom";
@@ -183,26 +182,6 @@ export default function SettingsMenu({ onOpenChange, variant = "standalone" }: S
         isOpen={isHireMeModalOpen}
         onClose={() => setIsHireMeModalOpen(false)}
       />
-
-      {userData && (
-        <EditProfileModal
-          isOpen={isEditProfileModalOpen}
-          onClose={() => setIsEditProfileModalOpen(false)}
-          currentUser={{
-            name: userData.name || "",
-            bio: userData.bio || "",
-            location: userData.location || "",
-            company: userData.company || "",
-            headline: userData.headline || "",
-            avatarUrl: userData.avatarUrl || userData.image || "",
-            leetcodeUsername: userData.leetcodeUsername || "",
-            githubUsername: userData.githubUsername || "",
-            skills: userData.skills || [],
-            socialLinks: (userData.socialLinks as any) || {},
-          } as any}
-        />
-      )
-      }
     </div >
   );
 }
