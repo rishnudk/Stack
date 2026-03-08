@@ -14,6 +14,8 @@ interface UserData {
     githubUsername?: string;
     skills?: string[];
     socialLinks?: Record<string, string>;
+    coverUrl?: string;
+    coverGradient?: string;
 }
 
 export function useEditProfile(currentUser: UserData, isOnboarding: boolean | undefined, onClose: () => void) {
@@ -37,9 +39,9 @@ export function useEditProfile(currentUser: UserData, isOnboarding: boolean | un
 
     // Cover photo state
     const [coverFile, setCoverFile] = useState<File | null>(null);
-    const [coverPreview, setCoverPreview] = useState<string>("");
-    const [coverType, setCoverType] = useState<"upload" | "gradient">("gradient");
-    const [selectedGradient, setSelectedGradient] = useState("from-blue-600 via-purple-600 to-pink-600");
+    const [coverPreview, setCoverPreview] = useState<string>(currentUser.coverUrl || "");
+    const [coverType, setCoverType] = useState<"upload" | "gradient">(currentUser.coverUrl ? "upload" : "gradient");
+    const [selectedGradient, setSelectedGradient] = useState(currentUser.coverGradient || "from-blue-600 via-purple-600 to-pink-600");
 
     const [newSkill, setNewSkill] = useState("");
     const [newSocialKey, setNewSocialKey] = useState("");
@@ -118,8 +120,8 @@ export function useEditProfile(currentUser: UserData, isOnboarding: boolean | un
 
         try {
             let avatarUrl = formData.avatarUrl;
-            let coverUrl = "";
-            let coverGradient = "";
+            let coverUrl = coverType === "upload" ? currentUser.coverUrl || "" : "";
+            let coverGradient = coverType === "gradient" ? selectedGradient : "";
 
             if (imageFile) {
                 const { uploadUrl, fileUrl } = await getPresignedUrlMutation.mutateAsync({
@@ -151,8 +153,6 @@ export function useEditProfile(currentUser: UserData, isOnboarding: boolean | un
 
                 if (!uploadResponse.ok) throw new Error("Failed to upload cover image to S3");
                 coverUrl = fileUrl;
-            } else if (coverType === "gradient") {
-                coverGradient = selectedGradient;
             }
 
             await updateProfileMutation.mutateAsync({
