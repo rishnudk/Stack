@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { Settings, User, Briefcase, Shield, LogOut, ChevronUp } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import HireMeSettingsModal from "../../../../app/profile/components/HireMeSettingsModal";
 import { EditProfileModal } from "../../../../app/profile/components/EditProfileModal";
 import { trpc } from "@/utils/trpc";
@@ -20,6 +21,7 @@ export default function SettingsMenu({ onOpenChange, variant = "standalone" }: S
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
   const { data: session } = useSession();
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const variantStyles = {
     standalone: "bg-neutral-900 border border-neutral-800 rounded-xl hover:bg-neutral-800",
@@ -61,7 +63,7 @@ export default function SettingsMenu({ onOpenChange, variant = "standalone" }: S
       icon: User,
       label: "Edit Profile",
       onClick: () => {
-        setIsEditProfileModalOpen(true);
+        router.push("/profile?edit=true");
         setIsOpen(false);
         onOpenChange?.(false);
       },

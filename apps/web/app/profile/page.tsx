@@ -7,7 +7,7 @@ import { DevStatsSidebar } from "./components/DevStatsSidebar";
 
 
 type Props = {
-  searchParams: { userId?: string }
+  searchParams: { userId?: string, edit?: string }
 }
 
 export default async function ProfilePage({ searchParams }: Props) {
@@ -32,7 +32,11 @@ export default async function ProfilePage({ searchParams }: Props) {
         {/* Profile Content */}
         <main className="flex-1 flex justify-center">
           <div className="w-full max-w-[600px] px-4 py-0">
-            <ProfileContent userId={targetUserId} isOwnProfile={isOwnProfile} />
+            <ProfileContent
+              userId={targetUserId}
+              isOwnProfile={isOwnProfile}
+              initialTab={searchParams.edit === 'true' ? 'edit-profile' : 'work'}
+            />
           </div>
         </main>
 
