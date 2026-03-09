@@ -19,6 +19,10 @@ export const updateProjectSchema = z.object({
     imageUrl: z.string().optional()
 })
 
+export const getProjectsByUserIdSchema = z.object({
+    userId: z.string()
+})
+
 export const deleteProjectSchema = z.object({
     id: z.string()
 })
@@ -32,3 +36,12 @@ export const getProjectsSchema = z.object({
     limit: z.number().default(10)
 })
 
+export const editProjectSchema = z.object({
+    id: z.string(),
+    name: z.string().optional(),
+    description: z.string().optional(),
+    openToContributions: z.boolean().optional(),
+    liveLink: z.string().optional(),
+    githubLink: z.string().optional(),
+    imageUrl: z.string().optional()
+})
