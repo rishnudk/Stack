@@ -1,8 +1,8 @@
-# 🚀 Stack Monorepo
+# Stack Monorepo
 
 Welcome to **Stack**, a high-performance, full-stack monorepo designed for scale and developer velocity. Built with a modern tech stack, it provides a seamless end-to-end type-safe experience.
 
-## 🏗️ Architecture
+##  Architecture
 
 This project is a monorepo managed by **Turborepo** and **pnpm workspaces**.
 
@@ -28,7 +28,39 @@ This project is a monorepo managed by **Turborepo** and **pnpm workspaces**.
 -   **Real-time**: [Socket.io](https://socket.io/)
 -   **Documentation**: [trpc-panel](https://github.com/iway1/trpc-panel)
 
-## 🚀 Getting Started
+## Monorepo Folder Structure
+
+stack/
+│
+├── apps/
+│   ├── web/                # Next.js frontend (App Router)
+│   │   ├── app/
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   └── utils/
+│   │
+│   └── api/                # Fastify + tRPC backend
+│       └── src/
+│           ├── modules/    # Feature-based modules
+│           │   └── articles/
+│           │       ├── article.router.ts
+│           │       ├── article.schema.ts
+│           │       └── article.service.ts
+│           │
+│           ├── lib/        # Shared backend utilities
+│           ├── trpc/       # tRPC setup
+│           └── server.ts
+│
+├── packages/
+│   ├── db/                 # Prisma client & database utilities
+│   ├── types/              # Shared TypeScript types
+│   └── ui/                 # Shared UI components
+│
+├── turbo.json              # Turborepo pipeline config
+├── pnpm-workspace.yaml
+└── package.json
+
+##  Getting Started
 
 ### Prerequisites
 -   **Node.js**: v20.x or higher
@@ -66,7 +98,7 @@ pnpm dev
 
 This will concurrently start the Next.js frontend and the Fastify backend.
 
-## 🧪 Development Commands
+##  Development Commands
 
 -   `pnpm build`: Build all workspace projects.
 -   `pnpm lint`: Run linting across the monorepo.
@@ -74,6 +106,6 @@ This will concurrently start the Next.js frontend and the Fastify backend.
 -   `pnpm --filter web dev`: Run only the frontend.
 -   `pnpm --filter api dev`: Run only the backend.
 
-## 📄 License
+##  License
 
-This project is licensed under the **ISC License**.
+This project is licensed under the **MIT License**.
