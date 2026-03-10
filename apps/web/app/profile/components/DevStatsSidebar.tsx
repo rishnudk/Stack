@@ -1,10 +1,10 @@
 "use client";
 
 import { trpc } from "@/utils/trpc";
-import { LeetCodeStatsCard } from "./LeetCodeStatsCard";
-import { GitHubStatsCard } from "./GitHubStatsCard";
-import { AchievementsCard } from "./AchievementsCard";
-import { RecentActivityCard } from "./RecentActivityCard";
+import { LeetCodeStatsCard } from "./right-tab/LeetCodeStatsCard";
+import { GitHubStatsCard } from "./right-tab/GitHubStatsCard";
+import { AchievementsCard } from "./right-tab/AchievementsCard";
+import { RecentActivityCard } from "./right-tab/RecentActivityCard";
 
 interface DevStatsSidebarProps {
   userId: string;
