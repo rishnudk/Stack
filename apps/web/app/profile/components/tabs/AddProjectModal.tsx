@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { X, Upload, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { trpc } from "@/utils/trpc";
+import { toast } from "sonner";
 
 interface AddProjectModalProps {
     isOpen: boolean;
@@ -17,6 +19,109 @@ export function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
         liveLink: "",
         githubLink: "",
     });
+
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const utils = trpc.useUtils();
+    const getPresignedUrlMutation = trpc.upload.getPresignedUrl.useMutation();
+    const createProjectMutation = trpc.projects.createProject.useMutation({
+        onSuccess: () => {
+            toast.success("Project created successfully!");
+            utils.projects.getProjects.invalidate();
+            utils.projects.getProjectsByUserId.invalidate();
+            onClose();
+        },
+        onError: (error) => {
+            toast.error(error.message || "Failed to create project");
+        }
+    });
+
+    const isSubmitting = getPresignedUrlMutation.isPending || createProjectMutation.isPending;
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file size (100KB - 1MB)
+        const minSize = 100 * 1024; // 100 KB
+        const maxSize = 1 * 1024 * 1024; // 1 MB
+
+        if (file.size < minSize || file.size > maxSize) {
+            toast.error("Image size must be between 100KB and 1MB.");
+            // Reset input so they can try again with the same file if they resize it
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+            toast.error("Please select an image file.");
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            return;
+        }
+
+        setImageFile(file);
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleRemoveImage = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setImageFile(null);
+        setImagePreview(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!formData.name.trim() || !formData.description.trim()) {
+            toast.error("Project name and description are required.");
+            return;
+        }
+
+        try {
+            let imageUrl: string | undefined = undefined;
+
+            if (imageFile) {
+                const { uploadUrl, fileUrl } = await getPresignedUrlMutation.mutateAsync({
+                    fileType: imageFile.type,
+                    fileName: imageFile.name,
+                });
+
+                const uploadResponse = await fetch(uploadUrl, {
+                    method: "PUT",
+                    body: imageFile,
+                    headers: { "Content-Type": imageFile.type },
+                });
+
+                if (!uploadResponse.ok) throw new Error("Failed to upload project image.");
+                imageUrl = fileUrl;
+            }
+
+            await createProjectMutation.mutateAsync({
+                ...formData,
+                imageUrl,
+            });
+
+            // Clear form
+            setFormData({
+                name: "",
+                description: "",
+                openToContributions: false,
+                liveLink: "",
+                githubLink: "",
+            });
+            setImageFile(null);
+            setImagePreview(null);
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to save project");
+        }
+    };
 
     if (!isOpen) return null;
 
@@ -57,9 +162,37 @@ export function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
                             {/* Image Upload Placeholder */}
                             <div>
                                 <label className="block text-sm font-medium text-neutral-300 mb-1.5">Project Image</label>
-                                <div className="border-2 border-dashed border-neutral-700 hover:border-neutral-500 rounded-lg p-6 flex flex-col items-center justify-center text-neutral-400 cursor-pointer transition-colors bg-neutral-900/50">
-                                    <Upload size={20} className="mb-2" />
-                                    <span className="text-xs font-medium">Click to upload</span>
+                                <div
+                                    className="relative border-2 border-dashed border-neutral-700 hover:border-neutral-500 rounded-lg h-32 flex flex-col items-center justify-center text-neutral-400 cursor-pointer transition-colors bg-neutral-900/50 overflow-hidden"
+                                    onClick={() => fileInputRef.current?.click()}
+                                >
+                                    {imagePreview ? (
+                                        <>
+                                            <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                                <button
+                                                    onClick={handleRemoveImage}
+                                                    type="button"
+                                                    className="p-2 bg-red-500 hover:bg-red-600 rounded-full text-white transition-colors"
+                                                >
+                                                    <X size={20} />
+                                                </button>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload size={24} className="mb-2" />
+                                            <span className="text-xs font-medium">Click to upload</span>
+                                            <span className="text-[10px] text-neutral-500 mt-1">100KB to 1MB limit</span>
+                                        </>
+                                    )}
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        onChange={handleImageChange}
+                                        accept="image/*"
+                                        className="hidden"
+                                    />
                                 </div>
                             </div>
 
@@ -142,9 +275,18 @@ export function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
                             Cancel
                         </button>
                         <button
-                            className="px-4 py-2 text-sm font-medium bg-white text-black rounded-lg hover:bg-neutral-200 transition-colors"
+                            onClick={handleSubmit}
+                            disabled={isSubmitting}
+                            className="px-4 py-2 text-sm font-medium bg-white text-black rounded-lg hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                         >
-                            Save Project
+                            {isSubmitting ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                "Save Project"
+                            )}
                         </button>
                     </div>
                 </motion.div>

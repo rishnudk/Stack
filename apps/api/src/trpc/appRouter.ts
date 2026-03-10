@@ -8,6 +8,7 @@ import { devStatsRouter } from "../modules/dev-stats/dev-stats.router";
 import { hireMeRouter } from "../modules/hire-me/hire-me.router";
 import { groupRouter } from "../modules/group/group.router";
 import { messagingRouter } from "../modules/messaging/messaging.router";
+import { projectRouter } from "../modules/projects/project.router";
 
 export const appRouter = mergeRouters(
   router({
@@ -20,6 +21,7 @@ export const appRouter = mergeRouters(
     hireMe: hireMeRouter,
     groups: groupRouter,
     messaging: messagingRouter,
+    projects: projectRouter,
   })
 );
 
