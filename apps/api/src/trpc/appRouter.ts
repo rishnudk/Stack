@@ -9,6 +9,7 @@ import { hireMeRouter } from "../modules/hire-me/hire-me.router";
 import { groupRouter } from "../modules/group/group.router";
 import { messagingRouter } from "../modules/messaging/messaging.router";
 import { projectRouter } from "../modules/projects/project.router";
+import { articleRouter } from "../modules/articles/article.router";
 
 export const appRouter = mergeRouters(
   router({
@@ -22,8 +23,10 @@ export const appRouter = mergeRouters(
     groups: groupRouter,
     messaging: messagingRouter,
     projects: projectRouter,
+    articles: articleRouter,
   })
 );
 
 
 export type AppRouter = typeof appRouter;
+

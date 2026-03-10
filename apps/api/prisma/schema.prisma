@@ -49,6 +49,9 @@ model User {
   groups              GroupMember[]
   groupMessages       GroupMessage[]
   projects            Project[]
+  articles            Article[]
+  articleComments     ArticleComment[]
+  articleLikes        ArticleLike[]
   
 }
 
@@ -129,6 +132,55 @@ model Project {
   updatedAt           DateTime @updatedAt
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+}
+
+model Article {
+  id          String           @id @default(cuid())
+  authorId    String
+  slug        String           @unique
+  title       String
+  description String
+  content     String
+  thumbnail   String
+  image       String?
+  tags        String[]
+  published   Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  author      User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments    ArticleComment[]
+  likes       ArticleLike[]
+
+  @@index([authorId])
+  @@index([createdAt])
+  @@index([published])
+}
+
+model ArticleComment {
+  id        String   @id @default(cuid())
+  articleId String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([articleId])
+  @@index([userId])
+}
+
+model ArticleLike {
+  id        String   @id @default(cuid())
+  articleId String
+  userId    String
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, userId])
+  @@index([articleId])
   @@index([userId])
 }
 
@@ -300,3 +352,4 @@ enum MemberStatus {
   ACCEPTED
   REJECTED
 }
+
