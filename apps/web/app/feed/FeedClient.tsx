@@ -1,15 +1,8 @@
 'use client';
-
-import { Card, CardHeader, CardTitle, CardDescription } from '@repo/ui/card';
-import { Avatar, AvatarFallback } from '@repo/ui/avatar';
-import { Badge } from '@repo/ui/badge';
-import { Separator } from '@repo/ui/separator';
 import type { Session } from 'next-auth';
-
 import { LeftSidebar } from '@/components/layout/left-sidebar/LeftSidebar';
 import { RightSidebar } from '@/components/layout/right-sidebar/RightSidebar';
 import { FeedBox } from './components/feedbox/FeedBox';
-import { EditProfileModal } from '../profile/components/EditProfileModal';
 import { trpc } from '@/utils/trpc';
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
@@ -54,19 +47,7 @@ export default function FeedClient({ session }: FeedClientProps) {
         </aside>
       </div>
 
-      {userInfo?.user && (
-        <EditProfileModal
-          isOpen={showOnboarding}
-          onClose={handleCloseOnboarding}
-          currentUser={{
-            ...userInfo.user,
-            avatarUrl: userInfo.user.image || undefined,
-            skills: (userInfo.user as any).skills || [],
-            socialLinks: (userInfo.user as any).socialLinks || {},
-          }}
-          isOnboarding={true}
-        />
-      )}
+      
     </div>
   );
 }
