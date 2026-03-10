@@ -2,8 +2,13 @@ export interface Article {
   slug: string
   author: string
   date: string
-  title: string
   description: string
   tags: string[]
   image?: string
+  id: string;
+  title: string;
+  thumbnail: string;
+  comments: number;
+  likes: number;
+  createdAt: string;
 }

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { ProfileHeader } from "./ProfileHeader";
 import { trpc } from "@/utils/trpc";
 import { PostCard } from "../../feed/components/feedbox/PostCard";
-import { ProjectCard } from "./ProjectCard";
+import { ProjectCard } from "./tabs/ProjectCard";
 import { formatPostTime } from "@/utils/formatTime";
 import { ProfileTopBar } from "./ProfileTopBar";
 import { EditProfileTab } from "./EditProfileTab";
@@ -16,11 +16,11 @@ import { ProjectsTab } from "./tabs/ProjectsTab";
 interface ProfileContentProps {
   userId: string;
   isOwnProfile: boolean;
-  initialTab?: "work" | "posts" | "resume" | "articles" | "projects" | "edit-profile";
+  initialTab?: "posts" | "resume" | "articles" | "projects" | "edit-profile";
 }
 
 export function ProfileContent({ userId, isOwnProfile, initialTab }: ProfileContentProps) {
-  const [activeTab, setActiveTab] = useState<ProfileTab>(initialTab || "work");
+  const [activeTab, setActiveTab] = useState<ProfileTab>(initialTab || "posts");
 
   const { data: posts, isLoading: postsLoading } =
     trpc.posts.getUserPosts.useQuery({ userId });

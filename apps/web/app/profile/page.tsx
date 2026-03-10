@@ -3,7 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { LeftSidebar } from '@/components/layout/left-sidebar/LeftSidebar';
 import { ProfileContent } from "./components/ProfileContent";
-import { DevStatsSidebar } from "./components/DevStatsSidebar";
+import { DevStatsSidebar } from "./components/right-tab/DevStatsSidebar";
 
 
 type Props = {
@@ -35,7 +35,7 @@ export default async function ProfilePage({ searchParams }: Props) {
             <ProfileContent
               userId={targetUserId}
               isOwnProfile={isOwnProfile}
-              initialTab={searchParams.edit === 'true' ? 'edit-profile' : 'work'}
+              initialTab={searchParams.edit === 'true' ? 'edit-profile' : 'posts'}
             />
           </div>
         </main>

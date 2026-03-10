@@ -6,7 +6,7 @@ interface ProfileTabsProps {
 }
 
 export function ProfileTabs({ activeTab, setActiveTab }: ProfileTabsProps) {
-  const tabs: ProfileTab[] = ["work", "projects", "posts", "resume", "articles"];
+  const tabs: ProfileTab[] = ["projects", "posts", "resume", "articles"];
 
   return (
     <div className="flex border-b border-neutral-800 sticky top-0 bg-black/80 backdrop-blur-sm z-10">
