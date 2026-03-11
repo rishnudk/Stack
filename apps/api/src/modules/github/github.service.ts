@@ -51,12 +51,20 @@ export async function getPinnedRepos(username: string): Promise<PinnedRepo[]> {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
+        "User-Agent": "stack-app",
       },
       body: JSON.stringify({
         query,
         variables: { username },
       }),
     });
+
+    console.log(`[github.service] getPinnedRepos response status:`, response.status);
+
+    if (!response.ok) {
+      console.error(`GitHub GraphQL API error (pinned repos): ${response.status} ${response.statusText}`);
+      return [];
+    }
 
     const data = await response.json();
 
@@ -109,12 +117,20 @@ export async function getContributionGraph(
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
+        "User-Agent": "stack-app",
       },
       body: JSON.stringify({
         query,
         variables: { username },
       }),
     });
+
+    console.log(`[github.service] getContributionGraph response status:`, response.status);
+
+    if (!response.ok) {
+      console.error(`GitHub GraphQL API error (contributions): ${response.status} ${response.statusText}`);
+      return [];
+    }
 
     const data = await response.json();
 

@@ -32,7 +32,6 @@ export const initSocket = (httpServer: any) => {
 
     io.on("connection", (socket) => {
       const userId = (socket as any).userId;
-      console.log(`🔌 [SOCKET] User connected: ${userId} (Socket: ${socket.id})`);
 
       // 2️⃣ TRACK ONLINE STATUS
       if (!onlineUsers.has(userId)) {
@@ -73,12 +72,10 @@ export const initSocket = (httpServer: any) => {
 
       //video call singalling
       socket.on("call-user", ({ toUserId, offer }) => {
-        console.log(`📞 [SOCKET] Call offer from ${userId} to user ${toUserId}`);
         //find the target user's socket
         const targetSockets = onlineUsers.get(toUserId);
         if (targetSockets) {
           targetSockets.forEach((socketId => {
-            console.log(`🔗 [SOCKET] Forwarding offer to socket: ${socketId}`);
             io.to(socketId).emit("incoming-call", {
               offer,
               fromUserId: userId,
@@ -86,12 +83,10 @@ export const initSocket = (httpServer: any) => {
             })
           }))
         } else {
-          console.warn(`⚠️ [SOCKET] User ${toUserId} is not online for call`);
         }
       });
 
       socket.on("answer-call", ({ toSocketId, answer }) => {
-        console.log(`📞 [SOCKET] Call answer from ${userId} to socket ${toSocketId}`);
         io.to(toSocketId).emit("call-answered", {
           answer,
           fromSocketId: socket.id,
@@ -99,7 +94,6 @@ export const initSocket = (httpServer: any) => {
       })
 
       socket.on("ice-candidate", ({ toSocketId, candidate }) => {
-        console.log(`❄️ [SOCKET] ICE candidate from ${userId} to socket ${toSocketId}`);
         io.to(toSocketId).emit("ice-candidate", {
           candidate,
           fromSocketId: socket.id,
@@ -116,11 +110,9 @@ export const initSocket = (httpServer: any) => {
             io.emit("user_status", { userId, status: "offline" });
           }
         }
-        console.log(`🔌 [SOCKET] User disconnected: ${userId}`);
       });
     });
 
-    console.log("🔌 [SOCKET] initialized with Auth & Tracking");
   }
   return io;
 };

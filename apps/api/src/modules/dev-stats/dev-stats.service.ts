@@ -152,14 +152,21 @@ export async function getGitHubStats(username: string): Promise<GitHubStatsResul
 
     try {
         const githubToken = process.env.GITHUB_TOKEN;
-        const headers: Record<string, string> = githubToken
-            ? { Authorization: `Bearer ${githubToken}` }
-            : {};
+        console.log(`[dev-stats] Using token for ${username}:`, githubToken ? "Token present" : "No token");
+        const headers: Record<string, string> = {
+            "User-Agent": "stack-app",
+            ...(githubToken ? { Authorization: `Bearer ${githubToken}` } : {}),
+        };
 
         const userResponse = await fetch(
             `https://api.github.com/users/${username}`,
             { headers }
         );
+        console.log(`[dev-stats] GitHub user response:`, userResponse.status, userResponse.statusText);
+        if (!userResponse.ok) {
+            console.error(`GitHub user API error: ${userResponse.status} ${userResponse.statusText}`);
+            return null;
+        }
         const userData = await userResponse.json();
 
         if (userData.message === "Not Found") return null;
@@ -168,13 +175,13 @@ export async function getGitHubStats(username: string): Promise<GitHubStatsResul
             `https://api.github.com/users/${username}/events/public?per_page=30`,
             { headers }
         );
-        const events: GitHubEvent[] = await eventsResponse.json();
+        const events: GitHubEvent[] = eventsResponse.ok ? await eventsResponse.json() : [];
 
         const reposResponse = await fetch(
             `https://api.github.com/users/${username}/repos?sort=updated&per_page=10`,
             { headers }
         );
-        const repos: GitHubRepo[] = await reposResponse.json();
+        const repos: GitHubRepo[] = reposResponse.ok ? await reposResponse.json() : [];
 
         const totalStars = repos.reduce(
             (sum, repo) => sum + (repo.stargazers_count || 0),
@@ -222,7 +229,8 @@ export async function getGitHubStats(username: string): Promise<GitHubStatsResul
 
         setCache(cacheKey, result);
         return result;
-    } catch {
+    } catch (error) {
+        console.error("Failed to fetch GitHub stats:", error);
         return null;
     }
 }

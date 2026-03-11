@@ -7,6 +7,8 @@ import { ProfileTab } from "@/types/profile-tab";
 import { ProfileTabs } from "./ProfileTabs";
 import { PostsTab } from "./tabs/PostsTab";
 import { ProjectsTab } from "./tabs/ProjectsTab";
+import { ProfileTopBar } from "./ProfileTopBar";
+import { EditProfileTab } from "./EditProfileTab";
 
 interface ProfileContentProps {
   userId: string;
@@ -39,32 +41,53 @@ export function ProfileContent({ userId, isOwnProfile, initialTab }: ProfileCont
       { enabled: !!githubUsername }
     );
 
+  console.log("[ProfileContent] user data:", user);
+  console.log("[ProfileContent] githubUsername:", githubUsername);
+  console.log("[ProfileContent] pinnedRepos:", pinnedRepos, "loading:", reposLoading);
+  console.log("[ProfileContent] contributionGraph length:", contributionGraph?.length);
+
   return (
     <div className="container">
-      <ProfileHeader userId={userId} isOwnProfile={isOwnProfile} />
+      <ProfileTopBar 
+        name={user?.name || ""} 
+        avatar={user?.image || user?.avatarUrl || ""} 
+        followers={user?._count?.followers ?? 0}
+        following={user?._count?.following ?? 0}
+        isOwnProfile={isOwnProfile}
+        onEditProfile={() => setActiveTab("edit-profile" as any)}
+      />
+      {activeTab === "edit-profile" ? (
+        <div className="pt-4">
+          <EditProfileTab currentUser={user} onCancel={() => setActiveTab("posts")} />
+        </div>
+      ) : (
+        <>
+          <ProfileHeader userId={userId} isOwnProfile={isOwnProfile} />
 
-      <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+          <ProfileTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <div className="pt-4">
-        {activeTab === "posts" && (
-          <PostsTab
-            posts={posts || []}
-            isLoading={postsLoading}
-            isOwnProfile={isOwnProfile}
-          />
-        )}
+          <div className="pt-4">
+            {activeTab === "posts" && (
+              <PostsTab
+                posts={posts || []}
+                isLoading={postsLoading}
+                isOwnProfile={isOwnProfile}
+              />
+            )}
 
-        {activeTab === "projects" && (
-          <ProjectsTab
-            repos={pinnedRepos || []}
-            loading={reposLoading}
-            contributions={contributionGraph || []}
-            contributionsLoading={graphLoading}
-            isOwnProfile={isOwnProfile}
-            userId={userId}
-          />
-        )}
-      </div>
+            {activeTab === "projects" && (
+              <ProjectsTab
+                repos={pinnedRepos || []}
+                loading={reposLoading}
+                contributions={contributionGraph || []}
+                contributionsLoading={graphLoading}
+                isOwnProfile={isOwnProfile}
+                userId={userId}
+              />
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }

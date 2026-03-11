@@ -1,4 +1,5 @@
-import { mergeRouters, router } from "./trpc";
+import { router } from "./trpc";
+
 import { userRouter } from "../modules/user/user.router";
 import { likeRouter } from "../modules/likes/like.router";
 import { postRouter } from "../modules/posts/post.router";
@@ -11,22 +12,20 @@ import { messagingRouter } from "../modules/messaging/messaging.router";
 import { projectRouter } from "../modules/projects/project.router";
 import { articleRouter } from "../modules/articles/article.router";
 
-export const appRouter = mergeRouters(
-  router({
-    posts: postRouter,
-    comments: commentRouter,
-    likes: likeRouter,
-    users: userRouter,
-    upload: uploadRouter,
-    devStats: devStatsRouter,
-    hireMe: hireMeRouter,
-    groups: groupRouter,
-    messaging: messagingRouter,
-    projects: projectRouter,
-    articles: articleRouter,
-  })
-);
+export const appRouter = router({
+  posts: postRouter,
+  comments: commentRouter,
+  likes: likeRouter,
+  users: userRouter,
+  upload: uploadRouter,
+  devStats: devStatsRouter,
+  hireMe: hireMeRouter,
+  groups: groupRouter,
+  messaging: messagingRouter,
+  projects: projectRouter,
+  articles: articleRouter,
+});
 
+console.log(Object.keys(appRouter._def.procedures));
 
 export type AppRouter = typeof appRouter;
-
