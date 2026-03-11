@@ -23,11 +23,9 @@ export default function ContributionGraph({ contributions }: Props) {
 
   return (
     <div className="relative">
-
-      {/* Tooltip */}
       {hovered && (
         <div className="absolute -top-8 left-0 bg-black text-white text-xs px-2 py-1 rounded">
-          {hovered.count} contributions on {hovered.date}
+          {hovered.count} commits on {hovered.date}
         </div>
       )}
 

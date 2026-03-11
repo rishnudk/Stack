@@ -5,15 +5,30 @@ import { ProjectCard } from "./ProjectCard";
 import { AddProjectModal } from "./AddProjectModal";
 import { ListProject } from "../ListProject";
 import { Plus, Github } from "lucide-react";
+import ContributionGraph from "./ContributionGraph";
+
+type ContributionDay = {
+    date: string;
+    count: number;
+};
 
 interface ProjectsTabProps {
     repos: any[];
     loading: boolean;
+    contributions: ContributionDay[];
+    contributionsLoading: boolean;
     isOwnProfile?: boolean;
     userId: string;
 }
 
-export function ProjectsTab({ repos, loading, isOwnProfile, userId }: ProjectsTabProps) {
+export function ProjectsTab({
+    repos,
+    loading,
+    contributions,
+    contributionsLoading,
+    isOwnProfile,
+    userId,
+}: ProjectsTabProps) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
@@ -76,24 +91,15 @@ export function ProjectsTab({ repos, loading, isOwnProfile, userId }: ProjectsTa
                     <h3 className="text-xl font-bold text-white">Contribution Graph</h3>
                 </div>
 
-                {loading ? (
+                {contributionsLoading ? (
                     <div className="p-8 text-neutral-500">Loading contribution graph...</div>
-                ) : !repos?.length ? (
+                ) : !contributions?.length ? (
                     <div className="p-8 text-center text-neutral-500 bg-neutral-900/50 rounded-xl border border-neutral-800/50">
                         No contribution graph found.
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {repos.map((repo) => (
-                            <ProjectCard
-                                key={repo.name}
-                                name={repo.name}
-                                description={repo.description}
-                                url={repo.url}
-                                stargazerCount={repo.stargazerCount}
-                                language={repo.primaryLanguage}
-                            />
-                        ))}
+                    <div className="rounded-xl border border-neutral-800/50 bg-neutral-900/50 p-4 overflow-x-auto">
+                        <ContributionGraph contributions={contributions} />
                     </div>
                 )}
             </div>

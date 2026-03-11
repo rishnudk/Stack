@@ -1,5 +1,8 @@
 import type { PrismaClient } from "@prisma/client";
-import { getPinnedRepos } from "../github/github.service";
+import {
+    getPinnedRepos,
+    getContributionGraph as getGithubContributionGraph,
+} from "../github/github.service";
 import type { SocialLinks } from "@stack/types";
 
 // ──────────────────────────────────────────────
@@ -215,6 +218,10 @@ export async function getGithubPinnedRepos(username: string) {
     return getPinnedRepos(username);
 }
 
+export async function getContributionGraph(username: string) {
+    return getGithubContributionGraph(username);
+}
+
 // ──────────────────────────────────────────────
 // COMPLETE ONBOARDING
 // ──────────────────────────────────────────────
@@ -327,30 +334,3 @@ export async function getSuggestions(
 
     return ranked;
 }
-
-export async function getContributionGraph(
-    prisma: PrismaClient,
-    username: string
-) {
-    const user = await prisma.user.findUnique({
-        where: { email: username },
-        select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-            avatarUrl: true,
-            headline: true,
-            location: true,
-            company: true,
-            bio: true,
-            skills: true,
-            socialLinks: true,
-            leetcodeUsername: true,
-            githubUsername: true,
-            createdAt: true,
-            _count: { select: { posts: true } },
-        },
-    });
-}
-

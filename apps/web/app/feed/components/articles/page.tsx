@@ -175,7 +175,7 @@ export default function NewArticlePage() {
                     <div className="flex justify-end gap-4 pt-4 border-t border-neutral-800">
                         <Button 
                             type="button" 
-                            variant="ghost" 
+                            variant="primary" 
                             onClick={() => router.back()}
                             className="hover:bg-neutral-900 rounded-full px-6"
                         >
