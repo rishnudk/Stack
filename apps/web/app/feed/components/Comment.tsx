@@ -8,28 +8,43 @@ import { formatPostTime } from "@/utils/formatTime";
 
 interface CommentProps {
   comment: any;
-  postId: string;
+  targetId: string;
+  type?: "post" | "article";
   onCommentAdded: () => void;
   depth?: number;
 }
 
-export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentProps) {
+export function Comment({ comment, targetId, type = "post", onCommentAdded, depth = 0 }: CommentProps) {
   const [showReplyBox, setShowReplyBox] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(comment.likes?.length || 0);
 
-  const addCommentMutation = trpc.comments.addComment.useMutation();
-  const toggleLikeMutation = trpc.comments.toggleCommentLike.useMutation();
+  const addPostCommentMutation = trpc.comments.addComment.useMutation();
+  const togglePostLikeMutation = trpc.comments.toggleCommentLike.useMutation();
+
+  const addArticleCommentMutation = trpc.articles.addComment.useMutation();
+  const toggleArticleLikeMutation = trpc.articles.toggleCommentLike.useMutation();
+
+  const isPending = type === "post" ? addPostCommentMutation.isPending : addArticleCommentMutation.isPending;
+  const isLikePending = type === "post" ? togglePostLikeMutation.isPending : toggleArticleLikeMutation.isPending;
 
   const handleReply = async () => {
     if (!replyText.trim()) return;
 
-    await addCommentMutation.mutateAsync({
-      postId,
-      content: replyText,
-      parentId: comment.id,
-    });
+    if (type === "post") {
+      await addPostCommentMutation.mutateAsync({
+        postId: targetId,
+        content: replyText,
+        parentId: comment.id,
+      });
+    } else {
+      await addArticleCommentMutation.mutateAsync({
+        articleId: targetId,
+        content: replyText,
+        parentId: comment.id,
+      });
+    }
 
     setReplyText("");
     setShowReplyBox(false);
@@ -37,7 +52,12 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
   };
 
   const handleLike = async () => {
-    const result = await toggleLikeMutation.mutateAsync({ commentId: comment.id });
+    let result;
+    if (type === "post") {
+      result = await togglePostLikeMutation.mutateAsync({ commentId: comment.id });
+    } else {
+      result = await toggleArticleLikeMutation.mutateAsync({ commentId: comment.id });
+    }
 
     if (result.liked) {
       setIsLiked(true);
@@ -85,7 +105,7 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
               <button
                 onClick={handleLike}
                 className="flex items-center gap-2 group transition-colors"
-                disabled={toggleLikeMutation.isPending}
+                disabled={isLikePending}
               >
                 <Heart
                   size={16}
@@ -135,7 +155,7 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
                 />
                 <button
                   onClick={handleReply}
-                  disabled={!replyText.trim() || addCommentMutation.isPending}
+                  disabled={!replyText.trim() || isPending}
                   className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-800 disabled:cursor-not-allowed transition-colors"
                 >
                   <Send size={14} className="text-white" />
@@ -153,7 +173,8 @@ export function Comment({ comment, postId, onCommentAdded, depth = 0 }: CommentP
             <Comment
               key={reply.id}
               comment={reply}
-              postId={postId}
+              targetId={targetId}
+              type={type}
               onCommentAdded={onCommentAdded}
               depth={depth + 1}
             />

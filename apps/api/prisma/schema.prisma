@@ -52,6 +52,8 @@ model User {
   articles            Article[]
   articleComments     ArticleComment[]
   articleLikes        ArticleLike[]
+  savedArticles       SavedArticle[]
+  articleCommentLikes ArticleCommentLike[]
   
 }
 
@@ -151,6 +153,7 @@ model Article {
   author      User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
   comments    ArticleComment[]
   likes       ArticleLike[]
+  savedBy     SavedArticle[]
 
   @@index([authorId])
   @@index([createdAt])
@@ -162,11 +165,41 @@ model ArticleComment {
   articleId String
   userId    String
   content   String
+  parentId  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent    ArticleComment?      @relation("ArticleCommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   ArticleComment[]     @relation("ArticleCommentReplies")
+  likes     ArticleCommentLike[]
 
+  @@index([articleId])
+  @@index([userId])
+}
+
+model ArticleCommentLike {
+  id        String         @id @default(cuid())
+  commentId String
+  userId    String
+  createdAt DateTime       @default(now())
+  comment   ArticleComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
+  @@index([commentId])
+  @@index([userId])
+}
+
+model SavedArticle {
+  id        String   @id @default(cuid())
+  articleId String
+  userId    String
+  createdAt DateTime @default(now())
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, userId])
   @@index([articleId])
   @@index([userId])
 }

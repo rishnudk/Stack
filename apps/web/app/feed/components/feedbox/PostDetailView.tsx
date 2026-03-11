@@ -118,7 +118,8 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
             <Comment
               key={comment.id}
               comment={comment}
-              postId={postId}
+              targetId={postId}
+              type="post"
               onCommentAdded={refetchComments}
             />
           ))

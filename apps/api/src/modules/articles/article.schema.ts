@@ -52,3 +52,26 @@ export const getArticlesSchema = z.object({
   tag: z.string().trim().optional(),
   publishedOnly: z.boolean().default(true),
 })
+
+export const toggleLikeSchema = z.object({
+  articleId: z.string().trim().min(1, "Article id is required"),
+})
+
+export const toggleSaveSchema = z.object({
+  articleId: z.string().trim().min(1, "Article id is required"),
+})
+
+export const addCommentSchema = z.object({
+  articleId: z.string().trim().min(1, "Article id is required"),
+  content: z.string().trim().min(1, "Content is required"),
+  parentId: z.string().trim().optional(),
+})
+
+export const getCommentsSchema = z.object({
+  articleId: z.string().trim().min(1, "Article id is required"),
+})
+
+export const toggleCommentLikeSchema = z.object({
+  commentId: z.string().trim().min(1, "Comment id is required"),
+})
+

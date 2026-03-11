@@ -278,3 +278,111 @@ export async function getMyArticles(
     nextCursor,
   };
 }
+
+// ──────────────────────────────────────────────
+// COMMENTS & INTERACTIONS
+// ──────────────────────────────────────────────
+
+export async function getComments(prisma: PrismaClient, articleId: string) {
+  return prisma.articleComment.findMany({
+    where: { articleId, parentId: null },
+    include: {
+      user: true,
+      likes: true,
+      replies: {
+        include: {
+          user: true,
+          likes: true,
+          replies: {
+            include: { user: true, likes: true },
+            orderBy: { createdAt: "asc" },
+          },
+        },
+        orderBy: { createdAt: "asc" },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function addComment(
+  prisma: PrismaClient,
+  userId: string,
+  input: { articleId: string; content: string; parentId?: string }
+) {
+  return prisma.articleComment.create({
+    data: {
+      content: input.content,
+      articleId: input.articleId,
+      userId,
+      parentId: input.parentId,
+    },
+    include: {
+      user: true,
+      likes: true,
+    },
+  });
+}
+
+export async function toggleCommentLike(
+  prisma: PrismaClient,
+  userId: string,
+  commentId: string
+) {
+  const existing = await prisma.articleCommentLike.findFirst({
+    where: { commentId, userId },
+  });
+
+  if (existing) {
+    await prisma.articleCommentLike.delete({ where: { id: existing.id } });
+    return { liked: false };
+  }
+
+  await prisma.articleCommentLike.create({
+    data: { commentId, userId },
+  });
+
+  return { liked: true };
+}
+
+export async function toggleLike(
+  prisma: PrismaClient,
+  userId: string,
+  articleId: string
+) {
+  const existing = await prisma.articleLike.findFirst({
+    where: { articleId, userId },
+  });
+
+  if (existing) {
+    await prisma.articleLike.delete({ where: { id: existing.id } });
+    return { liked: false };
+  }
+
+  await prisma.articleLike.create({
+    data: { articleId, userId },
+  });
+
+  return { liked: true };
+}
+
+export async function toggleSave(
+  prisma: PrismaClient,
+  userId: string,
+  articleId: string
+) {
+  const existing = await prisma.savedArticle.findFirst({
+    where: { articleId, userId },
+  });
+
+  if (existing) {
+    await prisma.savedArticle.delete({ where: { id: existing.id } });
+    return { saved: false };
+  }
+
+  await prisma.savedArticle.create({
+    data: { articleId, userId },
+  });
+
+  return { saved: true };
+}
