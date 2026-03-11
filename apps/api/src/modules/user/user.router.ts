@@ -60,4 +60,10 @@ export const userRouter = router({
         .query(({ ctx }) =>
             UserService.getSuggestions(ctx.prisma, ctx.session.user.id)
         ),
+
+    getContributionGraph: publicProcedure
+        .input(UserSchema.getContributionGraphSchema)
+        .query(({ input }) =>
+            UserService.getContributionGraph(input.username)
+        ),
 });

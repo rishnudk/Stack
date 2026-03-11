@@ -2,8 +2,9 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Button } from "@repo/ui/button";
-import { Image, Smile } from "lucide-react";
+import { Image, Smile, FileText } from "lucide-react";
 import ImageNext from "next/image";
+import { useRouter } from "next/navigation";
 import { trpc } from '@/utils/trpc';
 import { toast } from 'sonner';
 import { useSession } from 'next-auth/react';
@@ -13,6 +14,7 @@ interface CreatePostBoxProps {
 }
 
 export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
+    const router = useRouter();
     const { data: session } = useSession();
     const [content, setContent] = useState('');
     const [files, setFiles] = useState<File[]>([]);
@@ -202,7 +204,11 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
                         <div className="flex items-center gap-3">
 
                             {/* Write article */}
-                            <button className="flex items-center gap-2 border border-neutral-700 px-4 py-1.5 rounded-full text-sm hover:bg-neutral-900">
+                            <button 
+                                onClick={() => router.push('/article')}
+                                className="flex items-center gap-2 border border-neutral-700 px-4 py-1.5 rounded-full text-sm hover:bg-neutral-900 transition-colors"
+                            >
+                                <FileText size={16} />
                                 Write Article
                             </button>
 

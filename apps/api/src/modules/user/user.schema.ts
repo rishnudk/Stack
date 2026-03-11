@@ -53,3 +53,8 @@ export const updateProfileSchema = z.object({
 export const getGithubPinnedReposSchema = z.object({
     username: z.string(),
 });
+
+// getContributionGraph
+export const getContributionGraphSchema = z.object({
+    username: z.string(),
+});

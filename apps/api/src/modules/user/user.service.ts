@@ -327,3 +327,30 @@ export async function getSuggestions(
 
     return ranked;
 }
+
+export async function getContributionGraph(
+    prisma: PrismaClient,
+    username: string
+) {
+    const user = await prisma.user.findUnique({
+        where: { email: username },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            avatarUrl: true,
+            headline: true,
+            location: true,
+            company: true,
+            bio: true,
+            skills: true,
+            socialLinks: true,
+            leetcodeUsername: true,
+            githubUsername: true,
+            createdAt: true,
+            _count: { select: { posts: true } },
+        },
+    });
+}
+
