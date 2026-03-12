@@ -5,8 +5,6 @@ import Link from "next/link"
 import { Home, User, Calendar, CreditCard, Menu, X, Sun, Moon, Github } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { LazyMotion, domAnimation, m, AnimatePresence } from "framer-motion"
-import { useTheme } from "next-themes"
-import { useSound } from "@/hooks/use-sound"
 import { Button } from "@/components/ui/button"
 
 // Helper component for navigation links

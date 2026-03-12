@@ -23,7 +23,7 @@ export const TrpcProvider = ({ children }: { children: React.ReactNode }) => {
           async headers() {
             const { getSession } = await import('next-auth/react');
             const session = await getSession();
-            console.log("🌐 [tRPC] Session in headers:", !!session, "Token present:", !!session?.apiToken);
+            console.log(" [tRPC] Session in headers:", !!session, "Token present:", !!session?.apiToken);
             if (session?.apiToken) {
               return {
                 Authorization: `Bearer ${session.apiToken}`,

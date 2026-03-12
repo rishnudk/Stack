@@ -11,6 +11,7 @@ import { groupRouter } from "../modules/group/group.router";
 import { messagingRouter } from "../modules/messaging/messaging.router";
 import { projectRouter } from "../modules/projects/project.router";
 import { articleRouter } from "../modules/articles/article.router";
+import { githubRouter } from "../modules/github/github.router";
 
 export const appRouter = router({
   posts: postRouter,
@@ -24,8 +25,7 @@ export const appRouter = router({
   messaging: messagingRouter,
   projects: projectRouter,
   articles: articleRouter,
+  github: githubRouter,
 });
-
-console.log(Object.keys(appRouter._def.procedures));
 
 export type AppRouter = typeof appRouter;

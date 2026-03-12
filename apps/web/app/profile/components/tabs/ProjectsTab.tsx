@@ -6,6 +6,8 @@ import { AddProjectModal } from "./AddProjectModal";
 import { ListProject } from "../ListProject";
 import { Plus, Github } from "lucide-react";
 import ContributionGraph from "./ContributionGraph";
+import { trpc } from "@/utils/trpc";
+
 
 type ContributionDay = {
     date: string;
@@ -19,6 +21,7 @@ interface ProjectsTabProps {
     contributionsLoading: boolean;
     isOwnProfile?: boolean;
     userId: string;
+    githubUsername: string;
 }
 
 export function ProjectsTab({
@@ -28,8 +31,13 @@ export function ProjectsTab({
     contributionsLoading,
     isOwnProfile,
     userId,
+    githubUsername,
 }: ProjectsTabProps) {
+
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { data: pinnedRepos, isLoading: pinnedReposLoading } = trpc.github.getPinnedRepos.useQuery({
+        username: githubUsername,
+    });
 
     return (
         <div className="space-y-8">
@@ -57,15 +65,15 @@ export function ProjectsTab({
                     <h3 className="text-xl font-bold text-white">Pinned Repositories</h3>
                 </div>
 
-                {loading ? (
+                {pinnedReposLoading ? (
                     <div className="p-8 text-neutral-500">Loading GitHub repos...</div>
-                ) : !repos?.length ? (
+                ) : !pinnedRepos?.length ? (
                     <div className="p-8 text-center text-neutral-500 bg-neutral-900/50 rounded-xl border border-neutral-800/50">
                         No pinned repositories found.
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {repos.map((repo) => (
+                        {pinnedRepos.map((repo: any) => (
                             <ProjectCard
                                 key={repo.name}
                                 name={repo.name}
