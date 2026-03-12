@@ -1,17 +1,27 @@
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { ArrowLeft, ExternalLink, Github, Code, Users } from "lucide-react";
+import { ArrowLeft, ExternalLink, Github, Code, Users, Trash2, Trash, Pencil } from "lucide-react";
+import { AddProjectModal } from "./AddProjectModal";
 
 interface ListProjectProps {
     userId: string;
 }
 
 export function ListProject({ userId }: ListProjectProps) {
+
+    const utils = trpc.useUtils();
     const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
     const [showAll, setShowAll] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const [editProject, setEditProject] = useState(false);
 
     const { data: projects, isLoading } = trpc.projects.getProjectsByUserId.useQuery({ userId });
-
+    const deleteProject = trpc.projects.deleteProject.useMutation({
+        onSuccess: () => {
+            utils.projects.getProjectsByUserId.invalidate({ userId });
+            setSelectedProjectId(null);
+        }
+    })
     if (isLoading) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -95,8 +105,62 @@ export function ListProject({ userId }: ListProjectProps) {
                                         Source Code
                                     </a>
                                 )}
+                                <button
+                                    title="Edit Project"
+                                    onClick={() => setEditProject(true)}
+                                    className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition-colors"
+                                >
+                                    <Pencil size={16} />
+                                </button>
+
+                                <button
+                                    title="Delete Project"
+                                    onClick={() => setConfirmDelete(true)}
+                                    className="p-2 rounded-lg bg-red-600/10 hover:bg-red-600/20 text-red-500 border border-red-600/20 transition-colors"
+                                >
+                                    <Trash2 size={16} />
+                                </button>
                             </div>
                         </div>
+                        <AddProjectModal
+                            isOpen={editProject}
+                            onClose={() => setEditProject(false)}
+                            project={project}
+                        />
+
+                        {confirmDelete && (
+                            <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
+                                <div className="bg-neutral-900 border border-neutral-800 rounded-xl p-6 w-[320px] animate-in fade-in zoom-in-95">
+
+                                    <h3 className="text-white text-lg font-semibold mb-2">
+                                        Delete Project
+                                    </h3>
+
+                                    <p className="text-sm text-neutral-400 mb-6">
+                                        Are you sure you want to delete this project? This action cannot be undone.
+                                    </p>
+
+                                    <div className="flex justify-end gap-3">
+                                        <button
+                                            onClick={() => setConfirmDelete(false)}
+                                            className="px-4 py-2 text-sm rounded-lg border border-neutral-700 text-neutral-300 hover:bg-neutral-800"
+                                        >
+                                            Cancel
+                                        </button>
+
+                                        <button
+                                            onClick={() => {
+                                                deleteProject.mutate({ id: project.id });
+                                                setConfirmDelete(false);
+                                            }}
+                                            className="px-4 py-2 text-sm rounded-lg bg-red-600 hover:bg-red-700 text-white"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="prose prose-invert max-w-none">
                             <h3 className="text-lg font-semibold text-white mb-3">About the Project</h3>

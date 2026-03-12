@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { ProjectCard } from "./ProjectCard";
 import { AddProjectModal } from "./AddProjectModal";
-import { ListProject } from "../ListProject";
+import { ListProject } from "./ListProject";
 import { Plus, Github } from "lucide-react";
 import ContributionGraph from "./ContributionGraph";
 import { trpc } from "@/utils/trpc";

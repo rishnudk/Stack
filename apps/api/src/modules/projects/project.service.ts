@@ -53,15 +53,26 @@ export async function getProjects(
 }
 
 export async function deleteProject(
-    prisma: PrismaClient,
-    userId: string,
-    input: { id: string }
+  prisma: PrismaClient,
+  userId: string,
+  input: { id: string }
 ) {
-    const project = await prisma.project.findUnique({ where: { id: input.id } });
-    if (!project) throw new Error("Project not found");
-    if (project.userId !== userId) throw new Error("Unauthorized");
+  const project = await prisma.project.findUnique({
+    where: { id: input.id },
+  });
 
-    return prisma.project.delete({ where: { id: input.id } });
+  if (!project) {
+    throw new Error("Project not found");
+  }
+
+  // security check
+  if (project.userId !== userId) {
+    throw new Error("Unauthorized to delete this project");
+  }
+
+  return prisma.project.delete({
+    where: { id: input.id },
+  });
 }
 
 export async function editProject(

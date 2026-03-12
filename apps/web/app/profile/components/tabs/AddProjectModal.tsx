@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X, Upload, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { trpc } from "@/utils/trpc";
@@ -9,9 +9,10 @@ import { toast } from "sonner";
 interface AddProjectModalProps {
     isOpen: boolean;
     onClose: () => void;
+    project?: any;
 }
 
-export function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
+export function AddProjectModal({ isOpen, onClose, project }: AddProjectModalProps) {
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -37,6 +38,34 @@ export function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
             toast.error(error.message || "Failed to create project");
         }
     });
+    const editProjectMutation = trpc.projects.editProject.useMutation({
+        onSuccess: () => {
+            toast.success("Project edited successfully!");
+            utils.projects.getProjects.invalidate();
+            utils.projects.getProjectsByUserId.invalidate();
+            onClose();
+        },
+        onError: (error) => {
+            toast.error(error.message || "Failed to edit project");
+        }
+    });
+
+
+    useEffect(() => {
+  if (project) {
+    setFormData({
+      name: project.name || "",
+      description: project.description || "",
+      openToContributions: project.openToContributions || false,
+      liveLink: project.liveLink || "",
+      githubLink: project.githubLink || "",
+    });
+
+    if (project.imageUrl) {
+      setImagePreview(project.imageUrl);
+    }
+  }
+}, [project]);
 
     const isSubmitting = getPresignedUrlMutation.isPending || createProjectMutation.isPending;
 
@@ -103,10 +132,21 @@ export function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
                 imageUrl = fileUrl;
             }
 
-            await createProjectMutation.mutateAsync({
-                ...formData,
-                imageUrl,
-            });
+            if (project) {
+                //edit project
+                await editProjectMutation.mutateAsync({
+                    ...formData,
+                    imageUrl,
+                    id: project.id,
+                });
+            } else {
+                //create project
+                await createProjectMutation.mutateAsync({
+                    ...formData,
+                    imageUrl,
+                });
+
+            }
 
             // Clear form
             setFormData({
@@ -146,7 +186,9 @@ export function AddProjectModal({ isOpen, onClose }: AddProjectModalProps) {
                 >
                     {/* Header */}
                     <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-800">
-                        <h2 className="text-lg font-semibold text-white">Add Project</h2>
+                        <h2 className="text-lg font-semibold text-white">
+                            {project ? "Edit Project" : "Add Project"}
+                        </h2>
                         <button
                             onClick={onClose}
                             className="p-1 rounded-full hover:bg-neutral-800 text-neutral-400 hover:text-white transition-colors"

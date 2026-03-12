@@ -82,6 +82,7 @@ export function ProfileContent({ userId, isOwnProfile, initialTab }: ProfileCont
                 contributions={contributionGraph || []}
                 contributionsLoading={graphLoading}
                 isOwnProfile={isOwnProfile}
+                githubUsername={githubUsername}
                 userId={userId}
               />
             )}

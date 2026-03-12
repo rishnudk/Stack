@@ -65,7 +65,7 @@ export default async function LandingPage() {
     <div className="min-h-screen bg-[#000000] text-white selection:bg-[#3B82F6]/30 dark">
       <Navbar />
       <Hero />
-      <BentoSection />
+      {/* <BentoSection />
       <div className="container mx-auto pb-24">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
           What our users say
@@ -81,7 +81,7 @@ export default async function LandingPage() {
           marqueeTextColor="#060010"
           borderColor="#ffffff"
         />
-      </div>
+      </div> */}
     </div>
   );
 }
