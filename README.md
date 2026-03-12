@@ -26,7 +26,6 @@ This project is a monorepo managed by **Turborepo** and **pnpm workspaces**.
 -   **ORM**: [Prisma](https://www.prisma.io/) (PostgreSQL)
 -   **API Layer**: [tRPC](https://trpc.io/) for end-to-end type safety
 -   **Real-time**: [Socket.io](https://socket.io/)
--   **Documentation**: [trpc-panel](https://github.com/iway1/trpc-panel)
 
 ## Monorepo Folder Structure
 
