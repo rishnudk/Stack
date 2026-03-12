@@ -1,5 +1,9 @@
 import Hero from "./landing/components/Hero";
 import Navbar from "./landing/components/Navbar";
+import { BentoGridDemo } from "./landing/components/BentoGrid";
+import { GlowingGrid } from "./landing/components/GlowingGrid";
+import { MinimalFooter } from "./landing/components/MinimalFooter";
+import { SmoothScroll } from "./landing/components/SmoothScroll";
 import { BentoSection } from "./landing/components/BentoSection";
 import { TestimonialMarquee } from "./landing/components/Marquee";
 import { redirect } from "next/navigation";
@@ -63,16 +67,18 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#000000] text-white selection:bg-[#3B82F6]/30 dark">
+      <SmoothScroll />
       <Navbar />
       <Hero />
-      {/* <BentoSection />
+      <BentoGridDemo />
+      <GlowingGrid />
       <div className="container mx-auto pb-24">
         <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">
           What our users say
         </h2>
         <TestimonialMarquee testimonials={testimonials} />
       </div>
-      <div style={{ height: '600px', position: 'relative' }}>
+      {/* <div style={{ height: '600px', position: 'relative' }}>
         <FlowingMenu items={demoItems}
           speed={15}
           textColor="#ffffff"
@@ -82,6 +88,7 @@ export default async function LandingPage() {
           borderColor="#ffffff"
         />
       </div> */}
+      <MinimalFooter />
     </div>
   );
 }
