@@ -127,16 +127,6 @@ export function AuthPage() {
 							type="button" 
 							size="lg" 
 							className="w-full"
-							onClick={() => handleSocialSignIn("apple")}
-							disabled={isLoading !== null}
-						>
-							<AppleIcon className='size-4 me-2' />
-							Continue with Apple
-						</Button>
-						<Button 
-							type="button" 
-							size="lg" 
-							className="w-full"
 							onClick={() => handleSocialSignIn("github")}
 							disabled={isLoading !== null}
 						>
@@ -178,23 +168,7 @@ export function AuthPage() {
 							{isLoading === "email" ? "Sending email..." : "Continue With Email"}
 						</Button>
 					</form>
-					<p className="text-muted-foreground mt-8 text-sm">
-						By clicking continue, you agree to our{' '}
-						<a
-							href="#"
-							className="hover:text-primary underline underline-offset-4"
-						>
-							Terms of Service
-						</a>{' '}
-						and{' '}
-						<a
-							href="#"
-							className="hover:text-primary underline underline-offset-4"
-						>
-							Privacy Policy
-						</a>
-						.
-					</p>
+					
 				</div>
 			</div>
 		</main>
