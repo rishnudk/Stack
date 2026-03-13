@@ -100,7 +100,7 @@ export function LeftSidebar({ session: propSession }: LeftSidebarProps) {
         })}
       </nav>
       
-      <div className="pt-8 mt-auto space-y-6">
+      <div className="mt-auto space-y-4">
         {user && <SidebarProfile user={user} />}
         <ProfileCard session={session} />
       </div>
