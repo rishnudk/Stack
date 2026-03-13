@@ -52,7 +52,7 @@ export default function ProfileCard({ session: propSession }: ProfileCardProps) 
 
         {/* Description */}
         <p className="text-sm text-neutral-400 mt-2">
-          Get verified on Peerlist to boost your search ranking.
+          Get verified on Stack to boost your search ranking.
         </p>
 
         {/* Button */}
