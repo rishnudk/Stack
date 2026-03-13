@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { trpc } from "@/utils/trpc";
 import type { Session } from "next-auth";
 import SidebarLogo from "./SidebarLogo";
 import ProfileCard from "./ProfileCard";
@@ -34,8 +36,17 @@ const navItems = [
   { icon: Users, label: "Profile", href: "/profile" },
 ];
 
-export function LeftSidebar({ session }: LeftSidebarProps) {
+export function LeftSidebar({ session: propSession }: LeftSidebarProps) {
   const pathname = usePathname();
+  const { data: sessionData } = useSession();
+  const session = propSession || sessionData;
+
+  const { data: userData } = trpc.users.getSidebarInfo.useQuery(
+    { userId: session?.user?.id },
+    { enabled: !!session?.user?.id }
+  );
+
+  const user = userData?.user;
 
   return (
     <aside className="w-72 bg-black/50 backdrop-blur-xl border-neutral-800/50 sticky top-0 h-screen flex flex-col">
@@ -88,8 +99,9 @@ export function LeftSidebar({ session }: LeftSidebarProps) {
           );
         })}
       </nav>
-      <div>
-        <SidebarProfile  />
+      
+      <div className="pt-8 mt-auto space-y-6">
+        {user && <SidebarProfile user={user} />}
         <ProfileCard session={session} />
       </div>
       </div>

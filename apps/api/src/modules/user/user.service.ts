@@ -39,6 +39,12 @@ export async function getSidebarInfo(
             headline: true,
             location: true,
             onboardingCompleted: true,
+            _count: {
+                select: {
+                    followers: true,
+                    following: true,
+                },
+            },
         },
     });
 
