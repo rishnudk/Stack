@@ -9,16 +9,16 @@ export const postRouter = router({
             PostService.createPost(ctx.prisma, ctx.session.user.id, input)
         ),
 
-    getPosts: protectedProcedure
+    getPosts: publicProcedure
         .input(PostSchema.getPostsSchema)
         .query(({ ctx, input }) =>
-            PostService.getPosts(ctx.prisma, ctx.session.user.id, input)
+            PostService.getPosts(ctx.prisma, ctx.session?.user?.id, input)
         ),
 
-    getPostById: protectedProcedure
+    getPostById: publicProcedure
         .input(PostSchema.getPostByIdSchema)
         .query(({ ctx, input }) =>
-            PostService.getPostById(ctx.prisma, ctx.session.user.id, input.postId)
+            PostService.getPostById(ctx.prisma, ctx.session?.user?.id, input.postId)
         ),
 
     getUserPosts: publicProcedure

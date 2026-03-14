@@ -8,12 +8,14 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 
 interface FeedClientProps {
-  session: Session;
+  session: Session | null;
 }
 
 export default function FeedClient({ session }: FeedClientProps) {
-  const { data: updateSession } = useSession();
-  const { data: userInfo, isLoading } = trpc.users.getSidebarInfo.useQuery({});
+  const { data: userInfo, isLoading } = trpc.users.getSidebarInfo.useQuery(
+    {},
+    { enabled: !!session } // Only fetch user sidebar info if logged in
+  );
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
@@ -21,10 +23,6 @@ export default function FeedClient({ session }: FeedClientProps) {
       setShowOnboarding(true);
     }
   }, [isLoading, userInfo]);
-
-  const handleCloseOnboarding = () => {
-    setShowOnboarding(false);
-  };
 
   return (
     <div className="flex justify-center min-h-screen bg-black">
@@ -37,7 +35,7 @@ export default function FeedClient({ session }: FeedClientProps) {
         {/* Feed Section */}
         <main className="flex-1 flex justify-center">
           <div className="w-full max-w-[700px] px-4 py-0">
-            <FeedBox />
+            <FeedBox session={session} />
           </div>
         </main>
 
@@ -46,8 +44,7 @@ export default function FeedClient({ session }: FeedClientProps) {
           <RightSidebar session={session} />
         </aside>
       </div>
-
-      
     </div>
   );
 }
+

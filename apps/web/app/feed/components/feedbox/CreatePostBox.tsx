@@ -2,43 +2,41 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Button } from "@repo/ui/button";
-import { Image, Smile, FileText } from "lucide-react";
+import { Image, Smile, FileText, Sparkles, Code2, Users } from "lucide-react";
 import ImageNext from "next/image";
 import { useRouter } from "next/navigation";
-import { trpc } from '@/utils/trpc';
-import { toast } from 'sonner';
-import { useSession } from 'next-auth/react';
+import { trpc } from "@/utils/trpc";
+import { toast } from "sonner";
+import type { Session } from "next-auth";
+import Link from "next/link";
 
 interface CreatePostBoxProps {
     groupId?: string;
+    session?: Session | null;
 }
 
-export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
+export function CreatePostBox({ groupId, session }: CreatePostBoxProps = {}) {
     const router = useRouter();
-    const { data: session } = useSession();
-    const [content, setContent] = useState('');
+    const [content, setContent] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [uploading, setUploading] = useState(false);
-    const [progress, setProgress] = useState<Record<string, number>>({});
     const [placeholderIndex, setPlaceholderIndex] = useState(0);
 
     const placeholders = [
         "What are you building?",
         "What are you working on?",
         "What did you learn today?",
-        "Are you hiring?"
+        "Are you hiring?",
     ];
 
-    // Use the actual tRPC mutation
     const utils = trpc.useUtils();
     const createPost = trpc.posts.createPost.useMutation();
     const getPresignedUrl = trpc.upload.getPresignedUrl.useMutation();
 
     useEffect(() => {
         if (content.length > 0) return;
-
         const interval = setInterval(() => {
-            setPlaceholderIndex((prev) => (prev + 1) % placeholders.length)
+            setPlaceholderIndex((prev) => (prev + 1) % placeholders.length);
         }, 2000);
         return () => clearInterval(interval);
     }, [content]);
@@ -46,67 +44,49 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
     const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
         setFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
-    }
+    };
 
-    async function uploadFileTos3(file: File) {
-        console.log('🔵 Starting upload for:', file.name);
+    async function uploadFileToS3(file: File) {
         const presignResp = await getPresignedUrl.mutateAsync({
             fileName: file.name,
-            fileType: file.type
+            fileType: file.type,
         });
-        console.log('🔵 Uploading to S3...');
         const { uploadUrl, fileUrl } = presignResp;
-        console.log('🔵 Upload URL:', uploadUrl);
-        console.log('🔵 File URL:', fileUrl);
         await fetch(uploadUrl, {
-            method: 'PUT',
-            headers: { 'Content-Type': file.type },
+            method: "PUT",
+            headers: { "Content-Type": file.type },
             body: file,
         });
-        console.log('🔵 File uploaded successfully!');
         return fileUrl;
     }
 
     const handleSubmit = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        console.log('🔵 Starting post creation...');
         const trimmedContent = content.trim();
-
         if (!trimmedContent && files.length === 0) {
             toast.error("Content or image is required");
             return;
         }
-
         try {
             setUploading(true);
             const imageUrls: string[] = [];
-
             for (const file of files) {
-                const url = await uploadFileTos3(file);
+                const url = await uploadFileToS3(file);
                 if (url) imageUrls.push(url);
             }
-
             await createPost.mutateAsync({
                 content: trimmedContent,
                 images: imageUrls,
-                groupId: groupId,
+                groupId,
             });
-
-            // Clear form after successful submission
             setContent("");
             setFiles([]);
-            setProgress({});
             toast.success("Post created successfully!");
-
-            // Invalidate queries to refresh the UI
             if (groupId) {
-                // Invalidate group posts query
                 utils.groups.getGroupPosts.invalidate({ groupId });
             } else {
-                // Invalidate general feed posts query
                 utils.posts.getPosts.invalidate();
             }
-
         } catch (err: any) {
             console.error(err);
             toast.error(err.message || "Error creating post");
@@ -115,10 +95,50 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
         }
     };
 
+    // ── Guest CTA Banner ──────────────────────────────────────────────────────
+    if (!session) {
+        return (
+            <div className="border-b border-neutral-800 bg-linear-to-br from-neutral-950 to-black px-5 py-5 text-white">
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-2 text-neutral-400 text-xs font-medium uppercase tracking-widest">
+                        <Sparkles size={12} className="text-green-400" />
+                        <span>The dev social network</span>
+                    </div>
+                    <h3 className="text-[15px] font-semibold text-white leading-snug">
+                        Share your work, connect with devs,<br />
+                        <span className="text-green-400">and build your engineering brand.</span>
+                    </h3>
+                    <div className="flex items-center gap-4 text-neutral-500 text-xs mt-1">
+                        <span className="flex items-center gap-1.5">
+                            <Code2 size={12} className="text-neutral-400" />
+                            Share code &amp; projects
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <Users size={12} className="text-neutral-400" />
+                            Follow top engineers
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1">
+                        <Link href="/signup">
+                            <button className="bg-green-500 hover:bg-green-400 text-black font-semibold text-sm px-5 py-2 rounded-full transition-all duration-200 active:scale-95">
+                                Join Stack
+                            </button>
+                        </Link>
+                        <Link href="/signin">
+                            <button className="text-neutral-300 hover:text-white text-sm border border-neutral-700 hover:border-neutral-500 px-4 py-2 rounded-full transition-all duration-200">
+                                Sign in
+                            </button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    // ── Authenticated Create Post Box ─────────────────────────────────────────
     return (
         <div className="border-b border-neutral-800 bg-black px-4 py-3 text-white">
             <div className="flex items-start gap-3">
-
                 {/* Avatar */}
                 <ImageNext
                     src={session?.user?.image || "/profile.png"}
@@ -129,10 +149,7 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
                 />
 
                 <div className="flex-1">
-
                     <div className="relative flex-1">
-
-                        {/* Animated placeholder */}
                         {content.length === 0 && (
                             <span
                                 key={placeholderIndex}
@@ -141,13 +158,11 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
                                 {placeholders[placeholderIndex]}
                             </span>
                         )}
-
                         <textarea
                             className="w-full bg-transparent resize-none outline-none text-[15px]"
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                         />
-
                     </div>
 
                     {/* Hidden file input */}
@@ -162,15 +177,11 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
 
                     {/* Bottom actions */}
                     <div className="flex items-center justify-between mt-3">
-
-                        {/* Left icons */}
                         <div className="flex items-center gap-5 text-neutral-400">
                             <label htmlFor="fileUpload" className="cursor-pointer hover:text-white">
                                 <Image size={18} />
                             </label>
-
                             <Smile size={18} className="cursor-pointer hover:text-white" />
-
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="18"
@@ -184,7 +195,6 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
                                 <line x1="9" y1="5" x2="9" y2="9" />
                                 <line x1="9" y1="13" x2="9.01" y2="13" />
                             </svg>
-
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="18"
@@ -200,19 +210,14 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
                             </svg>
                         </div>
 
-                        {/* Right buttons */}
                         <div className="flex items-center gap-3">
-
-                            {/* Write article */}
-                            <button 
-                                onClick={() => router.push('/article')}
+                            <button
+                                onClick={() => router.push("/article")}
                                 className="flex items-center gap-2 border border-neutral-700 px-4 py-1.5 rounded-full text-sm hover:bg-neutral-900 transition-colors"
                             >
                                 <FileText size={16} />
                                 Write Article
                             </button>
-
-                            {/* Post button */}
                             <Button
                                 onClick={() => handleSubmit()}
                                 disabled={uploading || createPost.isPending}
@@ -220,11 +225,8 @@ export function CreatePostBox({ groupId }: CreatePostBoxProps = {}) {
                             >
                                 {uploading || createPost.isPending ? "Posting..." : "Post"}
                             </Button>
-
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>

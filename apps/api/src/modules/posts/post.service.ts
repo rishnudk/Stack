@@ -51,7 +51,7 @@ export async function createPost(
 // ──────────────────────────────────────────────
 export async function getPosts(
   prisma: PrismaClient,
-  userId: string,
+  userId: string | undefined,
   input: { cursor?: string | null; limit: number }
 ) {
   const posts = await prisma.post.findMany({
@@ -62,7 +62,7 @@ export async function getPosts(
       author: { select: AUTHOR_SELECT },
       likes: true,
       comments: true,
-      savedBy: { where: { userId }, take: 1 },
+      savedBy: userId ? { where: { userId }, take: 1 } : false as any,
     },
   });
 
@@ -71,7 +71,7 @@ export async function getPosts(
   return {
     posts: posts.map((post) => ({
       ...post,
-      isSaved: post.savedBy.length > 0,
+      isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
     })),
     nextCursor,
   };
@@ -82,7 +82,7 @@ export async function getPosts(
 // ──────────────────────────────────────────────
 export async function getPostById(
   prisma: PrismaClient,
-  userId: string,
+  userId: string | undefined,
   postId: string
 ) {
   const post = await prisma.post.findUnique({
@@ -91,12 +91,12 @@ export async function getPostById(
       author: { select: AUTHOR_SELECT },
       likes: true,
       comments: { include: { user: true } },
-      savedBy: { where: { userId }, take: 1 },
+      savedBy: userId ? { where: { userId }, take: 1 } : false as any,
     },
   });
 
   if (!post) return null;
-  return { ...post, isSaved: post.savedBy.length > 0 };
+  return { ...post, isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false };
 }
 
 // ──────────────────────────────────────────────

@@ -7,7 +7,7 @@ import { TrendingCard } from "./TrendingCard";
 import type { Session } from "next-auth";
 
 interface RightSidebarProps {
-  session: Session;
+  session: Session | null;
 }
 
 export function RightSidebar({ session }: RightSidebarProps) {

@@ -24,7 +24,7 @@ import SettingsMenu from "./SettingsMenu";
 import SidebarProfile from "./SidebarProfile";
 
 interface LeftSidebarProps {
-  session: Session;
+  session: Session | null;
 }
 
 const navItems = [

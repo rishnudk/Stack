@@ -8,8 +8,13 @@ import { PostList } from "./PostList";
 import { PostDetailView } from "./PostDetailView";
 import { GroupsList } from "./GroupsList";
 import { GroupDetailView } from "./GroupDetailView";
+import type { Session } from "next-auth";
 
-export function FeedBox() {
+interface FeedBoxProps {
+  session: Session | null;
+}
+
+export function FeedBox({ session }: FeedBoxProps) {
   const pathname = usePathname();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -40,11 +45,11 @@ export function FeedBox() {
             <GroupsList />
           ) : (
             <>
-              {/* Create new post box */}
-              <CreatePostBox />
+              {/* Create new post box — shows CTA for guests */}
+              <CreatePostBox session={session} />
 
               {/* Post feed */}
-              <PostList />
+              <PostList session={session} />
             </>
           )}
         </>
