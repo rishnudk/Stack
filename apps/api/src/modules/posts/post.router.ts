@@ -55,4 +55,29 @@ export const postRouter = router({
         .mutation(({ ctx, input }) =>
             PostService.toggleSavePost(ctx.prisma, ctx.session.user.id, input.postId)
         ),
+        
+    saveDraft: protectedProcedure
+        .input(PostSchema.saveDraftSchema)
+        .mutation(({ ctx, input }) =>
+            PostService.saveDraft(ctx.prisma, ctx.session.user.id, input)
+        ),
+
+    getDrafts: protectedProcedure
+        .input(PostSchema.getDraftsSchema)
+        .query(({ ctx, input }) =>
+            PostService.getDrafts(ctx.prisma, ctx.session.user.id, input)
+        ),
+
+    deleteDraft: protectedProcedure
+        .input(PostSchema.deleteDraftSchema)
+        .mutation(({ ctx, input }) =>
+            PostService.deleteDraft(ctx.prisma, ctx.session.user.id, input.draftId)
+        ),
+
+    updateDraft: protectedProcedure
+        .input(PostSchema.updateDraftSchema)
+        .mutation(({ ctx, input }) =>
+            PostService.updateDraft(ctx.prisma, ctx.session.user.id, input)
+        ),
+
 });

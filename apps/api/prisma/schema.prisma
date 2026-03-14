@@ -54,6 +54,7 @@ model User {
   articleLikes        ArticleLike[]
   savedArticles       SavedArticle[]
   articleCommentLikes ArticleCommentLike[]
+  drafts              Draft[]
   
 }
 
@@ -63,6 +64,21 @@ model Conversation {
   updatedAt    DateTime                  @updatedAt
   participants ConversationParticipant[]
   messages     DirectMessage[]
+}
+
+model Draft {
+  id        String   @id @default(cuid())
+  content   String
+  images    String[]
+  authorId  String
+  groupId   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  group     Group?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([createdAt])
 }
 
 model ConversationParticipant {
@@ -324,6 +340,7 @@ model Group {
   posts       Post[]
   members     GroupMember[]
   messages    GroupMessage[]
+  drafts      Draft[]
 
   @@map("groups")
 }

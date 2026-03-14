@@ -255,3 +255,68 @@ export async function toggleSavePost(
   await prisma.savedPost.create({ data: { postId, userId } });
   return { isSaved: true };
 }
+
+export async function saveDraft(
+  prisma: PrismaClient,
+  userId: string,
+  input: { content: string; images: string[]; groupId?: string }
+) {
+  return prisma.draft.create({
+    data: {
+      content: input.content,
+      images: input.images,
+      authorId: userId,
+      groupId: input.groupId,
+    },
+  });
+}
+
+export async function getDrafts(
+  prisma: PrismaClient,
+  userId: string,
+  input: { cursor?: string | null; limit: number }
+) {
+  const drafts = await prisma.draft.findMany({
+    take: input.limit + 1,
+    cursor: input.cursor ? { id: input.cursor } : undefined,
+    orderBy: { createdAt: "desc" },
+    include: {
+      author: { select: AUTHOR_SELECT },
+    },
+  });
+
+  const nextCursor = drafts.length > input.limit ? drafts.pop()?.id : null;
+
+  return { drafts, nextCursor };
+}
+
+export async function deleteDraft(
+  prisma: PrismaClient,
+  userId: string,
+  draftId: string
+) {
+  const draft = await prisma.draft.findUnique({ where: { id: draftId } });
+  if (!draft) throw new Error("Draft not found");
+  if (draft.authorId !== userId) throw new Error("Unauthorized");
+
+  return prisma.draft.delete({ where: { id: draftId } });
+}
+
+export async function updateDraft(
+  prisma: PrismaClient,
+  userId: string,
+  input: { id: string; content: string; images: string[]; groupId?: string }
+) {
+  const draft = await prisma.draft.findUnique({ where: { id: input.id } });
+  if (!draft) throw new Error("Draft not found");
+  if (draft.authorId !== userId) throw new Error("Unauthorized");
+
+  return prisma.draft.update({
+    where: { id: input.id },
+    data: {
+      content: input.content,
+      images: input.images,
+      groupId: input.groupId,
+    },
+  });
+}

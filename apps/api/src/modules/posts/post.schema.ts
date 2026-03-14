@@ -49,3 +49,25 @@ export const getPostsByHashtagSchema = z.object({
 export const toggleSavePostSchema = z.object({
     postId: z.string()
 })
+
+export const saveDraftSchema = z.object({
+    content: z.string(),
+    images: z.array(z.string()).default([]),
+    groupId: z.string().optional(),
+})
+
+export const getDraftsSchema = z.object({
+    cursor: z.string().optional(),
+    limit: z.number().default(10),
+})
+
+export const deleteDraftSchema = z.object({
+    draftId: z.string()
+})
+
+export const updateDraftSchema = z.object({
+    id: z.string(),
+    content: z.string(),
+    images: z.array(z.string()).default([]),
+    groupId: z.string().optional(),
+})
