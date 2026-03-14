@@ -36,6 +36,11 @@ async function bootstrap() {
     console.log("🔌 Connected:", socket.id);
   });
 
+  // ── Health check — ping this every 14 min to prevent Render cold starts ──
+  server.get('/health', async (_req, reply) => {
+    return reply.send({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+  });
+
   await server.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
     trpcOptions: {
