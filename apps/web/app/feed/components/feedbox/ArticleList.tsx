@@ -30,30 +30,31 @@ export function ArticleList({ articles }: Props) {
       ))}
 
       {/* PAGINATION */}
+      {articles.length > PAGE_SIZE && (
+        <div className="flex justify-center gap-4 mt-8">
 
-      <div className="flex justify-center gap-4 mt-8">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((p) => p - 1)}
+            className="px-4 py-2 rounded-lg bg-zinc-800 disabled:opacity-40"
+          >
+            Prev
+          </button>
 
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((p) => p - 1)}
-          className="px-4 py-2 rounded-lg bg-zinc-800 disabled:opacity-40"
-        >
-          Prev
-        </button>
+          <span className="text-zinc-400">
+            Page {page} of {totalPages}
+          </span>
 
-        <span className="text-zinc-400">
-          Page {page} of {totalPages}
-        </span>
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage((p) => p + 1)}
+            className="px-4 py-2 rounded-lg bg-zinc-800 disabled:opacity-40"
+          >
+            Next
+          </button>
 
-        <button
-          disabled={page === totalPages}
-          onClick={() => setPage((p) => p + 1)}
-          className="px-4 py-2 rounded-lg bg-zinc-800 disabled:opacity-40"
-        >
-          Next
-        </button>
-
-      </div>
+        </div>
+      )}
 
     </div>
   )

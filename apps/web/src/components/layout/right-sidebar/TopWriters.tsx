@@ -1,6 +1,7 @@
 import {WriterCard} from "./WriterCard"
 import { Writer } from "@stack/types"
 
+
 type Props = {
   writers: Writer[]
 }
