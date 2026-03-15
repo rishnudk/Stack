@@ -24,7 +24,7 @@ export function ArticlePreview({
         <div className="w-full max-w-4xl mx-auto bg-black text-white p-6 rounded-2xl border border-neutral-800 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Cover Image */}
             {coverImage ? (
-                <div className="relative w-full h-[400px] mb-8 rounded-xl overflow-hidden group">
+                <div className="relative w-full h-[250px] mb-8 rounded-xl overflow-hidden group">
                     <Image
                         src={coverImage}
                         alt="Cover"
