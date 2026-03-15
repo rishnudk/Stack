@@ -123,7 +123,7 @@ export function CreatePostBox({ groupId, session }: CreatePostBoxProps = {}) {
 
               <div className="flex items-center gap-3">
                 <button
-                  onClick={() => router.push("/article")}
+                  onClick={() => router.push("/article/create")}
                   className="flex items-center gap-2 border border-neutral-700 px-4 py-1.5 rounded-full text-sm hover:bg-neutral-900 transition-colors"
                 >
                   <FileText size={16} />

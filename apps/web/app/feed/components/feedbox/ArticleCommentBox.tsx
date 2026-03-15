@@ -15,13 +15,14 @@ export default function ArticleCommentBox({ articleId }: Props) {
   const { data: session } = useSession()
   const utils = trpc.useUtils()
 
-  const addComment = trpc.articles.addComment.useMutation({
+  const addCommentMutation = trpc.articles.addComment.useMutation({
     onSuccess: () => {
       setComment("")
       toast.success("Comment posted!")
       utils.articles.getComments.invalidate({ articleId })
+      utils.articles.getArticleBySlug.invalidate()
     },
-    onError: (err) => {
+    onError: (err: any) => {
       toast.error(err.message || "Failed to post comment")
     }
   })
@@ -32,7 +33,7 @@ export default function ArticleCommentBox({ articleId }: Props) {
       toast.error("You must be logged in to comment")
       return
     }
-    addComment.mutate({
+    addCommentMutation.mutate({
       articleId,
       content: comment.trim()
     })
@@ -42,13 +43,14 @@ export default function ArticleCommentBox({ articleId }: Props) {
     <div className="flex items-start gap-4 mt-10" id="comment-box">
 
       {/* USER AVATAR */}
-      <Image
-        src={session?.user?.image || "/user.jpg"}
-        alt="user"
-        width={40}
-        height={40}
-        className="rounded-full aspect-square object-cover"
-      />
+      <div className="relative w-10 h-10 shrink-0">
+        <Image
+          src={session?.user?.image || "/user.jpg"}
+          alt="user"
+          fill
+          className="rounded-full object-cover"
+        />
+      </div>
 
       {/* COMMENT INPUT */}
       <div className="flex flex-col gap-3 flex-1">
@@ -64,10 +66,10 @@ export default function ArticleCommentBox({ articleId }: Props) {
         <div className="flex justify-end">
           <button
             onClick={handleSubmit}
-            disabled={addComment.isPending}
+            disabled={addCommentMutation.isPending}
             className="px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-zinc-200 transition-colors disabled:opacity-50"
           >
-            {addComment.isPending ? "Posting..." : "Post Comment"}
+            {addCommentMutation.isPending ? "Posting..." : "Post Comment"}
           </button>
         </div>
 

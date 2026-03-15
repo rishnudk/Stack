@@ -8,7 +8,6 @@ import {
   MessageCircle,
   Search,
   Megaphone,
-  Pencil,
   Users,
   Settings,
 } from "lucide-react";
@@ -29,7 +28,7 @@ interface LeftSidebarProps {
 
 const navItems = [
   { icon: Home, label: "Scroll", href: "/feed" },
-  { icon: Pencil, label: "Articles", href: "/articles" },
+  { icon: FileText, label: "Articles", href: "/article" },
   { icon: Briefcase, label: "Jobs", href: "/jobs" },
   { icon: MessageCircle, label: "Inbox", href: "/messages" },
   { icon: Search, label: "Search", href: "/search" },

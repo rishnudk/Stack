@@ -6,6 +6,7 @@ import ArticleCommentBox from "../../feed/components/feedbox/ArticleCommentBox"
 import { useParams } from "next/navigation"
 import { trpc } from "@/utils/trpc"
 import { Loader2, MessageSquare } from "lucide-react"
+import { Comment } from "../../feed/components/Comment"
 
 export default function ArticlePage() {
   const { slug } = useParams()
@@ -18,6 +19,12 @@ export default function ArticlePage() {
     { articleId: article?.id as string },
     { enabled: !!article?.id }
   )
+
+  const utils = trpc.useUtils()
+  const handleCommentAdded = () => {
+    utils.articles.getComments.invalidate({ articleId: article?.id as string })
+    utils.articles.getArticleBySlug.invalidate({ slug: slug as string })
+  }
 
   if (isLoading) {
     return (
@@ -52,7 +59,7 @@ export default function ArticlePage() {
         <div className="flex flex-col items-center gap-3 text-center">
 
           <Image
-            src={article.authorImage}
+            src={(article as any).authorImage || "/avatar.jpg"}
             alt="author"
             width={60}
             height={60}
@@ -115,28 +122,13 @@ export default function ArticlePage() {
               </div>
             ) : comments && comments.length > 0 ? (
               comments.map((comment) => (
-                <div key={comment.id} className="flex gap-4">
-                  <Image
-                    src={comment.user.image || "/avatar.jpg"}
-                    alt={comment.user.name || "User"}
-                    width={40}
-                    height={40}
-                    className="rounded-full h-10 w-10 aspect-square object-cover"
-                  />
-                  <div className="flex flex-col gap-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm text-white">
-                        {comment.user.name}
-                      </span>
-                      <span className="text-xs text-zinc-500">
-                        {new Date(comment.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <p className="text-zinc-400 text-sm leading-relaxed">
-                      {comment.content}
-                    </p>
-                  </div>
-                </div>
+                <Comment
+                  key={comment.id}
+                  comment={comment}
+                  targetId={article.id}
+                  type="article"
+                  onCommentAdded={handleCommentAdded}
+                />
               ))
             ) : (
               <p className="text-center text-zinc-500 italic py-10">

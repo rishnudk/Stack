@@ -76,13 +76,14 @@ export function Comment({ comment, targetId, type = "post", onCommentAdded, dept
     <div className={`border-b border-neutral-800 ${shouldIndent ? `ml-${depth * 12}` : ""}`}>
       <div className="p-4">
         <div className="flex gap-3">
-          <Image
-            src="/profile.png"
-            alt="user"
-            width={depth === 0 ? 40 : 32}
-            height={depth === 0 ? 40 : 32}
-            className="rounded-full"
-          />
+          <div className="relative shrink-0" style={{ width: depth === 0 ? 40 : 32, height: depth === 0 ? 40 : 32 }}>
+            <Image
+              src={comment.user.image || "/avatar.jpg"}
+              alt="user"
+              fill
+              className="rounded-full object-cover"
+            />
+          </div>
           <div className="flex-1">
             {/* Comment Header */}
             <div className="flex items-center gap-2">
