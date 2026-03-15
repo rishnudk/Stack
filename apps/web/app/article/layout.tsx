@@ -30,10 +30,6 @@ export default async function ArticleLayout({
           </div>
         </main>
 
-        {/* Right Sidebar */}
-        <aside className="hidden lg:block w-[320px] p-3">
-          <RightSidebar session={session} />
-        </aside>
       </div>
     </div>
   );
