@@ -11,4 +11,7 @@ export interface Article {
   comments: number;
   likes: number;
   createdAt: string;
+  authorName: string
+  authorImage: string
+  previewImage: string
 }
