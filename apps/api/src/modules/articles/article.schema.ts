@@ -75,3 +75,8 @@ export const toggleCommentLikeSchema = z.object({
   commentId: z.string().trim().min(1, "Comment id is required"),
 })
 
+export const getArticleByIdSchema = z.object({
+  id: z.string().trim().min(1, "Article id is required"),
+})
+
+

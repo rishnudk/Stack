@@ -78,4 +78,9 @@ export const articleRouter = router({
     .mutation(({ ctx, input }) =>
       ArticleService.toggleCommentLike(ctx.prisma, ctx.session.user.id, input.commentId)
     ),
+
+  getTopArticles: publicProcedure
+    .query(({ ctx }) =>
+      ArticleService.getTopArticles(ctx.prisma, 3)
+    ),
 })

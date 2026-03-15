@@ -284,6 +284,36 @@ export async function getMyArticles(
   };
 }
 
+export async function getTopArticles(
+  prisma: PrismaClient,
+  limit: number = 3
+) {
+  const articles = await prisma.article.findMany({
+    take: limit,
+    where: {
+      published: true,
+    },
+    orderBy: [
+      {
+        likes: {
+          _count: "desc",
+        },
+      },
+      {
+        comments: {
+          _count: "desc",
+        },
+      },
+      {
+        createdAt: "desc",
+      },
+    ],
+    include: articleInclude,
+  });
+
+  return articles.map(mapArticle);
+}
+
 // ──────────────────────────────────────────────
 // COMMENTS & INTERACTIONS
 // ──────────────────────────────────────────────

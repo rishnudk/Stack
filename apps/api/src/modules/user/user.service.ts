@@ -340,3 +340,49 @@ export async function getSuggestions(
 
     return ranked;
 }
+
+export async function getTopWriters(
+    prisma: PrismaClient,
+    limit: number = 3
+) {
+    const writers = await prisma.user.findMany({
+        take: limit,
+        where: {
+            articles: {
+                some: {
+                    published: true,
+                },
+            },
+        },
+        orderBy: {
+            articles: {
+                _count: "desc",
+            },
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            avatarUrl: true,
+            bio: true,
+            _count: {
+                select: {
+                    articles: {
+                        where: {
+                            published: true,
+                        },
+                    },
+                },
+            },
+        },
+    });
+
+    return writers.map((w) => ({
+        id: w.id,
+        name: w.name ?? "Anonymous",
+        avatar: w.avatarUrl ?? w.image ?? "/avatar.jpg",
+        bio: w.bio ?? "Writer on Stack",
+        topArticles: w._count.articles,
+    }));
+}

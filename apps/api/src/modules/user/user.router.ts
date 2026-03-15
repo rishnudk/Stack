@@ -66,4 +66,9 @@ export const userRouter = router({
         .query(({ input }) =>
             UserService.getContributionGraph(input.username)
         ),
+
+    getTopWriters: publicProcedure
+        .query(({ ctx }) =>
+            UserService.getTopWriters(ctx.prisma, 3)
+        ),
 });
