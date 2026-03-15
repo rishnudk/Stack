@@ -1,4 +1,4 @@
-type Conversation = {
+export type Conversation = {
   id: string;
   participants: {
     userId: string;

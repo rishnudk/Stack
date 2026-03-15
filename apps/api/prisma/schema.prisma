@@ -55,7 +55,20 @@ model User {
   savedArticles       SavedArticle[]
   articleCommentLikes ArticleCommentLike[]
   drafts              Draft[]
-  
+  writer              Writer?                   @relation(fields: [writerId], references: [id])
+  writerId            String?                   @unique
+}
+
+model Writer {
+  id          String   @id @default(cuid())
+  name        String
+  avatar      String?
+  bio         String?
+  topArticles Int      @default(0)
+  user        User?
+  articles    Article[]
+  accounts    Account[]
+  groups      Group[]
 }
 
 model Conversation {
@@ -170,6 +183,8 @@ model Article {
   comments    ArticleComment[]
   likes       ArticleLike[]
   savedBy     SavedArticle[]
+  writer      Writer?          @relation(fields: [writerId], references: [id], onDelete: Cascade)
+  writerId    String?
 
   @@index([authorId])
   @@index([createdAt])
@@ -246,6 +261,8 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
+  writerId          String?
+  writer            Writer? @relation(fields: [writerId], references: [id], onDelete: Cascade)
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
@@ -341,6 +358,8 @@ model Group {
   members     GroupMember[]
   messages    GroupMessage[]
   drafts      Draft[]
+  writer      Writer?        @relation(fields: [writerId], references: [id], onDelete: Cascade)
+  writerId    String?
 
   @@map("groups")
 }

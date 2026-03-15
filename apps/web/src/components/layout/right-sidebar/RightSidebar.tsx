@@ -5,6 +5,7 @@ import ProfileMenu from "./ProfileMenu";
 import { SuggestionsCard } from "./SuggestionsCard";
 import { TrendingCard } from "./TrendingCard";
 import type { Session } from "next-auth";
+import { TopWriters } from "./TopWriters";
 
 interface RightSidebarProps {
   session: Session | null;
@@ -31,6 +32,9 @@ export function RightSidebar({ session }: RightSidebarProps) {
 
           {/* Trending section */}
           <TrendingCard />
+
+          {/* Top Writers section */}
+          <TopWriters />
         </div>
       )}
     </aside>
