@@ -21,6 +21,14 @@ interface CreatePostModalProps {
   prefillDraftId?: string
 }
 
+const trendingTags = [
+  "#show",
+  "#react",
+  "#nextjs",
+  "#typescript",
+  "#webdev",
+]
+
 export function CreatePostModal({
   isOpen,
   onClose,
@@ -35,6 +43,7 @@ export function CreatePostModal({
   const [existingImages] = useState<string[]>(prefillImages)
   const [showDiscard, setShowDiscard] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [tag, setTag] = useState("#show")
 
   const utils = trpc.useUtils()
 
@@ -171,32 +180,66 @@ export function CreatePostModal({
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800 shrink-0">
-                <div className="flex items-center gap-3">
-                  <NextImage
-                    src={session?.user?.image || "/profile.png"}
-                    alt="avatar"
-                    width={36}
-                    height={36}
-                    className="rounded-full ring-2 ring-zinc-700"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-white leading-tight">
-                      {session?.user?.name || "You"}
-                    </p>
-                    <p className="text-xs text-zinc-400">
-                      {groupId ? "Posting to group" : "Posting to feed"}
-                    </p>
-                  </div>
-                </div>
+              {/* Header */}
+<div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800 shrink-0">
 
-                <button
-                  onClick={handleClose}
-                  className="p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
-                >
-                  <X size={18} />
-                </button>
-              </div>
+  {/* LEFT */}
+  <div className="flex items-center gap-3">
+    <button
+      onClick={handleClose}
+      className="p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors"
+    >
+      <X size={18} />
+    </button>
+
+    <button
+      onClick={handleSaveDraft}
+      className="text-sm bg-zinc-800 hover:bg-zinc-700 px-3 py-1 rounded-md text-zinc-200"
+    >
+      Drafts
+    </button>
+  </div>
+
+
+  {/* RIGHT */}
+  <div className="flex items-center gap-3">
+
+    {/* Trending Tags */}
+    <select
+      value={tag}
+      onChange={(e) => setTag(e.target.value)}
+      className="bg-zinc-800 text-sm px-3 py-1 rounded-md text-zinc-200 outline-none"
+    >
+      {trendingTags.map((t) => (
+        <option key={t}>{t}</option>
+      ))}
+    </select>
+
+    {/* Post Button OR Saving Loader */}
+    {isSavingDraft ? (
+      <div className="flex items-center gap-2 text-sm text-zinc-400">
+        <Loader2 size={16} className="animate-spin" />
+        Saving draft...
+      </div>
+    ) : (
+      <button
+        onClick={handlePost}
+        disabled={isPosting || isEmpty || content.length > 300}
+        className="bg-green-500 hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold text-sm px-5 py-2 rounded-full transition-colors flex items-center gap-2"
+      >
+        {isPosting ? (
+          <>
+            <Loader2 size={14} className="animate-spin" />
+            Posting…
+          </>
+        ) : (
+          "Post"
+        )}
+      </button>
+    )}
+
+  </div>
+</div>
 
               {/* Textarea */}
               <div className="flex-1 overflow-y-auto px-5 py-4">
@@ -208,6 +251,7 @@ export function CreatePostModal({
                   onChange={(e) => setContent(e.target.value)}
                 />
 
+              <br />
                 {/* Image previews */}
                 {files.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-3">
@@ -268,26 +312,10 @@ export function CreatePostModal({
                 </div>
 
                 <div className="flex items-center gap-3">
-                  {/* Character count */}
-                  <span className={`text-xs tabular-nums ${content.length > 280 ? "text-red-400" : "text-zinc-500"}`}>
-                    {content.length}/300
-                  </span>
-
-                  <button
-                    onClick={handlePost}
-                    disabled={isPosting || isEmpty || content.length > 300}
-                    className="bg-green-500 hover:bg-green-400 disabled:opacity-50 disabled:cursor-not-allowed text-black font-semibold text-sm px-5 py-2 rounded-full transition-colors flex items-center gap-2"
-                  >
-                    {isPosting ? (
-                      <>
-                        <Loader2 size={14} className="animate-spin" />
-                        Posting…
-                      </>
-                    ) : (
-                      "Post"
-                    )}
-                  </button>
-                </div>
+  <span className={`text-xs tabular-nums ${content.length > 280 ? "text-red-400" : "text-zinc-500"}`}>
+    {content.length}/300
+  </span>
+</div>
               </div>
             </motion.div>
           </motion.div>
