@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@repo/ui/button";
 import { useSession } from "next-auth/react";
 
-import { MarkdownEditor } from "../../feed/components/editor/MarkdownEditor";
+import { MarkdownEditor } from "../../feed/components/article/MarkdownEditor";
 import { ArticlePreview } from "../../feed/components/articles/ArticlePreview";
 
 export default function ComposeArticlePage() {
@@ -104,7 +104,7 @@ export default function ComposeArticlePage() {
     const tagsArray = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
 
     return (
-        <div className="min-h-screen text-white pb-20">
+        <div className="text-white pb-20">
             {/* Header / Tabs */}
             <div className="sticky top-0 z-10 bg-black/80 backdrop-blur-md border-b border-neutral-800 px-4 sm:px-8 py-4">
                 <div className="flex items-center justify-between">

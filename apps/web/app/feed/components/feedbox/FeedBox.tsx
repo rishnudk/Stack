@@ -6,8 +6,8 @@ import { Navigation } from "./Navigation";
 import { CreatePostBox } from "./CreatePostBox";
 import { PostList } from "./PostList";
 import { PostDetailView } from "./PostDetailView";
-import { GroupsList } from "./GroupsList";
-import { GroupDetailView } from "./GroupDetailView";
+import { GroupsList } from "../group/GroupsList";
+import { GroupDetailView } from "../group/GroupDetailView";
 import type { Session } from "next-auth";
 
 interface FeedBoxProps {

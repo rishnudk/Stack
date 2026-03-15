@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { LeftSidebar } from '@/components/layout/left-sidebar/LeftSidebar';
+import { RightSidebar } from '@/components/layout/right-sidebar/RightSidebar';
 
 export default async function ArticleLayout({
   children,
@@ -22,12 +23,17 @@ export default async function ArticleLayout({
           <LeftSidebar session={session} />
         </aside>
 
-        {/* Content Section (No Right Sidebar) */}
-        <main className="flex-1 flex justify-center w-full min-w-0 border-x border-neutral-800">
-          <div className="w-full max-w-3xl">
+        {/* Main Content Section */}
+        <main className="flex-1 flex flex-col items-center border-x border-neutral-800">
+           <div className="w-full max-w-[700px] min-h-screen">
             {children}
           </div>
         </main>
+
+        {/* Right Sidebar */}
+        <aside className="hidden lg:block w-[320px] p-3">
+          <RightSidebar session={session} />
+        </aside>
       </div>
     </div>
   );

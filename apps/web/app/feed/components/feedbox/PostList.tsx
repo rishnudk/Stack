@@ -1,7 +1,7 @@
 "use client";
 import { formatPostTime } from "@/utils/formatTime";
 import { PostCard } from "./PostCard";
-import { ArticleCard } from "../articles/ArticleCard";
+import { ArticleCard } from "../article/ArticleCard";
 import { trpc } from "@/utils/trpc";
 import { useMemo } from "react";
 import type { Session } from "next-auth";

@@ -11,7 +11,7 @@ type Props = {
 
 export function ArticleCard({ article }: Props) {
   return (
-    <div className="flex items-start justify-between gap-6 border-b border-zinc-800 py-6">
+    <div className="flex items-start justify-between gap-6 border-b border-zinc-800 py-6 px-6">
 
       {/* LEFT */}
       <div className="flex flex-col gap-3 flex-1">
@@ -35,7 +35,7 @@ export function ArticleCard({ article }: Props) {
 
         {/* TITLE */}
         <Link href={`/article/${article.slug}`}>
-          <h2 className="text-lg font-semibold text-white hover:text-zinc-300 cursor-pointer">
+          <h2 className="text-lg font-semibold text-white hover:text-zinc-300 hover:underline cursor-pointer">
             {article.title}
           </h2>
         </Link>
@@ -72,7 +72,7 @@ export function ArticleCard({ article }: Props) {
 
       {/* RIGHT IMAGE */}
       <Link href={`/article/${article.slug}`}>
-        <div className="w-[140px] h-[90px] relative rounded-md overflow-hidden">
+        <div className="w-[110px] h-[70px] relative rounded-md overflow-hidden shrink-0">
           <Image
             src={article.thumbnail}
             alt="post"

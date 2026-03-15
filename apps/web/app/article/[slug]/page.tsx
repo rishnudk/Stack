@@ -1,8 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import ArticleActions from "../../feed/components/feedbox/ArticleActions"
-import ArticleCommentBox from "../../feed/components/feedbox/ArticleCommentBox"
+import ArticleActions from "../../feed/components/article/ArticleActions"
+import ArticleCommentBox from "../../feed/components/article/ArticleCommentBox"
 import { useParams } from "next/navigation"
 import { trpc } from "@/utils/trpc"
 import { Loader2, MessageSquare } from "lucide-react"
@@ -28,7 +28,7 @@ export default function ArticlePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center p-20">
         <Loader2 className="w-8 h-8 animate-spin text-white" />
       </div>
     )
@@ -36,7 +36,7 @@ export default function ArticlePage() {
 
   if (error || !article) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+      <div className="flex flex-col items-center justify-center p-20 gap-4">
         <h1 className="text-2xl font-bold text-white">Article not found</h1>
         <p className="text-zinc-400">{error?.message || "Something went wrong"}</p>
       </div>
@@ -53,7 +53,7 @@ export default function ArticlePage() {
         commentsCount={article.comments} 
       />
 
-      <div className="max-w-3xl mx-auto px-6 py-16">
+      <div className="w-full px-6 py-16">
 
         {/* AUTHOR */}
         <div className="flex flex-col items-center gap-3 text-center">
@@ -61,8 +61,8 @@ export default function ArticlePage() {
           <Image
             src={(article as any).authorImage || "/avatar.jpg"}
             alt="author"
-            width={60}
-            height={60}
+            width={10}
+            height={10}
             className="rounded-full aspect-square object-cover"
           />
 
@@ -91,8 +91,8 @@ export default function ArticlePage() {
           <Image
             src={article.thumbnail}
             alt="article"
-            width={900}
-            height={500}
+            width={90}
+            height={50}
             className="w-full object-cover"
           />
         </div>
