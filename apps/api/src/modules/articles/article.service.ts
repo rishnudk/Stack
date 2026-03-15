@@ -15,10 +15,13 @@ function mapArticle(article: any): Article {
     id: article.id,
     slug: article.slug,
     author: article.author?.name ?? "Unknown author",
+    authorName: article.author?.name ?? "Unknown author",
+    authorImage: article.author?.avatarUrl ?? article.author?.image ?? "/avatar.jpg",
     date: formatArticleDate(article.createdAt),
     description: article.description,
     tags: article.tags ?? [],
     image: article.image ?? article.thumbnail,
+    previewImage: article.image ?? article.thumbnail,
     title: article.title,
     thumbnail: article.thumbnail,
     comments: article._count?.comments ?? 0,
@@ -79,6 +82,8 @@ const articleInclude = {
   author: {
     select: {
       name: true,
+      image: true,
+      avatarUrl: true,
     },
   },
   _count: {

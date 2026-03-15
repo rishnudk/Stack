@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import Image from "next/image"
 import { MessageCircle, Heart, Bookmark } from "lucide-react"
 import { Article } from "@stack/types"
@@ -33,9 +34,11 @@ export function ArticleCard({ article }: Props) {
         </div>
 
         {/* TITLE */}
-        <h2 className="text-lg font-semibold text-white hover:text-zinc-300 cursor-pointer">
-          {article.title}
-        </h2>
+        <Link href={`/article/${article.slug}`}>
+          <h2 className="text-lg font-semibold text-white hover:text-zinc-300 cursor-pointer">
+            {article.title}
+          </h2>
+        </Link>
 
         {/* META */}
         <div className="flex items-center gap-6 text-sm text-zinc-400">
@@ -68,15 +71,17 @@ export function ArticleCard({ article }: Props) {
       </div>
 
       {/* RIGHT IMAGE */}
-      <div className="w-[140px] h-[90px] relative rounded-md overflow-hidden">
-        <Image
-          src={article.thumbnail}
-          alt="post"
-          fill
-          className="object-cover"
-        />
-      </div>
+      <Link href={`/article/${article.slug}`}>
+        <div className="w-[140px] h-[90px] relative rounded-md overflow-hidden">
+          <Image
+            src={article.thumbnail}
+            alt="post"
+            fill
+            className="object-cover"
+          />
+        </div>
+      </Link>
 
     </div>
   )
-}
+}
