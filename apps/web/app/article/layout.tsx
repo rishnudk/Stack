@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { LeftSidebar } from '@/components/layout/left-sidebar/LeftSidebar';
 import { RightSidebar } from '@/components/layout/right-sidebar/RightSidebar';
+import { ArticleActions } from "../feed/components/article/ArticleActions";
 
 export default async function ArticleLayout({
   children,
@@ -29,7 +30,6 @@ export default async function ArticleLayout({
             {children}
           </div>
         </main>
-
       </div>
     </div>
   );

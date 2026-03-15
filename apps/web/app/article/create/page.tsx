@@ -10,7 +10,7 @@ import { Button } from "@repo/ui/button";
 import { useSession } from "next-auth/react";
 
 import { MarkdownEditor } from "../../feed/components/article/MarkdownEditor";
-import { ArticlePreview } from "../../feed/components/articles/ArticlePreview";
+import { ArticlePreview } from "../../feed/components/article/ArticlePreview";
 
 export default function ComposeArticlePage() {
     const router = useRouter();

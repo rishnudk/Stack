@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import ArticleActions from "../../feed/components/article/ArticleActions"
+import {ArticleActions} from "../../feed/components/article/ArticleActions"
 import ArticleCommentBox from "../../feed/components/article/ArticleCommentBox"
 import { useParams } from "next/navigation"
 import { trpc } from "@/utils/trpc"

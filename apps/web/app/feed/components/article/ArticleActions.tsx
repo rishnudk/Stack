@@ -12,7 +12,7 @@ type Props = {
   commentsCount: number
 }
 
-export default function ArticleActions({ articleId, likesCount, commentsCount }: Props) {
+export function ArticleActions({ articleId, likesCount, commentsCount }: Props) {
   const [isLiked, setIsLiked] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
   const [likes, setLikes] = useState(likesCount)
@@ -44,7 +44,7 @@ export default function ArticleActions({ articleId, likesCount, commentsCount }:
   }
 
   return (
-    <div className="fixed left-[calc(50%-440px)] top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-6 items-center">
+    <div className="fixed left-[calc(50%+550px)] top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-4 items-center">
       
       {/* LIKE */}
       <div className="flex flex-col items-center gap-1">
