@@ -57,6 +57,19 @@ model User {
   drafts              Draft[]
   writer              Writer?                   @relation(fields: [writerId], references: [id])
   writerId            String?                   @unique
+  streak              Streak?                   @relation(fields: [streakId], references: [id])
+  streakId            String?                   @unique
+}
+
+model Streak {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User?    @relation
+  currentStreak Int      @default(0)
+  longestStreak Int      @default(0)
+  lastActive    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Writer {

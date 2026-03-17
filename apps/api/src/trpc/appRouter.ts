@@ -12,6 +12,7 @@ import { messagingRouter } from "../modules/messaging/messaging.router";
 import { projectRouter } from "../modules/projects/project.router";
 import { articleRouter } from "../modules/articles/article.router";
 import { githubRouter } from "../modules/github/github.router";
+import { streakRouter } from "../modules/streak/streak.router";
 
 export const appRouter = router({
   posts: postRouter,
@@ -26,6 +27,7 @@ export const appRouter = router({
   projects: projectRouter,
   articles: articleRouter,
   github: githubRouter,
+  streak: streakRouter,
 });
 
 export type AppRouter = typeof appRouter;
