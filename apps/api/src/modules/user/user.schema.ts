@@ -58,3 +58,20 @@ export const getGithubPinnedReposSchema = z.object({
 export const getContributionGraphSchema = z.object({
     username: z.string(),
 });
+
+export const getSuggestionsSchema = z.object({
+    limit: z.number().optional(),
+});
+
+export const getTopWritersSchema = z.object({
+    limit: z.number().optional(),
+});
+
+export const getTopArticlesSchema = z.object({
+    limit: z.number().optional(),
+});
+
+export const getTrendingArticlesSchema = z.object({
+    limit: z.number().optional(),
+});
+

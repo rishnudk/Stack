@@ -1,14 +1,26 @@
 "use client";
 
 import Image from "next/image";
-import { Search, Bell, Coins, X, Moon } from "lucide-react";
+import { Search, Bell, X, Moon, Flame } from "lucide-react";
+import { trpc } from "@/utils/trpc";
 
 interface HeaderActionsProps {
   isProfileOpen: boolean;
   setIsProfileOpen: (open: boolean) => void;
+  isStreakOpen: boolean;
+  setIsStreakOpen: (open: boolean) => void;
 }
 
-export default function HeaderActions({ isProfileOpen, setIsProfileOpen }: HeaderActionsProps) {
+export default function HeaderActions({ 
+  isProfileOpen, 
+  setIsProfileOpen,
+  isStreakOpen,
+  setIsStreakOpen
+}: HeaderActionsProps) {
+  const { data: streakData } = trpc.streak.getStreak.useQuery({}, {
+    refetchOnWindowFocus: false,
+  });
+
   if (isProfileOpen) {
     return (
       <div className="flex items-center justify-between w-full h-9 shrink-0">
@@ -26,6 +38,20 @@ export default function HeaderActions({ isProfileOpen, setIsProfileOpen }: Heade
     );
   }
 
+  if (isStreakOpen) {
+    return (
+      <div className="flex items-center justify-between w-full h-9 shrink-0">
+        <div className="flex-1" /> {/* Spacer */}
+        <button
+          onClick={() => setIsStreakOpen(false)}
+          className="flex items-center justify-center w-9 h-9 rounded-xl bg-neutral-800 hover:bg-neutral-700 transition-colors border border-neutral-700 shadow-lg"
+        >
+          <X size={18} className="text-white" />
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center gap-3 w-full shrink-0">
       {/* Search */}
@@ -38,13 +64,18 @@ export default function HeaderActions({ isProfileOpen, setIsProfileOpen }: Heade
         />
       </div>
 
-      {/* Coins */}
-      <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 shrink-0">
-        <Coins size={18} className="text-orange-400" />
-        <span className="absolute -top-1 -right-1 text-xs bg-orange-500 text-white w-5 h-5 rounded-full flex items-center justify-center">
-          1
-        </span>
-      </div>
+      {/* Streak */}
+      <button 
+        onClick={() => setIsStreakOpen(true)}
+        className="relative flex items-center justify-center w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 shrink-0 hover:border-orange-500/50 transition-colors group"
+      >
+        <Flame size={18} className={`transition-colors ${streakData?.currentStreak ? 'text-orange-500' : 'text-zinc-500'} group-hover:text-orange-400`} />
+        {streakData?.currentStreak !== undefined && (
+          <span className="absolute -top-1 -right-1 text-[10px] font-bold bg-linear-to-br from-orange-500 to-rose-500 text-white w-5 h-5 rounded-full flex items-center justify-center border-2 border-black">
+            {streakData.currentStreak}
+          </span>
+        )}
+      </button>
 
       {/* Notifications */}
       <div className="relative flex items-center justify-center w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 shrink-0">
