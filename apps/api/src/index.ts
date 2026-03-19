@@ -41,6 +41,15 @@ async function bootstrap() {
     return reply.send({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
   });
 
+  // ── Temp debug: verify env vars are loaded ──
+  server.get('/debug-env', async (_req, reply) => {
+    return reply.send({ 
+      hasSecret: !!process.env.API_JWT_SECRET,
+      secretLen: process.env.API_JWT_SECRET?.length,
+      secretPrefix: process.env.API_JWT_SECRET?.substring(0, 8),
+    });
+  });
+
   await server.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
     trpcOptions: {

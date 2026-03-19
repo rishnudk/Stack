@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { trpc } from "@/utils/trpc"
 
 export default function DayStreak() {
-  const { data, isLoading, refetch } = trpc.streak.getStreak.useQuery({})
+  const { data, isLoading, isError, refetch } = trpc.streak.getStreak.useQuery({})
   const updateStreak = trpc.streak.updateStreak.useMutation({
     onSuccess: () => {
       refetch()
@@ -15,10 +15,23 @@ export default function DayStreak() {
     updateStreak.mutate({})
   }, [])
 
-  if (isLoading || !data) return (
+  if (isLoading) return (
     <div className="flex flex-col h-full animate-pulse">
       <div className="h-40 bg-zinc-900/50 rounded-2xl mb-4" />
       <div className="h-64 bg-zinc-900/50 rounded-2xl" />
+    </div>
+  )
+
+  if (isError || !data) return (
+    <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-4">
+      <span className="text-4xl">⚠️</span>
+      <p className="text-sm font-semibold text-zinc-400">Couldn't load streak data</p>
+      <button
+        onClick={() => refetch()}
+        className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm text-zinc-300 font-medium transition-colors border border-zinc-700"
+      >
+        Try again
+      </button>
     </div>
   )
 
