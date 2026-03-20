@@ -66,7 +66,7 @@ export function LeftSidebar({ session: propSession }: LeftSidebarProps) {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
                 isActive
-                  ? "bg-white/10 text-white shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                  ? "text-neutral-400 hover:text-white hover:bg-white/5"
                   : "text-neutral-400 hover:text-white hover:bg-white/5"
               )}
             >

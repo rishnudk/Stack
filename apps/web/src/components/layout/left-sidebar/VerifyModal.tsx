@@ -57,6 +57,9 @@ export default function VerifyModal({ open, setOpen, user }: Props) {
             <p className="text-neutral-400 text-sm">
               Manage your profile verification.
             </p>
+            <p className=" bg-red-500/20 text-red-400 text-lg mt-2 px-2 py-1 rounded-md">
+              Coming soon...
+            </p>
           </div>
 
           {/* Options */}
