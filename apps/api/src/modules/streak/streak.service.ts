@@ -20,20 +20,45 @@ export const getStreakService = async (prisma: PrismaClient, userId: string) => 
     })
   }
 
+  // Calculate the date 30 days ago
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  thirtyDaysAgo.setHours(0, 0, 0, 0);
+
+  // Fetch activity from different models
+  const [posts, comments, likes] = await Promise.all([
+    prisma.post.findMany({
+      where: { authorId: userId, createdAt: { gte: thirtyDaysAgo } },
+      select: { createdAt: true },
+    }),
+    prisma.comment.findMany({
+      where: { userId: userId, createdAt: { gte: thirtyDaysAgo } },
+      select: { createdAt: true },
+    }),
+    prisma.like.findMany({
+      where: { userId: userId, createdAt: { gte: thirtyDaysAgo } },
+      select: { createdAt: true },
+    }),
+  ]);
+
+  // Create a set of dates where the user was active
+  const activeDates = new Set<string>();
+  [...posts, ...comments, ...likes].forEach((item) => {
+    activeDates.add(new Date(item.createdAt).toDateString());
+  });
+
   // generate last 30 days grid
   const days = []
   for (let i = 29; i >= 0; i--) {
     const date = new Date()
     date.setDate(date.getDate() - i)
+    const dateStr = date.toDateString();
 
-    const isCompleted =
-      streak.lastActive &&
-      new Date(streak.lastActive).toDateString() ===
-        date.toDateString()
+    const isCompleted = activeDates.has(dateStr);
 
     days.push({
       date: date.toISOString(),
-      completed: !!isCompleted,
+      completed: isCompleted,
     })
   }
 

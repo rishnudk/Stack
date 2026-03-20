@@ -1,115 +1,102 @@
-"use client"
+"use client";
 
-import { useEffect } from "react"
-import { trpc } from "@/utils/trpc"
+import { Info, Ticket, Zap, Lock, Egg } from "lucide-react";
+import { trpc } from "@/utils/trpc";
+import { cn } from "@/lib/utils";
+import StreakMilestones from "./StreakMilestones";
 
 export default function DayStreak() {
-  const { data, isLoading, isError, refetch } = trpc.streak.getStreak.useQuery({})
-  const updateStreak = trpc.streak.updateStreak.useMutation({
-    onSuccess: () => {
-      refetch()
-    }
-  })
+  const { data: streakData, isLoading } = trpc.streak.getStreak.useQuery({});
 
-  useEffect(() => {
-    updateStreak.mutate({})
-  }, [])
-
-  if (isLoading) return (
-    <div className="flex flex-col h-full animate-pulse">
-      <div className="h-40 bg-zinc-900/50 rounded-2xl mb-4" />
-      <div className="h-64 bg-zinc-900/50 rounded-2xl" />
-    </div>
-  )
-
-  if (isError || !data) return (
-    <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-4">
-      <span className="text-4xl">⚠️</span>
-      <p className="text-sm font-semibold text-zinc-400">Couldn't load streak data</p>
-      <button
-        onClick={() => refetch()}
-        className="px-4 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm text-zinc-300 font-medium transition-colors border border-zinc-700"
-      >
-        Try again
-      </button>
-    </div>
-  )
-
-  const {
-    currentStreak,
-    longestStreak,
-    days,
-    isExpired,
-  } = data
-
-  const getDayColor = (completed: boolean, isToday: boolean) => {
-    if (completed) return "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]"
-    if (isToday) return "bg-zinc-800 border-dashed border-zinc-600 after:content-[''] after:w-1 after:h-1 after:bg-white after:rounded-full after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2"
-    return "bg-zinc-800/40 border border-zinc-700/50"
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-40">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-orange-500"></div>
+      </div>
+    );
   }
 
-  return (
-    <div className="flex flex-col gap-6 w-full max-w-[320px] mx-auto select-none">
-      {/* Top Card Section */}
-      <div className="relative overflow-hidden rounded-3xl bg-neutral-900/40 border border-neutral-800/50 p-6 min-h-[180px]">
-        {/* Dotted Background */}
-        <div 
-          className="absolute inset-0 opacity-[0.15] pointer-events-none"
-          style={{
-            backgroundImage: `radial-gradient(circle, #ffffff 1px, transparent 1px)`,
-            backgroundSize: '12px 12px'
-          }}
-        />
+  const days = streakData?.days || [];
+  const currentStreak = streakData?.currentStreak || 0;
+  const longestStreak = streakData?.longestStreak || 0;
+  const isExpired = streakData?.isExpired ?? true;
 
-        <div className="relative flex justify-between items-start">
+  return (
+    <div className="relative flex flex-col w-full h-full text-zinc-400 font-sans selection:bg-orange-500/30 min-h-screen">
+      {/* Background Dots - Only for this component content */}
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(#27272a_1px,transparent_1px)] bg-size-[16px_16px] opacity-40 pointer-events-none" />
+
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col">
+        {/* Streak Header */}
+        <div className="flex items-start justify-between mb-2">
           <div className="flex flex-col">
             <div className="flex items-baseline gap-2">
-              <span className="text-6xl font-bold text-zinc-400 leading-none">
+              <span className="text-6xl font-black text-zinc-100 leading-none tracking-tighter">
                 {currentStreak}
               </span>
-              <div className="flex flex-col uppercase tracking-tighter leading-none">
-                <span className="text-xs font-bold text-zinc-500">Day</span>
-                <span className="text-xs font-bold text-zinc-500">Streak</span>
+              <div className="flex flex-col -translate-y-1">
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest leading-none">DAY</span>
+                <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest leading-none">STREAK</span>
               </div>
             </div>
           </div>
 
-          <div className="w-20 h-20 rounded-3xl border-2 border-orange-500/40 bg-orange-500/5 flex items-center justify-center text-3xl shadow-lg">
-            {currentStreak > 0 ? "🔥" : "😐"}
+          <div className="relative group">
+            <div className="absolute -inset-2 bg-orange-500/10 rounded-2xl blur-lg group-hover:bg-orange-500/20 transition-all" />
+            <div className="relative w-14 h-14 rounded-2xl border border-orange-500/30 bg-zinc-900/50 flex items-center justify-center text-2xl shadow-inner group-hover:border-orange-500/50 cursor-help transition-colors translate-x-2">
+              {isExpired ? "😐" : "🔥"}
+            </div>
           </div>
         </div>
 
-        <div className="relative mt-6">
-          <p className={`text-sm font-bold ${isExpired ? 'text-rose-500' : 'text-emerald-400'}`}>
-            {isExpired ? `Your ${currentStreak}-day streak is over!` : `On a ${currentStreak}-day streak!`}
+        {/* Status Message */}
+        <div className="mb-6">
+          <p className={cn(
+            "text-[15px] font-semibold mb-1",
+            isExpired ? "text-orange-400" : "text-green-400"
+          )}>
+            {isExpired ? `Your ${currentStreak}-day streak is over!` : "Your streak is active!"}
           </p>
-          <p className="text-[13px] text-zinc-500 leading-snug mt-1 font-medium italic">
-            "The goal with streaks is to encourage meaningful collaboration and contribution. You add value, you get value!"
+          <p className="text-[13px] text-zinc-500 leading-relaxed font-medium">
+            The goal with streaks is to encourage meaningful collaboration and contribution. You add value, you get value!
           </p>
         </div>
-      </div>
 
-      {/* Grid Section */}
-      <div className="flex flex-col gap-4">
-        <div className="grid grid-cols-8 gap-3">
-          {days.slice(-24).map((day: any, index: number) => {
-            const isToday = index === 23;
-            return (
+        {/* Activity Grid - Moved below text */}
+        <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-2xl p-4 mb-8 backdrop-blur-sm self-center w-full max-w-[280px]">
+          <div className="grid grid-cols-10 gap-2 mb-4">
+            {days.map((day, idx) => (
               <div
-                key={index}
-                className={`relative w-full aspect-square rounded-xl transition-all duration-300 ${getDayColor(day.completed, isToday)}`}
-              />
-            );
-          })}
-        </div>
-      </div>
+                key={idx}
+                className={cn(
+                  "w-5 h-5 rounded-[5px] transition-all duration-300 relative group",
+                  day.completed 
+                    ? "bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)] border border-green-400/50" 
+                    : "bg-zinc-800/80 border border-zinc-700/50 hover:bg-zinc-700"
+                )}
+              >
+                 {day.completed && (
+                    <div className="absolute inset-x-0.5 inset-y-0.5 rounded-[4px] bg-linear-to-br from-white/10 to-transparent" />
+                 )}
+                 {idx === days.length - 1 && (
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-white rounded-full shadow-white shadow-sm" />
+                 )}
+              </div>
+            ))}
+          </div>
 
-      {/* Stats Footer */}
-      <div className="flex justify-between items-center text-[13px] font-bold text-zinc-500 mt-2 px-1">
-        <p>Your longest streak: <span className="text-zinc-300">{longestStreak} days</span></p>
-        <p>Restores left: <span className="text-zinc-300">0</span></p>
+          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-zinc-600">
+            <span>Longest: {longestStreak}d</span>
+            <span className="flex items-center gap-1.5">
+               RESTORES: <span className="text-zinc-100">0</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Milestones Component */}
+        <StreakMilestones currentStreak={currentStreak} />
       </div>
     </div>
-  )
+  );
 }
-
