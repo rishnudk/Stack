@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Search, Bell, X, Moon, Flame } from "lucide-react";
 import { trpc } from "@/utils/trpc";
+import { useSession } from "next-auth/react";
 
 interface HeaderActionsProps {
   isProfileOpen: boolean;
@@ -17,6 +18,7 @@ export default function HeaderActions({
   isStreakOpen,
   setIsStreakOpen
 }: HeaderActionsProps) {
+  const { data: session } = useSession();
   const { data: streakData } = trpc.streak.getStreak.useQuery({}, {
     refetchOnWindowFocus: false,
   });
@@ -91,7 +93,7 @@ export default function HeaderActions({
         className="rounded-full border border-zinc-700 shrink-0 hover:border-zinc-500 transition-colors active:scale-95 flex items-center justify-center overflow-hidden w-9 h-9"
       >
         <Image
-          src="/avatar.png"
+          src={session?.user?.image || "/avatar.png"}
           alt="profile"
           width={36}
           height={36}

@@ -12,10 +12,11 @@ import {
     Wrench,
     LogOut
 } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { motion } from "framer-motion";
 
 export default function ProfileMenu() {
+    const { data: session } = useSession();
     const menuItems = [
         {
             icon: <Settings size={18} className="text-zinc-400" />,
@@ -39,18 +40,6 @@ export default function ProfileMenu() {
             description: "Manage identity and other verifications.",
         },
         {
-            icon: <Globe size={18} className="text-zinc-400" />,
-            title: "Custom Domain",
-            description: "Use your profile as portfolio on your domain.",
-            badge: { text: "Not Connected", color: "bg-red-900/40 text-red-400 border-red-800/50" }
-        },
-        {
-            icon: <Gift size={18} className="text-zinc-400" />,
-            title: "Invite and Earn",
-            description: "See who joined using your invite link.",
-            badge: { text: "New", color: "bg-green-900/40 text-green-400 border-green-800/50" }
-        },
-        {
             icon: <BarChart2 size={18} className="text-zinc-400" />,
             title: "Analytics",
             description: "Views, clicks, and who viewed your profile.",
@@ -72,14 +61,14 @@ export default function ProfileMenu() {
             {/* Header Identity */}
             <div className="py-3 flex items-center gap-3 hover:bg-zinc-800/50 transition-colors cursor-pointer rounded-xl px-2">
                 <Image
-                    src="/avatar.png"
+                    src={session?.user?.image || "/avatar.png"}
                     alt="profile"
                     width={48}
                     height={48}
                     className="rounded-full border border-zinc-700 object-cover shrink-0"
                 />
                 <div className="flex flex-col">
-                    <span className="text-zinc-100 font-semibold text-[16px]">Rishnu Dk</span>
+                    <span className="text-zinc-100 font-semibold text-[16px]">{session?.user?.name || "User"}</span>
                     <span className="text-zinc-400 text-[13px] leading-tight mt-0.5">Manage integrations, resume, collections, etc.</span>
                 </div>
             </div>
