@@ -242,8 +242,43 @@ export async function completeOnboarding(
 }
 
 // ──────────────────────────────────────────────
-// SUGGESTIONS (skills-based)
+// SUGGESTIONS (skills-based + fallback)
 // ──────────────────────────────────────────────
+async function getLatestUsers(
+    prisma: PrismaClient,
+    excludedIds: string[],
+    take: number = 3
+) {
+    const latest = await prisma.user.findMany({
+        where: {
+            id: { notIn: excludedIds },
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            image: true,
+            avatarUrl: true,
+            headline: true,
+            skills: true,
+            company: true,
+            location: true,
+        },
+        take,
+    });
+
+    return latest.map((user) => ({
+        ...user,
+        sharedSkillCount: 0,
+        sameCompany: false,
+        sameLocation: false,
+        score: 0,
+    }));
+}
+
 export async function getSuggestions(
     prisma: PrismaClient,
     currentUserId: string
@@ -284,7 +319,9 @@ export async function getSuggestions(
         });
     }
 
-    if (orConditions.length === 0) return [];
+    if (orConditions.length === 0) {
+        return getLatestUsers(prisma, excludedIds, 3);
+    }
 
     const candidates = await prisma.user.findMany({
         where: {
@@ -337,6 +374,10 @@ export async function getSuggestions(
         })
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
+
+    if (ranked.length === 0) {
+        return getLatestUsers(prisma, excludedIds, 3);
+    }
 
     return ranked;
 }
