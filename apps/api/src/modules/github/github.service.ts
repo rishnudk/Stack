@@ -14,6 +14,14 @@ export interface PinnedRepo {
 export interface ContributionDay {
   date: string;
   count: number;
+  color: string;
+}
+
+export interface ContributionData {
+  totalContributions: number;
+  weeks: {
+    contributionDays: ContributionDay[];
+  }[];
 }
 
 export async function getPinnedRepos(username: string): Promise<PinnedRepo[]> {
@@ -84,14 +92,30 @@ export async function getPinnedRepos(username: string): Promise<PinnedRepo[]> {
   }
 }
 
+async function fetchWithTimeout(url: string, options: RequestInit, timeout = 10000) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal,
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
+  }
+}
+
 export async function getContributionGraph(
   username: string
-): Promise<ContributionDay[]> {
+): Promise<ContributionData> {
   const token = process.env.GITHUB_TOKEN;
 
   if (!token) {
     console.warn("GITHUB_TOKEN is not set in environment variables");
-    return [];
+    return { totalContributions: 0, weeks: [] };
   }
 
   const query = `
@@ -99,10 +123,12 @@ export async function getContributionGraph(
       user(login: $username) {
         contributionsCollection {
           contributionCalendar {
+            totalContributions
             weeks {
               contributionDays {
                 date
                 contributionCount
+                color
               }
             }
           }
@@ -111,47 +137,58 @@ export async function getContributionGraph(
     }
   `;
 
-  try {
-    const response = await fetch(GITHUB_GRAPHQL_API, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-        "User-Agent": "stack-app",
-      },
-      body: JSON.stringify({
-        query,
-        variables: { username },
-      }),
-    });
+  let lastError: any = null;
+  for (let i = 0; i < 3; i++) {
+    try {
+      const response = await fetchWithTimeout(GITHUB_GRAPHQL_API, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          "User-Agent": "stack-app",
+        },
+        body: JSON.stringify({
+          query,
+          variables: { username },
+        }),
+      }, 15000); // 15s timeout for contributions
 
-    console.log(`[github.service] getContributionGraph response status:`, response.status);
+      if (!response.ok) {
+        throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+      }
 
-    if (!response.ok) {
-      console.error(`GitHub GraphQL API error (contributions): ${response.status} ${response.statusText}`);
-      return [];
-    }
+      const data = await response.json();
 
-    const data = await response.json();
+      if (data.errors) {
+        throw new Error(`GitHub GraphQL Error: ${JSON.stringify(data.errors)}`);
+      }
 
-    if (data.errors) {
-      console.error("GitHub GraphQL Error:", data.errors);
-      return [];
-    }
+      const calendar = data.data?.user?.contributionsCollection?.contributionCalendar;
 
-    return (
-      data.data?.user?.contributionsCollection?.contributionCalendar?.weeks?.flatMap(
-        (week: { contributionDays: Array<{ date: string; contributionCount: number }> }) =>
-          week.contributionDays.map((day) => ({
+      if (!calendar) {
+        return { totalContributions: 0, weeks: [] };
+      }
+
+      return {
+        totalContributions: calendar.totalContributions,
+        weeks: calendar.weeks.map((week: any) => ({
+          contributionDays: week.contributionDays.map((day: any) => ({
             date: day.date,
             count: day.contributionCount,
-          }))
-      ) ?? []
-    );
-  } catch (error) {
-    console.error("Failed to fetch GitHub contribution graph:", error);
-    return [];
+            color: day.color,
+          })),
+        })),
+      };
+    } catch (error) {
+      lastError = error;
+      console.warn(`Attempt ${i + 1} failed for getContributionGraph:`, error);
+      // Wait a bit before retrying
+      if (i < 2) await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+    }
   }
+
+  console.error("Failed to fetch GitHub contribution graph after 3 attempts:", lastError);
+  return { totalContributions: 0, weeks: [] };
 }
 
 

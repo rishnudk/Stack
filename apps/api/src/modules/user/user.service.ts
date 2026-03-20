@@ -225,7 +225,23 @@ export async function getGithubPinnedRepos(username: string) {
 }
 
 export async function getContributionGraph(username: string) {
-    return getGithubContributionGraph(username);
+    const data = await getGithubContributionGraph(username);
+    
+    // If we have no weeks but a username was provided, return a structure that allows the UI to render an empty grid
+    if (data.weeks.length === 0 && username) {
+        return {
+            totalContributions: 0,
+            weeks: Array.from({ length: 52 }, () => ({
+                contributionDays: Array.from({ length: 7 }, () => ({
+                    date: new Date().toISOString(), // Placeholder, frontend can handle date-less days or we can just return this
+                    count: 0,
+                    color: "#161b22"
+                }))
+            }))
+        };
+    }
+    
+    return data;
 }
 
 // ──────────────────────────────────────────────

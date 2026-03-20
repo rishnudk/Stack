@@ -12,12 +12,20 @@ import { trpc } from "@/utils/trpc";
 type ContributionDay = {
     date: string;
     count: number;
+    color: string;
 };
+
+interface ContributionData {
+    totalContributions: number;
+    weeks: {
+        contributionDays: ContributionDay[];
+    }[];
+}
 
 interface ProjectsTabProps {
     repos: any[];
     loading: boolean;
-    contributions: ContributionDay[];
+    contributions: ContributionData | null;
     contributionsLoading: boolean;
     isOwnProfile?: boolean;
     userId: string;
@@ -101,13 +109,13 @@ export function ProjectsTab({
 
                 {contributionsLoading ? (
                     <div className="p-8 text-neutral-500">Loading contribution graph...</div>
-                ) : !contributions?.length ? (
+                ) : !contributions || contributions.weeks.length === 0 ? (
                     <div className="p-8 text-center text-neutral-500 bg-neutral-900/50 rounded-xl border border-neutral-800/50">
                         No contribution graph found.
                     </div>
                 ) : (
                     <div className="rounded-xl border border-neutral-800/50 bg-neutral-900/50 p-4 overflow-x-auto">
-                        <ContributionGraph contributions={contributions} />
+                        <ContributionGraph data={contributions} />
                     </div>
                 )}
             </div>

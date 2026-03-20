@@ -44,7 +44,7 @@ export function ProfileContent({ userId, isOwnProfile, initialTab }: ProfileCont
   console.log("[ProfileContent] user data:", user);
   console.log("[ProfileContent] githubUsername:", githubUsername);
   console.log("[ProfileContent] pinnedRepos:", pinnedRepos, "loading:", reposLoading);
-  console.log("[ProfileContent] contributionGraph length:", contributionGraph?.length);
+  console.log("[ProfileContent] contributionGraph:", contributionGraph);
 
   return (
     <div className="container">
@@ -79,7 +79,7 @@ export function ProfileContent({ userId, isOwnProfile, initialTab }: ProfileCont
               <ProjectsTab
                 repos={pinnedRepos || []}
                 loading={reposLoading}
-                contributions={contributionGraph || []}
+                contributions={contributionGraph || null}
                 contributionsLoading={graphLoading}
                 isOwnProfile={isOwnProfile}
                 githubUsername={githubUsername}
