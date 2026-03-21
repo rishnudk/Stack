@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-stack}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - stack-network
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-stack}?schema=public
+      API_JWT_SECRET: ${API_JWT_SECRET:-your_api_jwt_secret}
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    networks:
+      - stack-network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    restart: always
+    environment:
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-your_nextauth_secret}
+      API_JWT_SECRET: ${API_JWT_SECRET:-your_api_jwt_secret}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-stack}?schema=public
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+      - db
+    networks:
+      - stack-network
+
+networks:
+  stack-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
