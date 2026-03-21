@@ -2,8 +2,8 @@
 
 import React from 'react'
 import { useRouter } from 'next/navigation'
-import { Button } from '@repo/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@repo/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { trpc } from '@/utils/trpc'
 
 interface Group {

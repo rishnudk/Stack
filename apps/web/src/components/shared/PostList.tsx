@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { trpc } from '@/utils/trpc';
-import { Button } from '@repo/ui/button';
+import { Button } from "@/components/ui/button";
+import { trpc } from "@/utils/trpc";
 import { toast } from 'sonner';
 
 export function PostList() {
@@ -130,4 +130,5 @@ export function PostList() {
     </div>
   );
 }
+
 

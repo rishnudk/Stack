@@ -121,7 +121,7 @@ export default function ArticlePage() {
                 <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
               </div>
             ) : comments && comments.length > 0 ? (
-              comments.map((comment) => (
+              (comments as any).map((comment: any)=> (
                 <Comment
                   key={comment.id}
                   comment={comment}

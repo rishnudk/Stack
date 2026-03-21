@@ -1,7 +1,8 @@
 FROM node:20-alpine AS base
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable && corepack prepare pnpm@9.1.1 --activate
+RUN corepack enable && corepack prepare pnpm@9.12.0 --activate
+RUN apk add --no-cache openssl
 
 FROM base AS builder
 # Set working directory
@@ -15,18 +16,20 @@ FROM base AS installer
 WORKDIR /app
 
 # First install dependencies (as they change less often)
-COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm install
+RUN pnpm install --ignore-scripts
 
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
+# Explicitly copy root tsconfig as tsc -b needs it
+COPY tsconfig.json tsconfig.json
 
-# Generate Prisma Client
-RUN pnpm turbo run db:generate --filter=api
+# Generate Prisma Client (from root for monorepo consistency)
+RUN pnpm prisma generate --schema=apps/api/prisma/schema.prisma
 
+# Build the project
 RUN pnpm turbo run build --filter=api
 
 FROM base AS runner

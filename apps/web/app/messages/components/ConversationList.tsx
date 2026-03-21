@@ -1,6 +1,6 @@
 "use client";
 import { trpc } from "@/utils/trpc";
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";

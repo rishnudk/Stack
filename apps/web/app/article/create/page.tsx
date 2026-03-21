@@ -6,7 +6,7 @@ import { trpc } from "@/utils/trpc";
 import { ArrowLeft, Image as ImageIcon, Eye, Edit2 } from "lucide-react";
 import ImageNext from "next/image";
 import { toast } from "sonner";
-import { Button } from "@repo/ui/button";
+import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 
 import { MarkdownEditor } from "../../feed/components/article/MarkdownEditor";

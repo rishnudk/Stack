@@ -13,7 +13,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 .git
-.gitignore
+.gitignore-removed
 README.md
 LICENSE
 .github

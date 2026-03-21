@@ -1,8 +1,8 @@
 "use client";
 import { trpc } from "@/utils/trpc";
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/avatar";
-import { Button } from "@repo/ui/button";
-import { Input } from "@repo/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Loader2, Send, Video, Smile } from "lucide-react";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";

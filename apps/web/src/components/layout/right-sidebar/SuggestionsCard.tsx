@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button } from "@repo/ui/button";
+import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { trpc } from "@/utils/trpc";
 
@@ -132,3 +132,4 @@ export function SuggestionsCard() {
     </div>
   );
 }
+

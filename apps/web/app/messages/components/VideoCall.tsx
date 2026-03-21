@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { useSocket } from "../context/SocketContext";
-import { Button } from "@repo/ui/button";
+import { Button } from "@/components/ui/button";
 import { PhoneOff } from "lucide-react";
 
 interface VideoCallProps {
@@ -184,7 +184,7 @@ export default function VideoCall({
                 />
                 <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
                     <Button
-                        variant="danger"
+                        variant="destructive"
                         size="lg"
                         className="rounded-full w-16 h-16 shadow-xl hover:scale-110 transition-transform"
                         onClick={onClose}
