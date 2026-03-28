@@ -22,8 +22,20 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const navRef = useRef<HTMLElement | null>(null);
-
-
+  
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.classList.add('mobile-menu-open');
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.classList.remove('mobile-menu-open');
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.classList.remove('mobile-menu-open');
+    };
+  }, [isMobileMenuOpen]);
   return (
     <>
       <header className={cn("fixed top-0 inset-x-0 z-1001 h-16 flex px-0", className)} {...props} >
@@ -157,13 +169,13 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
         <AnimatePresence>
           {isMobileMenuOpen && (
             <m.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-x-0 top-16 z-40 bg-neutral-50 dark:bg-neutral-900 border-b border-foreground/5 p-4 md:hidden shadow-lg"
+              initial={{ opacity: 0, y: -10, x: "-50%", scale: 0.95 }}
+              animate={{ opacity: 1, y: 12, x: "-50%", scale: 1 }}
+              exit={{ opacity: 0, y: -10, x: "-50%", scale: 0.95 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="fixed left-1/2 top-16 z-1002 w-[90%] max-w-xs bg-white/70 dark:bg-black/70 backdrop-blur-lg border border-white/20 dark:border-white/10 p-6 md:hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl"
             >
-              <nav className="flex flex-col gap-4">
+              <nav className="flex flex-col gap-5 items-center">
                 <NavLink href="/" icon={Home} label="Home" />
                 <NavLink href="/signin" icon={User} label="Login" />
                 <NavLink href="/signup" icon={CreditCard} label="Get Started" />
@@ -171,10 +183,10 @@ const Navbar = ({ className, ...props }: React.HTMLAttributes<HTMLElement> & { l
                   href="https://github.com/rishnudk/Stack"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors"
+                  className="flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors py-2"
                 >
                   <Github className="w-5 h-5" />
-                  <span>GitHub</span>
+                  <span className="font-medium text-sm">GitHub</span>
                 </a>
               </nav>
             </m.div>
