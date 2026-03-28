@@ -1,6 +1,12 @@
 "use client";
 
-import { Box, Lock, Search, Settings, Sparkles } from "lucide-react";
+import { 
+  Layout, 
+  BarChart3, 
+  Briefcase, 
+  MessageSquare, 
+  Hash 
+} from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
 
@@ -9,49 +15,50 @@ export function GlowingGrid() {
     <section className="py-24 bg-black">
         <div className="container mx-auto px-4 mb-12">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center text-white">
-                Interactive Experiences
+                Engineered for Connection
             </h2>
             <p className="mt-4 text-gray-400 text-center max-w-2xl mx-auto">
-                Advanced cursor-tracking border effects that bring your interface to life.
+                The social platform where your code speaks louder than words. Build your network, showcase your stats, and find your next opportunity.
             </p>
         </div>
         <div className="max-w-7xl mx-auto px-4">
             <ul className="grid grid-cols-1 grid-rows-none gap-4 md:grid-cols-12 md:grid-rows-3 lg:gap-4 xl:max-h-136 xl:grid-rows-2">
             <GridItem
                 area="md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]"
-                icon={<Box className="h-4 w-4" />}
-                title="Do things the right way"
-                description="Running out of copy so I'll write anything."
+                icon={<Layout className="h-4 w-4" />}
+                title="A Feed That Understands Code"
+                description="Join a vibrant community of developers. Share snippets, celebrate milestones, and discover content tailored to your stack."
             />
             <GridItem
                 area="md:[grid-area:1/7/2/13] xl:[grid-area:2/1/3/5]"
-                icon={<Settings className="h-4 w-4" />}
-                title="The best AI code editor ever."
-                description="Yes, it's true. I'm not even kidding. Ask my mom if you don't believe me."
+                icon={<BarChart3 className="h-4 w-4" />}
+                title="Showcase Your Impact"
+                description="Sync your GitHub contributions and LeetCode streaks directly. Let your real-world progress do the talking."
             />
             <GridItem
                 area="md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/8]"
-                icon={<Lock className="h-4 w-4" />}
-                title="You should buy Aceternity UI Pro"
-                description="It's the best money you'll ever spend"
+                icon={<Briefcase className="h-4 w-4" />}
+                title="Land Your Dream Role"
+                description="Our 'Hire Me' system connects talent with opportunity. Build social proof and let recruiters find you based on verified skills."
             />
             <GridItem
                 area="md:[grid-area:2/7/3/13] xl:[grid-area:1/8/2/13]"
-                icon={<Sparkles className="h-4 w-4" />}
-                title="This card is also built by Cursor"
-                description="I'm not even kidding. Ask my mom if you don't believe me."
+                icon={<MessageSquare className="h-4 w-4" />}
+                title="Real-time Collaboration"
+                description="Native DM and group messaging built for speed. Coordinate on projects or geek out over the latest framework releases."
             />
             <GridItem
                 area="md:[grid-area:3/1/4/13] xl:[grid-area:2/8/3/13]"
-                icon={<Search className="h-4 w-4" />}
-                title="Coming soon on Aceternity UI"
-                description="I'm writing the code as I record this, no shit."
+                icon={<Hash className="h-4 w-4" />}
+                title="Master the Trends"
+                description="Follow specific technologies via hashtags. From #rust to #nextjs, stay ahead of the curve and curate your perfect feed."
             />
             </ul>
         </div>
     </section>
   );
 }
+
 
 interface GridItemProps {
   area: string;
