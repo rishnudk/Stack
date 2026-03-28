@@ -120,10 +120,3 @@ export const testimonials = [
     avatar: "/images/testimonials/surjit%20singh.jpg",
   },
 ];
-
-export const demoItems = [
-  { link: '#', text: 'Social Feed', image: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=800&auto=format&fit=crop' },
-  { link: '#', text: 'Dev Stats', image: 'https://images.unsplash.com/photo-1551288049-bbbda536ad3a?q=80&w=800&auto=format&fit=crop' },
-  { link: '#', text: 'Networking', image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop' },
-  { link: '#', text: 'Opportunities', image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=800&auto=format&fit=crop' }
-];
