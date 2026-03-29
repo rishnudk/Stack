@@ -69,7 +69,7 @@ export default function ComposeArticlePage() {
 
         try {
             setUploading(true);
-            let imageUrl = "/articles/blockchain.png"; // Fallback placeholder
+            let imageUrl = "/articles/blockchain.png";
 
             if (coverFile) {
                 imageUrl = await uploadFileTos3(coverFile);
@@ -91,7 +91,7 @@ export default function ComposeArticlePage() {
 
             toast.success("Article published successfully!");
             utils.articles.getArticles.invalidate();
-            router.push('/article'); 
+            router.push('/feed'); 
             
         } catch (error: any) {
             console.error(error);
@@ -110,9 +110,9 @@ export default function ComposeArticlePage() {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <button 
-                            onClick={() => router.push('/article')}
+                            onClick={() => router.push('/feed')}
                             className="p-2 hover:bg-neutral-900 rounded-full transition-colors flex items-center justify-center text-neutral-400 hover:text-white"
-                            title="Back to Articles"
+                            title="Back to Feed"
                         >
                             <ArrowLeft size={20} />
                         </button>
