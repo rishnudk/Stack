@@ -108,6 +108,7 @@ export async function getGroupById(
 // ──────────────────────────────────────────────
 export async function getGroupPosts(
     prisma: PrismaClient,
+    viewerId: string | undefined,
     groupId: string
 ) {
     const posts = await prisma.post.findMany({
@@ -121,6 +122,11 @@ export async function getGroupPosts(
                     avatarUrl: true,
                 },
             },
+            likes: {
+                where: { userId: viewerId || "" },
+                take: 1
+            },
+            savedBy: viewerId ? { where: { userId: viewerId }, take: 1 } : false as any,
             _count: {
                 select: {
                     likes: true,
@@ -142,6 +148,8 @@ export async function getGroupPosts(
         avatarUrl: post.author.avatarUrl || post.author.image,
         likeCount: post._count.likes,
         commentCount: post._count.comments,
+        isLiked: post.likes.length > 0,
+        isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
     }));
 }
 

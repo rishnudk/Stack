@@ -8,6 +8,7 @@ import { PostContent } from "./PostContent";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import Link from "next/link";
+import { trpc } from "@/utils/trpc";
 import type { Session } from "next-auth";
 
 export function PostCard({
@@ -24,6 +25,7 @@ export function PostCard({
   userId,
   keyword = "show",
   isSaved: initialIsSaved = false,
+  isLiked: initialIsLiked = false,
   session: propSession,
 }: {
   name: string;
@@ -39,6 +41,7 @@ export function PostCard({
   userId?: string;
   keyword?: string;
   isSaved?: boolean;
+  isLiked?: boolean;
   session?: Session | null;
 }) {
   // Use prop session if provided, otherwise fall back to hook
@@ -48,11 +51,20 @@ export function PostCard({
 
   const router = useRouter();
 
-  const [isLiked, setIsLiked] = useState(false);
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSaved, setIsSaved] = useState(initialIsSaved);
   const [isDeleted, setIsDeleted] = useState(false);
+
+  const toggleLikeMutation = trpc.likes.toggleLike.useMutation({
+    onError: (err) => {
+      toast.error("Failed to like post");
+      // Rollback
+      setIsLiked(isLiked);
+      setLikeCount(likeCount);
+    }
+  });
 
   const isOwner = session?.user?.id === userId;
 
@@ -74,9 +86,16 @@ export function PostCard({
       promptSignIn("like posts");
       return;
     }
-    if (isLiked) setLikeCount((prev) => prev - 1);
-    else setLikeCount((prev) => prev + 1);
-    setIsLiked(!isLiked);
+
+    // Toggle local state (Optimistic Update)
+    const newIsLiked = !isLiked;
+    setIsLiked(newIsLiked);
+    setLikeCount((prev) => (newIsLiked ? prev + 1 : prev - 1));
+
+    // Persist to DB
+    if (postId) {
+      toggleLikeMutation.mutate({ postId });
+    }
   };
 
   const handleBookmark = () => {

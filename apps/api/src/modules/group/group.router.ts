@@ -17,7 +17,7 @@ export const groupRouter = router({
     getGroupPosts: publicProcedure
         .input(GroupSchema.groupIdSchema)
         .query(({ ctx, input }) =>
-            GroupService.getGroupPosts(ctx.prisma, input.groupId)
+            GroupService.getGroupPosts(ctx.prisma, ctx.session?.user?.id, input.groupId)
         ),
 
     getTopGroups: protectedProcedure

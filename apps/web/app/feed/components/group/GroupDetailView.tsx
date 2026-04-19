@@ -164,7 +164,8 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
               userId={post.userId}
               likeCount={post.likeCount}
               commentCount={post.commentCount}
-              isSaved={false}
+              isSaved={post.isSaved || false}
+              isLiked={post.isLiked}
             />
           ))
         )}

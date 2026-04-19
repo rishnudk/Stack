@@ -72,6 +72,7 @@ export async function getPosts(
     posts: posts.map((post) => ({
       ...post,
       isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
+      isLiked: post.likes.some((l) => l.userId === userId),
     })),
     nextCursor,
   };
@@ -96,7 +97,11 @@ export async function getPostById(
   });
 
   if (!post) return null;
-  return { ...post, isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false };
+  return {
+    ...post,
+    isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
+    isLiked: post.likes.some((l) => l.userId === userId),
+  };
 }
 
 // ──────────────────────────────────────────────
@@ -121,6 +126,7 @@ export async function getUserPosts(
   return posts.map((post) => ({
     ...post,
     isSaved: post.savedBy.length > 0,
+    isLiked: post.likes.some((l) => l.userId === viewerId),
   }));
 }
 
@@ -230,6 +236,7 @@ export async function getPostsByHashtag(
     posts: posts.map((post) => ({
       ...post,
       isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
+      isLiked: post.likes.some((l) => l.userId === viewerId),
     })),
     nextCursor,
   };

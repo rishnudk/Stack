@@ -61,6 +61,7 @@ export function PostList({ session }: PostListProps = {}) {
             commentCount={item.comments?.length || 0}
             avatarUrl={item.author.avatarUrl || item.author.image || undefined}
             isSaved={item.isSaved}
+            isLiked={item.isLiked}
             session={session}
           />
         );

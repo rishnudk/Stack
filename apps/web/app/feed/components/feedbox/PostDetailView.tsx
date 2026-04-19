@@ -79,6 +79,7 @@ export function PostDetailView({ postId }: PostDetailViewProps) {
           isDetailView={true}
           avatarUrl={(post as any).author.avatarUrl || (post as any).author.image || undefined}
           isSaved={(post as any).isSaved}
+          isLiked={(post as any).isLiked}
         />
       </div>
 
