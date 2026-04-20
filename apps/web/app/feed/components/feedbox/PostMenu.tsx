@@ -87,13 +87,13 @@ export function PostMenu({ postId, isSaved, isOwner, onDelete, onSaveToggle }: P
                             initial={{ opacity: 0, scale: 0.95, y: -10 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                            className="absolute right-0 mt-2 w-48 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl z-50 overflow-hidden"
+                            className="absolute right-0 mt-2 w-40 bg-neutral-900 border border-neutral-800 rounded-xl shadow-2xl z-50 overflow-hidden"
                         >
                             <div className="py-1">
                                 {/* Save Action */}
                                 <button
                                     onClick={handleSaveClick}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-neutral-800 transition-colors text-left"
+                                    className="w-full flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-neutral-800 transition-colors text-left"
                                 >
                                     {isSaved ? (
                                         <>
@@ -115,7 +115,7 @@ export function PostMenu({ postId, isSaved, isOwner, onDelete, onSaveToggle }: P
                                         {/* Delete Action */}
                                         <button
                                             onClick={handleDeleteClick}
-                                            className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors text-left ${showDeleteConfirm ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "hover:bg-neutral-800 text-red-400"
+                                            className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors text-left ${showDeleteConfirm ? "bg-red-500/10 text-red-500 hover:bg-red-500/20" : "hover:bg-neutral-800 text-red-400"
                                                 }`}
                                         >
                                             {showDeleteConfirm ? (
