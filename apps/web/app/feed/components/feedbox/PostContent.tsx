@@ -2,10 +2,7 @@
 
 import Link from "next/link";
 
-/**
- * Renders post content with clickable #hashtags.
- * Each #word token becomes a <Link> to /hashtag/word.
- */
+
 export function PostContent({ text, className }: { text: string; className?: string }) {
     // Split on hashtag boundaries, keeping the delimiter
     const parts = text.split(/(#[\w]+)/g);
