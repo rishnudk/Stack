@@ -37,18 +37,23 @@ export default function ComposeArticlePage() {
         }
     };
 
-    async function uploadFileTos3(file: File) {
-        const presignResp = await getPresignedUrl.mutateAsync({
+    function fileToBase64(file: File): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+        });
+    }
+
+    async function uploadFile(file: File) {
+        const fileBase64 = await fileToBase64(file);
+        const uploadResp = await getPresignedUrl.mutateAsync({
+            fileBase64,
             fileName: file.name,
-            fileType: file.type
+            fileType: file.type,
         });
-        const { uploadUrl, fileUrl } = presignResp;
-        await fetch(uploadUrl, {
-            method: 'PUT',
-            headers: { 'Content-Type': file.type },
-            body: file,
-        });
-        return fileUrl;
+        return uploadResp.fileUrl;
     }
 
     const generateSlug = (title: string) => {
@@ -72,7 +77,7 @@ export default function ComposeArticlePage() {
             let imageUrl = "/articles/blockchain.png";
 
             if (coverFile) {
-                imageUrl = await uploadFileTos3(coverFile);
+                imageUrl = await uploadFile(coverFile);
             }
 
             const tags = tagsInput.split(',').map(t => t.trim()).filter(Boolean);
