@@ -50,6 +50,10 @@ export const toggleSavePostSchema = z.object({
     postId: z.string()
 })
 
+export const toggleReshareSchema = z.object({
+    postId: z.string()
+})
+
 export const saveDraftSchema = z.object({
     content: z.string(),
     images: z.array(z.string()).default([]),

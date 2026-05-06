@@ -55,6 +55,12 @@ export const postRouter = router({
         .mutation(({ ctx, input }) =>
             PostService.toggleSavePost(ctx.prisma, ctx.session.user.id, input.postId)
         ),
+
+    toggleReshare: protectedProcedure
+        .input(PostSchema.toggleReshareSchema)
+        .mutation(({ ctx, input }) =>
+            PostService.toggleReshare(ctx.prisma, ctx.session.user.id, input.postId)
+        ),
         
     saveDraft: protectedProcedure
         .input(PostSchema.saveDraftSchema)

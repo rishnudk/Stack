@@ -62,17 +62,19 @@ export async function getPosts(
       author: { select: AUTHOR_SELECT },
       likes: true,
       comments: true,
+      reshares: true,
       savedBy: userId ? { where: { userId }, take: 1 } : false as any,
-    },
+    } as any,
   });
 
   const nextCursor = posts.length > input.limit ? posts.pop()?.id : null;
 
   return {
-    posts: posts.map((post) => ({
+    posts: posts.map((post: any) => ({
       ...post,
       isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
-      isLiked: post.likes.some((l) => l.userId === userId),
+      isLiked: post.likes.some((l: any) => l.userId === userId),
+      isReshared: post.reshares.some((r: any) => r.userId === userId),
     })),
     nextCursor,
   };
@@ -92,15 +94,17 @@ export async function getPostById(
       author: { select: AUTHOR_SELECT },
       likes: true,
       comments: { include: { user: true } },
+      reshares: true,
       savedBy: userId ? { where: { userId }, take: 1 } : false as any,
-    },
+    } as any,
   });
 
   if (!post) return null;
   return {
     ...post,
     isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
-    isLiked: post.likes.some((l) => l.userId === userId),
+    isLiked: post.likes.some((l: any) => l.userId === userId),
+    isReshared: post.reshares.some((r: any) => r.userId === userId),
   };
 }
 
@@ -119,14 +123,16 @@ export async function getUserPosts(
       author: { select: AUTHOR_SELECT },
       likes: true,
       comments: true,
+      reshares: true,
       savedBy: { where: { userId: viewerId || "" }, take: 1 },
-    },
+    } as any,
   });
 
-  return posts.map((post) => ({
+  return posts.map((post: any) => ({
     ...post,
     isSaved: post.savedBy.length > 0,
-    isLiked: post.likes.some((l) => l.userId === viewerId),
+    isLiked: post.likes.some((l: any) => l.userId === viewerId),
+    isReshared: post.reshares.some((r: any) => r.userId === viewerId),
   }));
 }
 
@@ -224,19 +230,21 @@ export async function getPostsByHashtag(
       author: { select: AUTHOR_SELECT },
       likes: true,
       comments: true,
+      reshares: true,
       savedBy: viewerId
         ? { where: { userId: viewerId }, take: 1 }
         : false as any,
-    },
+    } as any,
   });
 
   const nextCursor = posts.length > input.limit ? posts.pop()?.id : null;
 
   return {
-    posts: posts.map((post) => ({
+    posts: posts.map((post: any) => ({
       ...post,
       isSaved: Array.isArray(post.savedBy) ? post.savedBy.length > 0 : false,
-      isLiked: post.likes.some((l) => l.userId === viewerId),
+      isLiked: post.likes.some((l: any) => l.userId === viewerId),
+      isReshared: post.reshares.some((r: any) => r.userId === viewerId),
     })),
     nextCursor,
   };
@@ -261,6 +269,26 @@ export async function toggleSavePost(
 
   await prisma.savedPost.create({ data: { postId, userId } });
   return { isSaved: true };
+}
+
+export async function toggleReshare(
+  prisma: PrismaClient,
+  userId: string,
+  postId: string
+) {
+  const existingReshare = await prisma.reshare.findUnique({
+    where: { postId_userId: { postId, userId } },
+  });
+
+  if (existingReshare) {
+    await prisma.reshare.delete({ where: { id: existingReshare.id } });
+    const reshareCount = await prisma.reshare.count({ where: { postId } });
+    return { isReshared: false, reshareCount };
+  }
+
+  await prisma.reshare.create({ data: { postId, userId } });
+  const reshareCount = await prisma.reshare.count({ where: { postId } });
+  return { isReshared: true, reshareCount };
 }
 
 export async function saveDraft(

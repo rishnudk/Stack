@@ -43,6 +43,7 @@ model User {
   impressions         Impression[]
   likes               Like[]
   posts               Post[]
+  reshares            Reshare[]
   savedPosts          SavedPost[]
   sessions            Session[]
   views               View[]
@@ -158,8 +159,22 @@ model Post {
   group     Group?        @relation(fields: [groupId], references: [id], onDelete: Cascade)
   hashtags  PostHashtag[]
   savedBy   SavedPost[]
+  reshares  Reshare[]
 
   @@index([createdAt])
+}
+
+model Reshare {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
 }
 
 model Project {

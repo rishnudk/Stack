@@ -59,9 +59,11 @@ export function PostList({ session }: PostListProps = {}) {
             imageUrl={item.images?.[0]}
             likeCount={item.likes?.length || 0}
             commentCount={item.comments?.length || 0}
+            reshareCount={item.reshares?.length || 0}
             avatarUrl={item.author.avatarUrl || item.author.image || undefined}
             isSaved={item.isSaved}
             isLiked={item.isLiked}
+            isReshared={item.isReshared}
             session={session}
           />
         );
