@@ -7,6 +7,11 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/dd0af4cwg/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'stack.s3.amazonaws.com',
         pathname: '/uploads/**',
       },

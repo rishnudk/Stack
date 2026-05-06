@@ -69,7 +69,25 @@ export function CreatePostModal({
 
   const deleteDraft = trpc.posts.deleteDraft.useMutation()
 
-  const getPresignedUrl = trpc.upload.getPresignedUrl.useMutation()
+  const getUploadFile = trpc.upload.uploadFile.useMutation()
+
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
+
+  async function uploadFile(file: File): Promise<string> {
+    const fileBase64 = await fileToBase64(file)
+    const { fileUrl } = await getUploadFile.mutateAsync({
+      fileBase64,
+      fileName: file.name,
+    })
+    return fileUrl
+  }
 
   const isEmpty = content.trim().length === 0 && files.length === 0 && existingImages.length === 0
 
@@ -97,19 +115,6 @@ export function CreatePostModal({
     resetAndClose()
   }
 
-  async function uploadFileToS3(file: File): Promise<string> {
-    const { uploadUrl, fileUrl } = await getPresignedUrl.mutateAsync({
-      fileName: file.name,
-      fileType: file.type,
-    })
-    await fetch(uploadUrl, {
-      method: "PUT",
-      headers: { "Content-Type": file.type },
-      body: file,
-    })
-    return fileUrl
-  }
-
   async function handlePost() {
     if (isEmpty) {
       toast.error("Write something or attach an image")
@@ -117,7 +122,7 @@ export function CreatePostModal({
     }
     const uploadedUrls: string[] = [...existingImages]
     for (const file of files) {
-      const url = await uploadFileToS3(file)
+      const url = await uploadFile(file)
       uploadedUrls.push(url)
     }
     // If editing a draft, delete the draft first
@@ -138,7 +143,7 @@ export function CreatePostModal({
     }
     const uploadedUrls: string[] = [...existingImages]
     for (const file of files) {
-      const url = await uploadFileToS3(file)
+      const url = await uploadFile(file)
       uploadedUrls.push(url)
     }
     saveDraftMut.mutate({
@@ -157,7 +162,7 @@ export function CreatePostModal({
     setFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const isPosting = createPost.isPending || getPresignedUrl.isPending
+  const isPosting = createPost.isPending || getUploadFile.isPending
   const isSavingDraft = saveDraftMut.isPending
 
   return (

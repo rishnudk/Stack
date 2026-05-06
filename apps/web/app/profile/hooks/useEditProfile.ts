@@ -47,7 +47,16 @@ export function useEditProfile(currentUser: UserData, isOnboarding: boolean | un
     const [newSocialKey, setNewSocialKey] = useState("");
     const [newSocialValue, setNewSocialValue] = useState("");
 
-    const getPresignedUrlMutation = trpc.upload.getPresignedUrl.useMutation();
+    const uploadFileMutation = trpc.upload.uploadFile.useMutation();
+
+    function fileToBase64(file: File): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
     const completeOnboardingMutation = trpc.users.completeOnboarding.useMutation();
 
     const updateProfileMutation = trpc.users.updateProfile.useMutation({
@@ -124,34 +133,20 @@ export function useEditProfile(currentUser: UserData, isOnboarding: boolean | un
             let coverGradient = coverType === "gradient" ? selectedGradient : "";
 
             if (imageFile) {
-                const { uploadUrl, fileUrl } = await getPresignedUrlMutation.mutateAsync({
-                    fileType: imageFile.type,
+                const fileBase64 = await fileToBase64(imageFile);
+                const { fileUrl } = await uploadFileMutation.mutateAsync({
+                    fileBase64,
                     fileName: imageFile.name,
                 });
-
-                const uploadResponse = await fetch(uploadUrl, {
-                    method: "PUT",
-                    body: imageFile,
-                    headers: { "Content-Type": imageFile.type },
-                });
-
-                if (!uploadResponse.ok) throw new Error("Failed to upload profile image to S3");
                 avatarUrl = fileUrl;
             }
 
             if (coverType === "upload" && coverFile) {
-                const { uploadUrl, fileUrl } = await getPresignedUrlMutation.mutateAsync({
-                    fileType: coverFile.type,
+                const fileBase64 = await fileToBase64(coverFile);
+                const { fileUrl } = await uploadFileMutation.mutateAsync({
+                    fileBase64,
                     fileName: coverFile.name,
                 });
-
-                const uploadResponse = await fetch(uploadUrl, {
-                    method: "PUT",
-                    body: coverFile,
-                    headers: { "Content-Type": coverFile.type },
-                });
-
-                if (!uploadResponse.ok) throw new Error("Failed to upload cover image to S3");
                 coverUrl = fileUrl;
             }
 
@@ -219,8 +214,8 @@ export function useEditProfile(currentUser: UserData, isOnboarding: boolean | un
         handleSubmit,
         handleSkip,
         isSubmitting: updateProfileMutation.isPending ||
-            getPresignedUrlMutation.isPending ||
+            uploadFileMutation.isPending ||
             completeOnboardingMutation.isPending,
-        isUploading: getPresignedUrlMutation.isPending,
+        isUploading: uploadFileMutation.isPending,
     };
 }

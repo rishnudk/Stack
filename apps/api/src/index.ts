@@ -8,7 +8,7 @@ import { appRouter } from "./trpc/appRouter";
 import { createContext } from "./context";
 import { initSocket, getIO } from "./lib/socket";
 
-const server = Fastify({ logger: true });
+const server = Fastify({ logger: true, bodyLimit: 10 * 1024 * 1024 }); // 10MB for base64 image uploads
 
 async function bootstrap() {
   // socket init

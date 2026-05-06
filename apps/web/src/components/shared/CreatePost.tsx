@@ -25,21 +25,24 @@ export function CreatePost() {
     setFiles((prev) => [...prev, ...Array.from(e.target.files!)]);
   }
 
-  async function uploadFileTos3(file: File)  {
-    const presignResp = await TRPCMutation("upload.getPresignedUrl", { fileName: file.name, fileType: file.type });
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
 
-    if(presignResp.error) {
-      toast.error("Error getting presigned URL");
+  async function uploadFile(file: File) {
+    const fileBase64 = await fileToBase64(file);
+    const uploadResp = await TRPCMutation("upload.uploadFile", { fileBase64, fileName: file.name });
+
+    if (uploadResp.error) {
+      toast.error("Error uploading file");
       return;
     }
-    const { uploadUrl, fileUrl } = presignResp.result.data;
-
-    await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': file.type },
-      body: file,
-    });
-    return fileUrl;
+    return uploadResp.result.data.fileUrl;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,7 +54,7 @@ export function CreatePost() {
       const imageUrls : string[] = [];
 
       for(const file of files) {
-        const url = await uploadFileTos3(file);
+        const url = await uploadFile(file);
         if(url) imageUrls.push(url);
       }
 

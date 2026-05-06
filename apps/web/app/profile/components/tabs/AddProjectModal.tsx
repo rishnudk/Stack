@@ -26,7 +26,16 @@ export function AddProjectModal({ isOpen, onClose, project }: AddProjectModalPro
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const utils = trpc.useUtils();
-    const getPresignedUrlMutation = trpc.upload.getPresignedUrl.useMutation();
+    const uploadFileMutation = trpc.upload.uploadFile.useMutation();
+
+    function fileToBase64(file: File): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    }
     const createProjectMutation = trpc.projects.createProject.useMutation({
         onSuccess: () => {
             toast.success("Project created successfully!");
@@ -67,7 +76,7 @@ export function AddProjectModal({ isOpen, onClose, project }: AddProjectModalPro
   }
 }, [project]);
 
-    const isSubmitting = getPresignedUrlMutation.isPending || createProjectMutation.isPending;
+    const isSubmitting = uploadFileMutation.isPending || createProjectMutation.isPending;
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -117,18 +126,11 @@ export function AddProjectModal({ isOpen, onClose, project }: AddProjectModalPro
             let imageUrl: string | undefined = undefined;
 
             if (imageFile) {
-                const { uploadUrl, fileUrl } = await getPresignedUrlMutation.mutateAsync({
-                    fileType: imageFile.type,
+                const fileBase64 = await fileToBase64(imageFile);
+                const { fileUrl } = await uploadFileMutation.mutateAsync({
+                    fileBase64,
                     fileName: imageFile.name,
                 });
-
-                const uploadResponse = await fetch(uploadUrl, {
-                    method: "PUT",
-                    body: imageFile,
-                    headers: { "Content-Type": imageFile.type },
-                });
-
-                if (!uploadResponse.ok) throw new Error("Failed to upload project image.");
                 imageUrl = fileUrl;
             }
 

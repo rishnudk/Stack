@@ -1,16 +1,31 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../../trpc/trpc";
-import { createPresignedUrl } from "../uploads/s3.service";
+import { uploadToCloudinary } from "./cloudinary.service";
 
 export const uploadRouter = router({
-    getPresignedUrl: protectedProcedure
+    uploadFile: protectedProcedure
         .input(
             z.object({
-                fileType: z.string(),
+                fileBase64: z.string(),
                 fileName: z.string(),
             })
         )
-        .mutation(({ input }) =>
-            createPresignedUrl(input.fileType, input.fileName)
-        ),
+        .mutation(async ({ input }) => {
+            const fileUrl = await uploadToCloudinary(input.fileBase64, input.fileName);
+            return { fileUrl };
+        }),
+
+    // Keep the old name as an alias so any missed references don't break
+    getPresignedUrl: protectedProcedure
+        .input(
+            z.object({
+                fileBase64: z.string(),
+                fileName: z.string(),
+                fileType: z.string().optional(),
+            })
+        )
+        .mutation(async ({ input }) => {
+            const fileUrl = await uploadToCloudinary(input.fileBase64, input.fileName);
+            return { fileUrl, uploadUrl: "" };
+        }),
 });
