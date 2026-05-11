@@ -74,6 +74,8 @@ jobs:
         run: pnpm --filter web exec tsc --noEmit
 
       - name: Build web
+        env:
+          DATABASE_URL: postgres://dummy:dummy@localhost:5432/dummy
         run: pnpm --filter web build
 
   api:
@@ -106,6 +108,8 @@ jobs:
         run: pnpm --filter @stack/types build
 
       - name: Build API
+        env:
+          DATABASE_URL: postgres://dummy:dummy@localhost:5432/dummy
         run: pnpm --filter api build
 
   ci-status:
