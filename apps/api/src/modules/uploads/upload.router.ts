@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../../trpc/trpc";
 import { uploadToCloudinary } from "./cloudinary.service";
+console.log('hii');
 
 export const uploadRouter = router({
     uploadFile: protectedProcedure
