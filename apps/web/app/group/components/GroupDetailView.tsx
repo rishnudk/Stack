@@ -1,10 +1,13 @@
 "use client";
+import { useState } from "react";
 import Image from "next/image";
-import { ArrowLeft, Users } from "lucide-react";
+import { ArrowLeft, Users, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CreatePostBox } from "../../feed/components/feedbox/CreatePostBox";
 import { PostCard } from "../../feed/components/feedbox/PostCard";
 import { trpc } from "@/utils/trpc";
+import { toast } from "sonner";
+import EditGroupModal from "./EditGroupModal";
 
 interface GroupDetailViewProps {
   groupId: string;
@@ -12,6 +15,8 @@ interface GroupDetailViewProps {
 
 export function GroupDetailView({ groupId }: GroupDetailViewProps) {
   const router = useRouter();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const utils = trpc.useUtils();
 
   // Fetch group details
   const { data: group, isLoading: isLoadingGroup, error: groupError } =
@@ -20,6 +25,30 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
   // Fetch group posts
   const { data: posts, isLoading: isLoadingPosts, error: postsError } =
     trpc.groups.getGroupPosts.useQuery({ groupId });
+
+  const updateGroupMutation = trpc.groups.updateGroup.useMutation({
+    onSuccess: () => {
+      toast.success("Group updated successfully");
+      setIsEditModalOpen(false);
+      utils.groups.getGroupById.invalidate({ groupId });
+      utils.groups.getGroups.invalidate();
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update group");
+    },
+  });
+
+  const handleUpdateGroup = (formData: {
+    name: string;
+    description?: string;
+    privacy: "PUBLIC" | "PRIVATE";
+    image?: string;
+  }) => {
+    updateGroupMutation.mutate({
+      groupId,
+      ...formData,
+    });
+  };
 
   const handleBack = () => {
     router.push("/feed");
@@ -76,7 +105,7 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto min-h-screen border-x border-neutral-800 bg-black text-white">
+    <div className="w-full max-w-2xl mx-auto min-h-screen border-x border-neutral-800 bg-black text-white relative">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-black/95 backdrop-blur-sm border-b border-neutral-800">
         <div className="flex items-center gap-4 p-4">
@@ -108,9 +137,20 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
               </div>
             </div>
           </div>
-          <button className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-full font-semibold text-sm transition-colors">
-            {group.isMember ? "Joined" : "Join"}
-          </button>
+          {group.isAdmin && (
+            <button 
+              onClick={() => setIsEditModalOpen(true)}
+              className="p-2 bg-neutral-800 hover:bg-neutral-700 rounded-full text-white transition-colors"
+              title="Edit Group"
+            >
+              <Settings size={18} />
+            </button>
+          )}
+          {!group.isAdmin && (
+            <button className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 rounded-full font-semibold text-sm transition-colors">
+              {group.isMember ? "Joined" : "Join"}
+            </button>
+          )}
         </div>
         {group.description && (
           <div className="px-4 pb-3">
@@ -120,7 +160,7 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
       </div>
 
       {/* Create Post Box */}
-      <CreatePostBox groupId={groupId} />
+      {group.isMember && <CreatePostBox groupId={groupId} />}
 
       {/* Group Posts */}
       <div className="flex flex-col">
@@ -170,6 +210,19 @@ export function GroupDetailView({ groupId }: GroupDetailViewProps) {
           ))
         )}
       </div>
+
+      <EditGroupModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSubmit={handleUpdateGroup}
+        isLoading={updateGroupMutation.isPending}
+        initialData={{
+          name: group.name,
+          description: group.description,
+          privacy: group.privacy,
+          image: group.image,
+        }}
+      />
     </div>
   );
 }

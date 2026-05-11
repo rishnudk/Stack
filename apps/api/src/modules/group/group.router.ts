@@ -36,4 +36,10 @@ export const groupRouter = router({
         .mutation(({ ctx, input }) =>
             GroupService.createGroup(ctx.prisma, ctx.session.user.id, input)
         ),
+
+    updateGroup: protectedProcedure
+        .input(GroupSchema.updateGroupSchema)
+        .mutation(({ ctx, input }) =>
+            GroupService.updateGroup(ctx.prisma, ctx.session.user.id, input.groupId, input)
+        ),
 });

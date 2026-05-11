@@ -100,6 +100,7 @@ export async function getGroupById(
         guidelines: group.guidelines,
         memberCount: group._count.members,
         isMember: group.members.length > 0,
+        isAdmin: group.members[0]?.role === "ADMIN",
     };
 }
 
@@ -246,6 +247,41 @@ export async function createGroup(
                     status: "ACCEPTED",
                 },
             },
+        },
+    });
+}
+
+// ──────────────────────────────────────────────
+// UPDATE GROUP
+// ──────────────────────────────────────────────
+export async function updateGroup(
+    prisma: PrismaClient,
+    userId: string,
+    groupId: string,
+    input: { name?: string; description?: string; privacy?: "PUBLIC" | "PRIVATE"; image?: string; guidelines?: string }
+) {
+    // Check if the user is an admin
+    const member = await prisma.groupMember.findUnique({
+        where: {
+            userId_groupId: { userId, groupId },
+        },
+    });
+
+    if (!member || member.role !== "ADMIN") {
+        throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You must be an admin to update this group",
+        });
+    }
+
+    return prisma.group.update({
+        where: { id: groupId },
+        data: {
+            ...(input.name && { name: input.name }),
+            ...(input.description !== undefined && { description: input.description }),
+            ...(input.privacy && { privacy: input.privacy }),
+            ...(input.image !== undefined && { image: input.image }),
+            ...(input.guidelines !== undefined && { guidelines: input.guidelines }),
         },
     });
 }
