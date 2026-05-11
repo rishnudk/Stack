@@ -2,8 +2,8 @@
 import Image from "next/image";
 import { ArrowLeft, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CreatePostBox } from "@/app/feed/components/feedbox/CreatePostBox";
-import { PostCard } from "@/app/feed/components/feedbox/PostCard";
+import { CreatePostBox } from "../../feed/components/feedbox/CreatePostBox";
+import { PostCard } from "../../feed/components/feedbox/PostCard";
 import { trpc } from "@/utils/trpc";
 import { useSession } from "next-auth/react";
 
