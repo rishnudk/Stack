@@ -91,6 +91,9 @@ export async function getGroupById(
         });
     }
 
+    console.log("🛠️ getGroupById - viewerId:", viewerId);
+    console.log("🛠️ getGroupById - members:", JSON.stringify(group.members, null, 2));
+
     return {
         id: group.id,
         name: group.name,
