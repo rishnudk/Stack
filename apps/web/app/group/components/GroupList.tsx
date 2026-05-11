@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { trpc } from '@/utils/trpc';
 import { Button } from '@/components/ui/button';
 import { Users, Plus, Shield, Globe } from 'lucide-react';
-import CreateGroupModal from '@/components/layout/left-sidebar/CreateGroupModal';
+import CreateGroupModal from './CreateGroupModal';
 import { toast } from 'sonner';
 import { Card } from '@/components/ui/card';
 
@@ -27,7 +27,7 @@ export function GroupList() {
     },
   });
 
-  const handleCreateGroup = (formData: { name: string; description?: string; privacy: "PUBLIC" | "PRIVATE" }) => {
+  const handleCreateGroup = (formData: { name: string; description?: string; privacy: "PUBLIC" | "PRIVATE"; image?: string }) => {
     createGroupMutation.mutate(formData);
   };
 
@@ -102,7 +102,7 @@ export function GroupList() {
                   <div className="mt-4 pt-4 border-t border-neutral-800/50">
                     <Button 
                       variant="outline" 
-                      className="w-full border-neutral-700 text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                      className="w-full border-neutral-700 hover:bg-neutral-800 hover:text-black"
                       onClick={(e) => {
                         e.stopPropagation();
                         router.push(`/group/${group.id}`);

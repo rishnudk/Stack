@@ -2,8 +2,8 @@
 import Image from "next/image";
 import { ArrowLeft, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { CreatePostBox } from "../feedbox/CreatePostBox";
-import { PostCard } from "../feedbox/PostCard";
+import { CreatePostBox } from "../../feed/components/feedbox/CreatePostBox";
+import { PostCard } from "../../feed/components/feedbox/PostCard";
 import { trpc } from "@/utils/trpc";
 
 interface GroupDetailViewProps {

@@ -28,6 +28,7 @@ interface LeftSidebarProps {
 
 const navItems = [
   { icon: Home, label: "Scroll", href: "/feed" },
+  { icon:Users, label:"Groups", href:"/group"},
   { icon: FileText, label: "Articles", href: "/article" },
   { icon: Briefcase, label: "Jobs", href: "/jobs" },
   { icon: MessageCircle, label: "Inbox", href: "/messages" },

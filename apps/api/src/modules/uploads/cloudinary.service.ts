@@ -21,14 +21,24 @@ cloudinary.config({
 
 export async function uploadToCloudinary(
   fileBase64: string,
-  fileName: string
+  fileName: string,
+  folder: string = "uploads",
+  resize?: { width: number; height: number; crop?: string }
 ): Promise<string> {
   console.log("🔵 Uploading to Cloudinary:", fileName);
 
-  const result = await cloudinary.uploader.upload(fileBase64, {
-    folder: "uploads",
+  const options: any = {
+    folder: folder,
     resource_type: "auto",
-  });
+  };
+
+  if (resize) {
+    options.transformation = [
+      { width: resize.width, height: resize.height, crop: resize.crop || "limit" }
+    ];
+  }
+
+  const result = await cloudinary.uploader.upload(fileBase64, options);
 
   console.log("✅ Cloudinary upload complete:", result.secure_url);
   return result.secure_url;

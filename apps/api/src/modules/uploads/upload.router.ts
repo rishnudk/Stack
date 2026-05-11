@@ -8,10 +8,16 @@ export const uploadRouter = router({
             z.object({
                 fileBase64: z.string(),
                 fileName: z.string(),
+                folder: z.string().optional(),
+                resize: z.object({
+                    width: z.number(),
+                    height: z.number(),
+                    crop: z.string().optional(),
+                }).optional(),
             })
         )
         .mutation(async ({ input }) => {
-            const fileUrl = await uploadToCloudinary(input.fileBase64, input.fileName);
+            const fileUrl = await uploadToCloudinary(input.fileBase64, input.fileName, input.folder, input.resize);
             return { fileUrl };
         }),
 

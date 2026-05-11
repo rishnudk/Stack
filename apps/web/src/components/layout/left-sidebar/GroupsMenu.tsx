@@ -3,7 +3,7 @@ import { trpc } from "@/utils/trpc";
 import { useState, useRef, useEffect } from "react";
 import { Users, Plus, Star, Trophy, ChevronUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import CreateGroupModal from "./CreateGroupModal";
+import CreateGroupModal from "../../../../app/group/components/CreateGroupModal";
 
 type MenuVariant = "standalone" | "top" | "middle" | "bottom";
 
@@ -70,6 +70,7 @@ export default function GroupsMenu({ onOpenChange, variant = "standalone" }: Gro
     name: string;
     description?: string;
     privacy: "PUBLIC" | "PRIVATE";
+    image?: string;
   }) => {
     createGroupMutation.mutate(formData);
   };

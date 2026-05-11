@@ -231,13 +231,14 @@ export async function joinGroup(
 export async function createGroup(
     prisma: PrismaClient,
     userId: string,
-    input: { name: string; description?: string; privacy: "PUBLIC" | "PRIVATE" }
+    input: { name: string; description?: string; privacy: "PUBLIC" | "PRIVATE"; image?: string }
 ) {
     return prisma.group.create({
         data: {
             name: input.name,
             description: input.description,
             privacy: input.privacy,
+            image: input.image,
             members: {
                 create: {
                     userId,

@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
+import { X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { trpc } from "@/utils/trpc";
 
 interface CreateGroupModalProps {
     isOpen: boolean;
@@ -9,6 +10,7 @@ interface CreateGroupModalProps {
         name: string;
         description?: string;
         privacy: "PUBLIC" | "PRIVATE";
+        image?: string;
     }) => void;
     isLoading?: boolean;
 }
@@ -22,12 +24,33 @@ export default function CreateGroupModal({
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [privacy, setPrivacy] = useState<"PUBLIC" | "PRIVATE">("PUBLIC");
-    const [errors, setErrors] = useState<{ name?: string; description?: string }>({});
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [errors, setErrors] = useState<{ name?: string; description?: string; image?: string }>({});
     const [mounted, setMounted] = useState(false);
+    
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const uploadMutation = trpc.upload.uploadFile.useMutation();
 
     useEffect(() => {
         setMounted(true);
     }, []);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                setErrors({ ...errors, image: "Image size should be less than 5MB" });
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+                setErrors({ ...errors, image: undefined });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const validateForm = () => {
         const newErrors: { name?: string; description?: string } = {};
@@ -46,35 +69,64 @@ export default function CreateGroupModal({
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!validateForm()) {
             return;
         }
 
+        let imageUrl: string | undefined = undefined;
+
+        if (imagePreview) {
+            try {
+                const result = await uploadMutation.mutateAsync({
+                    fileBase64: imagePreview,
+                    fileName: `group-cover-${Date.now()}`,
+                    folder: "groups",
+                    resize: {
+                        width: 800,
+                        height: 400,
+                        crop: "fill"
+                    }
+                });
+                imageUrl = result.fileUrl;
+            } catch (error) {
+                console.error("Failed to upload image", error);
+                setErrors({ ...errors, image: "Failed to upload image. Please try again." });
+                return;
+            }
+        }
+
         onSubmit({
             name,
             description: description || undefined,
             privacy,
+            image: imageUrl,
         });
 
-        // Reset form
-        setName("");
-        setDescription("");
-        setPrivacy("PUBLIC");
-        setErrors({});
+        // Form reset logic handled in onClose or by parent component
+        if (!isLoading) {
+             setName("");
+             setDescription("");
+             setPrivacy("PUBLIC");
+             setImagePreview(null);
+             setErrors({});
+        }
     };
 
     const handleClose = () => {
         setName("");
         setDescription("");
         setPrivacy("PUBLIC");
+        setImagePreview(null);
         setErrors({});
         onClose();
     };
 
     if (!isOpen || !mounted) return null;
+
+    const isSubmitting = isLoading || uploadMutation.isPending;
 
     return createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
@@ -92,7 +144,7 @@ export default function CreateGroupModal({
                     <button
                         onClick={handleClose}
                         className="p-1 text-neutral-400 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors"
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                     >
                         <X size={20} />
                     </button>
@@ -101,6 +153,42 @@ export default function CreateGroupModal({
                 {/* Form - Scrollable */}
                 <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
                     <div className="p-4 sm:p-6 space-y-5 overflow-y-auto flex-1 scrollbar-hide">
+                        {/* Group Cover Image */}
+                        <div>
+                            <label className="block text-sm font-medium text-neutral-300 mb-2">
+                                Group Image <span className="text-neutral-500">(optional)</span>
+                            </label>
+                            
+                            <div 
+                                className={`relative w-full h-32 rounded-xl border-2 border-dashed ${errors.image ? 'border-red-500 bg-red-500/5' : 'border-neutral-700 bg-neutral-800/50 hover:bg-neutral-800 hover:border-neutral-600'} transition-all flex items-center justify-center overflow-hidden cursor-pointer group`}
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                {imagePreview ? (
+                                    <>
+                                        <img src={imagePreview} alt="Group Cover" className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <span className="text-white text-sm font-medium">Change Image</span>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="flex flex-col items-center text-neutral-400">
+                                        <ImageIcon size={24} className="mb-2 text-neutral-500" />
+                                        <span className="text-sm font-medium">Upload Image</span>
+                                        <span className="text-xs text-neutral-500 mt-1">PNG, JPG up to 5MB</span>
+                                    </div>
+                                )}
+                            </div>
+                            <input 
+                                type="file" 
+                                ref={fileInputRef} 
+                                className="hidden" 
+                                accept="image/png, image/jpeg, image/webp" 
+                                onChange={handleImageChange}
+                                disabled={isSubmitting}
+                            />
+                            {errors.image && <p className="text-xs text-red-500 mt-1.5">{errors.image}</p>}
+                        </div>
+
                         {/* Group Name */}
                         <div>
                             <label htmlFor="groupName" className="block text-sm font-medium text-neutral-300 mb-2">
@@ -114,7 +202,7 @@ export default function CreateGroupModal({
                                 placeholder="e.g., Web Developers"
                                 className={`w-full px-4 py-2.5 bg-neutral-800 border ${errors.name ? "border-red-500" : "border-neutral-700"
                                     } rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                                disabled={isLoading}
+                                disabled={isSubmitting}
                                 maxLength={50}
                             />
                             <div className="flex items-center justify-between mt-1.5">
@@ -136,7 +224,7 @@ export default function CreateGroupModal({
                                 rows={3}
                                 className={`w-full px-4 py-2.5 bg-neutral-800 border ${errors.description ? "border-red-500" : "border-neutral-700"
                                     } rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none`}
-                                disabled={isLoading}
+                                disabled={isSubmitting}
                                 maxLength={200}
                             />
                             <div className="flex items-center justify-between mt-1.5">
@@ -165,7 +253,7 @@ export default function CreateGroupModal({
                                         checked={privacy === "PUBLIC"}
                                         onChange={(e) => setPrivacy(e.target.value as "PUBLIC" | "PRIVATE")}
                                         className="mt-0.5 w-4 h-4 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 bg-neutral-700 border-neutral-600"
-                                        disabled={isLoading}
+                                        disabled={isSubmitting}
                                     />
                                     <div className="flex-1">
                                         <div className="font-medium text-white">Public</div>
@@ -189,7 +277,7 @@ export default function CreateGroupModal({
                                         checked={privacy === "PRIVATE"}
                                         onChange={(e) => setPrivacy(e.target.value as "PUBLIC" | "PRIVATE")}
                                         className="mt-0.5 w-4 h-4 text-blue-500 focus:ring-blue-500 focus:ring-offset-0 bg-neutral-700 border-neutral-600"
-                                        disabled={isLoading}
+                                        disabled={isSubmitting}
                                     />
                                     <div className="flex-1">
                                         <div className="font-medium text-white">Private</div>
@@ -208,16 +296,21 @@ export default function CreateGroupModal({
                             type="button"
                             onClick={handleClose}
                             className="flex-1 px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg font-medium transition-colors"
-                            disabled={isLoading}
+                            disabled={isSubmitting}
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            disabled={isLoading || name.length < 3}
+                            className="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            disabled={isSubmitting || name.length < 3}
                         >
-                            {isLoading ? "Creating..." : "Create Group"}
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 size={18} className="animate-spin" />
+                                    {uploadMutation.isPending ? "Uploading..." : "Creating..."}
+                                </>
+                            ) : "Create Group"}
                         </button>
                     </div>
                 </form>
