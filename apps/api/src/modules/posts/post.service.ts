@@ -52,36 +52,36 @@ export async function createPost(
 export async function getPosts(
   prisma: PrismaClient,
   userId: string | undefined,
-  input: { cursor?: string | null; limit: number; feedType?: "Newest" | "Trending" | "Following" }
+  input: { cursor?: string | null; limit: number; }
 ) {
-  let orderBy: any = { createdAt: "desc" };
-  let where: any = {};
+  // let orderBy: any = { createdAt: "desc" };
+  // let where: any = {};
 
-  if (input.feedType === "Trending") {
-    orderBy = [
-      { likes: { _count: "desc" } },
-      { createdAt: "desc" }
-    ];
-  } else if (input.feedType === "Following") {
-    if (!userId) {
-      return { posts: [], nextCursor: null };
-    }
-    where = {
-      author: {
-        followers: {
-          some: {
-            followerId: userId
-          }
-        }
-      }
-    };
-  }
+  // if (input.feedType === "Trending") {
+  //   orderBy = [
+  //     { likes: { _count: "desc" } },
+  //     { createdAt: "desc" }
+  //   ];
+  // } else if (input.feedType === "Following") {
+  //   if (!userId) {
+  //     return { posts: [], nextCursor: null };
+  //   }
+  //   where = {
+  //     author: {
+  //       followers: {
+  //         some: {
+  //           followerId: userId
+  //         }
+  //       }
+  //     }
+  //   };
+  // }
 
   const posts = await prisma.post.findMany({
-    where,
+    // where,
     take: input.limit + 1,
     cursor: input.cursor ? { id: input.cursor } : undefined,
-    orderBy,
+    orderBy: { createdAt: "desc" },
     include: {
       author: { select: AUTHOR_SELECT },
       likes: true,
