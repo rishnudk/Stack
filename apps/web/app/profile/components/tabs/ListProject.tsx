@@ -15,7 +15,7 @@ export function ListProject({ userId }: ListProjectProps) {
     const [showAll, setShowAll] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [editProject, setEditProject] = useState(false);
-    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [shareProject, setShareProject] = useState<any | null>(null);
 
     const { data: projects, isLoading } = trpc.projects.getProjectsByUserId.useQuery({ userId });
     const deleteProject = trpc.projects.deleteProject.useMutation({
@@ -108,13 +108,6 @@ export function ListProject({ userId }: ListProjectProps) {
                                     </a>
                                 )}
                                 <button
-                                    title="Share Project"
-                                    onClick={() => setIsShareModalOpen(true)}
-                                    className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition-colors"
-                                >
-                                    <Share2 size={16} />
-                                </button>
-                                <button
                                     title="Edit Project"
                                     onClick={() => setEditProject(true)}
                                     className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition-colors"
@@ -135,15 +128,6 @@ export function ListProject({ userId }: ListProjectProps) {
                             isOpen={editProject}
                             onClose={() => setEditProject(false)}
                             project={project}
-                        />
-                        <ShareProjectModal
-                            isOpen={isShareModalOpen}
-                            onClose={() => setIsShareModalOpen(false)}
-                            project={{
-                                name: project.name,
-                                description: project.description || "",
-                                url: project.liveLink || project.githubLink || "",
-                            }}
                         />
 
                         {confirmDelete && (
@@ -202,8 +186,18 @@ export function ListProject({ userId }: ListProjectProps) {
                     <div
                         key={project.id}
                         onClick={() => setSelectedProjectId(project.id)}
-                        className="group flex flex-col bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden cursor-pointer hover:border-neutral-700 transition-all hover:shadow-lg hover:shadow-black/50 hover:-translate-y-0.5"
+                        className="group flex flex-col bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden cursor-pointer hover:border-neutral-700 transition-all hover:shadow-lg hover:shadow-black/50 hover:-translate-y-0.5 relative"
                     >
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShareProject(project);
+                            }}
+                            className="absolute top-3 right-3 p-2 bg-neutral-900/80 hover:bg-neutral-800 rounded-lg text-neutral-400 hover:text-white transition-colors z-10 backdrop-blur-sm opacity-0 group-hover:opacity-100 border border-neutral-800"
+                            title="Share Project"
+                        >
+                            <Share2 size={16} />
+                        </button>
                         {project.imageUrl ? (
                             <div className="w-full h-40 border-b border-neutral-800 overflow-hidden relative">
                                 <img
@@ -211,16 +205,16 @@ export function ListProject({ userId }: ListProjectProps) {
                                     alt={project.name}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
-                                <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
                         ) : (
                             <div className="w-full h-40 bg-neutral-800/50 border-b border-neutral-800 flex items-center justify-center relative overflow-hidden">
                                 <Code size={48} className="text-neutral-700 transition-transform duration-500 group-hover:scale-110 group-hover:text-neutral-600" />
-                                <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
                         )}
                         <div className="p-4 flex-1 flex flex-col">
-                            <h3 className="text-base font-semibold text-white group-hover:text-blue-400 transition-colors mb-2 line-clamp-1">
+                            <h3 className="text-base font-semibold text-white group-hover:text-blue-400 transition-colors mb-2 line-clamp-1 pr-8">
                                 {project.name}
                             </h3>
                             <p className="text-sm text-neutral-400 mb-4 line-clamp-2 flex-1">
@@ -248,6 +242,19 @@ export function ListProject({ userId }: ListProjectProps) {
                     {showAll ? "Show less" : `Show all ${projects.length} projects`}
                 </button>
             )}
+
+            {shareProject && (
+                <ShareProjectModal
+                    isOpen={!!shareProject}
+                    onClose={() => setShareProject(null)}
+                    project={{
+                        name: shareProject.name,
+                        description: shareProject.description || "",
+                        url: shareProject.liveLink || shareProject.githubLink || "",
+                    }}
+                />
+            )}
         </div>
     );
 }
+
