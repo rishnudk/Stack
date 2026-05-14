@@ -5,11 +5,14 @@ import { X, Send } from "lucide-react";
 import { trpc } from "@/utils/trpc";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface ShareProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   project: {
+    id?: string;
+    userId?: string;
     name: string;
     description: string;
     url: string;
@@ -19,6 +22,7 @@ interface ShareProjectModalProps {
 export function ShareProjectModal({ isOpen, onClose, project }: ShareProjectModalProps) {
   const [description, setDescription] = useState("");
   const router = useRouter();
+  const { data: session } = useSession();
 
   const createPost = trpc.posts.createPost.useMutation({
     onSuccess: () => {
@@ -36,16 +40,21 @@ export function ShareProjectModal({ isOpen, onClose, project }: ShareProjectModa
 
   const handleShare = () => {
     let postContent = description;
+    
+    const embedData = {
+      id: project.id,
+      userId: project.userId || session?.user?.id,
+      name: project.name,
+      description: project.description,
+      url: project.url,
+    };
+
     if (description.trim().length > 0) {
         postContent += "\n\n";
     }
-    postContent += `Check out my project: ${project.name}`;
-    if (project.description) {
-        postContent += `\n${project.description}`;
-    }
-    if (project.url) {
-        postContent += `\n${project.url}`;
-    }
+    
+    // Append special embed tag
+    postContent += `[PROJECT_EMBED:${JSON.stringify(embedData)}]`;
 
     createPost.mutate({
       content: postContent,

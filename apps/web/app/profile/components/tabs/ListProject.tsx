@@ -6,12 +6,13 @@ import { ShareProjectModal } from "./ShareProjectModal";
 
 interface ListProjectProps {
     userId: string;
+    initialProjectId?: string;
 }
 
-export function ListProject({ userId }: ListProjectProps) {
+export function ListProject({ userId, initialProjectId }: ListProjectProps) {
 
     const utils = trpc.useUtils();
-    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+    const [selectedProjectId, setSelectedProjectId] = useState<string | null>(initialProjectId || null);
     const [showAll, setShowAll] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [editProject, setEditProject] = useState(false);
@@ -248,6 +249,8 @@ export function ListProject({ userId }: ListProjectProps) {
                     isOpen={!!shareProject}
                     onClose={() => setShareProject(null)}
                     project={{
+                        id: shareProject.id,
+                        userId: shareProject.userId,
                         name: shareProject.name,
                         description: shareProject.description || "",
                         url: shareProject.liveLink || shareProject.githubLink || "",

@@ -14,9 +14,10 @@ interface ProfileContentProps {
   userId: string;
   isOwnProfile: boolean;
   initialTab?: "posts" | "resume" | "articles" | "projects" | "edit-profile";
+  initialProjectId?: string;
 }
 
-export function ProfileContent({ userId, isOwnProfile, initialTab }: ProfileContentProps) {
+export function ProfileContent({ userId, isOwnProfile, initialTab, initialProjectId }: ProfileContentProps) {
   const [activeTab, setActiveTab] = useState<ProfileTab>(initialTab || "posts");
 
   const { data: posts, isLoading: postsLoading } =
@@ -84,6 +85,7 @@ export function ProfileContent({ userId, isOwnProfile, initialTab }: ProfileCont
                 isOwnProfile={isOwnProfile}
                 githubUsername={githubUsername}
                 userId={userId}
+                initialProjectId={initialProjectId}
               />
             )}
           </div>

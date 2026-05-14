@@ -7,7 +7,7 @@ import { DevStatsSidebar } from "./components/right-tab/DevStatsSidebar";
 
 
 type Props = {
-  searchParams: { userId?: string, edit?: string }
+  searchParams: { userId?: string, edit?: string, tab?: string, projectId?: string }
 }
 
 export default async function ProfilePage({ searchParams }: Props) {
@@ -20,6 +20,13 @@ export default async function ProfilePage({ searchParams }: Props) {
   const targetUserId = searchParams.userId || session.user.id;
 
   const isOwnProfile = targetUserId === session.user.id;
+
+  let initialTab: any = 'posts';
+  if (searchParams.edit === 'true') {
+    initialTab = 'edit-profile';
+  } else if (searchParams.tab) {
+    initialTab = searchParams.tab;
+  }
 
   return (
     <div className="flex justify-center min-h-screen bg-black text-white">
@@ -35,7 +42,8 @@ export default async function ProfilePage({ searchParams }: Props) {
             <ProfileContent
               userId={targetUserId}
               isOwnProfile={isOwnProfile}
-              initialTab={searchParams.edit === 'true' ? 'edit-profile' : 'posts'}
+              initialTab={initialTab}
+              initialProjectId={searchParams.projectId}
             />
           </div>
         </main>

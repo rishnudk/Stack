@@ -30,6 +30,7 @@ interface ProjectsTabProps {
     isOwnProfile?: boolean;
     userId: string;
     githubUsername: string;
+    initialProjectId?: string;
 }
 
 export function ProjectsTab({
@@ -40,6 +41,7 @@ export function ProjectsTab({
     isOwnProfile,
     userId,
     githubUsername,
+    initialProjectId,
 }: ProjectsTabProps) {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,7 +65,7 @@ export function ProjectsTab({
                         </button>
                     )}
                 </div>
-                <ListProject userId={userId} />
+                <ListProject userId={userId} initialProjectId={initialProjectId} />
             </div>
 
             {/* GitHub Pinned Repositories Section */}
