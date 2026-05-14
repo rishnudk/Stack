@@ -18,7 +18,7 @@ export function FeedBox({ session }: FeedBoxProps) {
   const pathname = usePathname();
   const params = useParams();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState("For you");
+  const [activeTab, setActiveTab] = useState("Newest");
   
   // Check if we're on a post detail page
   const isPostDetail = pathname?.startsWith("/feed/post/");
@@ -49,7 +49,7 @@ export function FeedBox({ session }: FeedBoxProps) {
               <CreatePostBox session={session} />
 
               {/* Post feed */}
-              <PostList session={session} />
+              <PostList session={session} activeTab={activeTab} />
             </>
           )}
         </>

@@ -16,6 +16,7 @@ export const createPostSchema = z.object({
 export const getPostsSchema = z.object({
     cursor: z.string().optional(),
     limit: z.number().default(10),
+    feedType: z.enum(["Newest", "Trending", "Following"]).optional(),
 });
 
 //get posts by Id
