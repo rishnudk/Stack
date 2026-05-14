@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { trpc } from "@/utils/trpc";
-import { ArrowLeft, ExternalLink, Github, Code, Users, Trash2, Trash, Pencil } from "lucide-react";
+import { ArrowLeft, ExternalLink, Github, Code, Users, Trash2, Trash, Pencil, Share2 } from "lucide-react";
 import { AddProjectModal } from "./AddProjectModal";
+import { ShareProjectModal } from "./ShareProjectModal";
 
 interface ListProjectProps {
     userId: string;
@@ -14,6 +15,7 @@ export function ListProject({ userId }: ListProjectProps) {
     const [showAll, setShowAll] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [editProject, setEditProject] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
     const { data: projects, isLoading } = trpc.projects.getProjectsByUserId.useQuery({ userId });
     const deleteProject = trpc.projects.deleteProject.useMutation({
@@ -106,6 +108,13 @@ export function ListProject({ userId }: ListProjectProps) {
                                     </a>
                                 )}
                                 <button
+                                    title="Share Project"
+                                    onClick={() => setIsShareModalOpen(true)}
+                                    className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition-colors"
+                                >
+                                    <Share2 size={16} />
+                                </button>
+                                <button
                                     title="Edit Project"
                                     onClick={() => setEditProject(true)}
                                     className="p-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-neutral-300 border border-neutral-700 transition-colors"
@@ -126,6 +135,15 @@ export function ListProject({ userId }: ListProjectProps) {
                             isOpen={editProject}
                             onClose={() => setEditProject(false)}
                             project={project}
+                        />
+                        <ShareProjectModal
+                            isOpen={isShareModalOpen}
+                            onClose={() => setIsShareModalOpen(false)}
+                            project={{
+                                name: project.name,
+                                description: project.description || "",
+                                url: project.liveLink || project.githubLink || "",
+                            }}
                         />
 
                         {confirmDelete && (
