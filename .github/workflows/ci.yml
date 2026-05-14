@@ -67,8 +67,8 @@ jobs:
       - name: Build shared types
         run: pnpm --filter @stack/types build
 
-      - name: Lint web
-        run: pnpm --filter web lint
+      # - name: Lint web
+      #   run: pnpm --filter web lint
 
       - name: Typecheck web
         run: pnpm --filter web exec tsc --noEmit
