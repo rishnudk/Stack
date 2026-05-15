@@ -52,6 +52,7 @@ prisma/migrations/*.db-journal
 
 # Postgres (if local dump or docker volume)
 *.sql
+!prisma/migrations/**/*.sql
 *.dump
 docker-data/
 pg_data/
